@@ -580,6 +580,16 @@ without knowing.
   parity fixture mirrors the untied choice; chapter 11's not-taught list names tying.
 - **2026-08-31, GELU is the tanh approximation** (GPT-2's), because NumPy has no erf and
   PyTorch matches it exactly with approximate="tanh".
+- **2026-08-31, the bits loss carries its factor into every gradient.** The gradient of
+  the fused softmax-plus-cross-entropy is `(probs - onehot) / (B * T * ln 2)`, not
+  `probs - onehot`: the mean divides by the position count and the base change divides by
+  ln 2. Prose that states the shape states the whole factor with it, because dropping the
+  ln 2 leaves a gradient 1.4427 times too large and every gradient check red. The same
+  decision fixes the fixture boundary: nanoGPT computes in nats, so
+  `tools/fixtures/gen_parity_fixture.py` divides its loss and gradients by ln 2 before
+  writing, and asserts that conversion on a fixed batch. Found by a review bot on the
+  design doc, which read "probabilities minus one-hot" and asked what happened to the
+  base change.
 - **2026-08-31, AdamW decays only parameters with ndim >= 2** (nanoGPT's rule), so
   gains, biases and LayerNorm parameters are never pulled toward zero.
 - **2026-08-31, Pyodide loads from the pinned jsDelivr CDN URL** (course one's pattern).

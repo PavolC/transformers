@@ -209,6 +209,22 @@ head), and every consumer suite must notice.
   curious. Every learner-written backward is tested against a numerical gradient check,
   which chapter 4 rebuilds in their own hands as `grad_check` (course one's flagship,
   restated, now a tool they carry).
+  **Completed 2026-08-31, from a review finding on this doc: the composition backwards
+  were unassigned, and with no autograd they cannot go unwritten. The learner writes
+  them.** `mlp_backward` and `transformer_block_backward` are chapter 9's, and the
+  residual join is the teaching point rather than plumbing: a residual stream adds on the
+  way forward, so on the way back the gradient reaches both branches and they sum, which
+  is the same "keep what you had, add a correction" the chapter's forward beat teaches,
+  read in the other direction. `backward_gpt`, the loop over the stack in reverse plus the
+  two embedding tables, is chapter 11's, alongside the training loop: assembling their own
+  parts is what the summit is for, and the parity check is what proves it. That makes the
+  full learner-written set: cross-entropy, embedding, linear, attention head, MLP, block,
+  stack. Course-written stays LayerNorm and GELU alone.
+- Units at the boundary, which is the one place two subsystems have to agree: this course's
+  loss and gradients are in **bits**, and nanoGPT computes in **nats**. The parity fixture
+  therefore stores PyTorch's loss and gradients already divided by ln 2, and its generator
+  asserts that conversion on a fixed batch before writing the file, so chapter 11's check
+  compares like with like rather than passing or failing by a factor of 1.4427.
 - Hint ladder per exercise: prompt (always re-rendered, carries the whole contract),
   then a nudge, then a structural hint, then the visible solution. Test source viewable in
   the page; a run-my-code path executes the editor without tests.
@@ -256,7 +272,16 @@ Titles are working titles. Each chapter: what it covers; interactives; the exerc
 4. **The learned tally.** The bigram, rebuilt as a trained model: the embedding table as
    a learnable tally, rows as scores (logits), softmax as the machine that turns scores
    into a guess list, fused cross-entropy and its clean gradient (probabilities minus
-   one-hot), the SGD step restated from course one, and `grad_check` rebuilt. Training
+   one-hot, then scaled), the SGD step restated from course one, and `grad_check` rebuilt.
+   **Corrected 2026-08-31, from a review finding on this doc: "probabilities minus
+   one-hot" is the gradient of the loss in NATS. This course's loss is in bits, so the
+   gradient the chapter teaches and the learner writes is
+   `(probs - onehot) / (B * T * ln 2)`: the mean reduction divides by the number of
+   positions, and the base change divides by ln 2 = 0.693147. Dropping the ln 2 leaves a
+   gradient too large by a factor of 1.4427, which the chapter's own `grad_check` catches
+   immediately, so the prose must state the whole factor at the point it states the shape.
+   `src/python/reference_scribe.py` already computes it this way and its native gradient
+   check passes.** Training
    converges to the counted tally's rung, which is the point: learning recovers counting
    when counting is all there is. *Interactives:* softmax playground (scores in, guess
    list out, temperature slider); learned-tally heatmap converging beside the counted one.
