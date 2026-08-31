@@ -31,12 +31,18 @@ SAMPLE_CHARS = 220
 
 
 def top_row(counts, chars, ch, k=4):
-    """The k most common successors of ch, as (char, count, share)."""
+    """The k most common successors of ch, as (char, count, share).
+
+    Shares are stored unrounded. The page rounds them once for display, and a
+    share rounded here as well moves the last digit: the space row's 's' is
+    7.1505 percent, which a round to four places turns into 0.0715 and the
+    page then renders as 7.1 rather than 7.2.
+    """
     row = counts[chars.index(ch)]
     total = float(row.sum())
     order = np.argsort(-row)[:k]
     return total, [
-        {"char": chars[int(i)], "count": int(row[int(i)]), "share": round(float(row[int(i)]) / total, 4)}
+        {"char": chars[int(i)], "count": int(row[int(i)]), "share": float(row[int(i)]) / total}
         for i in order
         if row[int(i)] > 0
     ]
@@ -103,10 +109,10 @@ def main():
     out["favourite_guess"] = {
         "hits": hits,
         "of": n,
-        "share": round(hits / n, 4),
+        "share": hits / n,
         "baseline_char": chars[common],
         "baseline_hits": flat_hits,
-        "baseline_share": round(flat_hits / n, 4),
+        "baseline_share": flat_hits / n,
     }
     print(f"\nTaking the tally's favourite guess every time is right {hits} times out of "
           f"{n} on the held-out text, {hits / n * 100:.1f} percent.")
@@ -135,13 +141,31 @@ def main():
         stuck.append(int(favourite[stuck[-1]]))
     loop = rs.decode(np.array(stuck, dtype=np.int64), itos)
 
-    out["sample"] = {"seed": 7, "chars": SAMPLE_CHARS, "text": sample, "engine": "Python"}
-    out["favourite_loop"] = {"chars": 24, "text": loop}
-    print(f"\nSampling by proportion for {SAMPLE_CHARS} characters (seed 7, this file's "
-          "Python generator):")
+    # Both texts begin with the character the walk started from, so the length
+    # of the text is one more than the number of draws that made it. Record
+    # both numbers under names that say which is which: a chapter sentence
+    # that quotes the text has to count what the reader sees, and an exercise
+    # snippet that reproduces the text has to print the starting character too.
+    out["sample"] = {
+        "seed": 7,
+        "steps": SAMPLE_CHARS,
+        "chars": len(sample),
+        "start_char": "\n",
+        "text": sample,
+        "engine": "Python",
+    }
+    out["favourite_loop"] = {
+        "steps": 24,
+        "chars": len(loop),
+        "start_char": "t",
+        "text": loop,
+    }
+    print(f"\nSampling by proportion for {SAMPLE_CHARS} draws from a line break "
+          f"(seed 7, this file's Python generator), {len(sample)} characters "
+          "including the line break it started from:")
     print("    " + sample.replace("\n", "\\n"))
     print(f"  Always taking the favourite instead falls into a loop after a few "
-          f"characters: {loop.replace(chr(10), chr(92) + 'n')!r}")
+          f"characters, starting from 't': {loop!r}")
 
     # ------------------------------------------- what the pair model forgets
     # The same character gets the same guess list however it got there, which
@@ -152,7 +176,7 @@ def main():
     out["forgetting"] = {
         "probe": probe,
         "after_h_top": top_h,
-        "after_h_share": round(float(row_h.max() / row_h.sum()), 4),
+        "after_h_share": float(row_h.max() / row_h.sum()),
         "contexts_collapsed": len(chars),
     }
     print(f"\nEvery context ending in 'h' gets one guess list: {top_h!r} at "

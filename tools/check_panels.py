@@ -207,6 +207,148 @@ def check_train(summary, ticks, params, problems, label):
                         "nowhere near a fresh model's ~6.0 over 65 characters")
 
 
+
+# ------------------------------------------------- the prompts' own snippets
+#
+# Every exercise prompt carries a copyable experiment with a Copy button and a
+# Send-to-the-scratch-pad button (CLAUDE.md: "Every prompt carries a concrete
+# experiment"). That code is the reader's first run of their own function
+# against the real corpus, and until this ran, nothing but a reader clicking
+# had ever executed it. Chapter 1 shipped two snippets opening on
+# load_corpus() into a scratch pad that fetched no corpus.
+
+PROMPTS = sorted((wb.EX).glob("*/index.ts"))
+
+# What the JS escapes in a quoted string mean, once JS has read the literal.
+JS_ESCAPES = {"n": "\n", "t": "\t", "r": "\r", "\\": "\\", '"': '"', "'": "'",
+              "`": "`", "0": "\0", "b": "\b", "f": "\f", "v": "\v"}
+
+
+def bench_value(dotted):
+    """A value out of a committed bench, for a ${bench.a.b} interpolation."""
+    parts = dotted.split(".")
+    if parts[0] != "bench":
+        raise SystemExit(f"a prompt snippet interpolates ${{{dotted}}}; this checker "
+                         "resolves only bench values")
+    value = json.loads((ROOT / "src" / "bench" / "chapter1.json").read_text())
+    for key in parts[1:]:
+        value = value[key]
+    return str(value)
+
+
+def js_string_chain(source, start):
+    """Decode the chain of JS string literals beginning at source[start].
+
+    A prompt's code block is written as "line\n" + "line\n" + ..., so the
+    value is a run of quoted literals joined by +. A backtick piece may
+    interpolate a bench value, which is resolved here the way the bundler
+    resolves it. Scanning stops at the first comma or closing brace found
+    outside a literal, which is where the object entry ends.
+    """
+    out = []
+    i = start
+    while i < len(source):
+        ch = source[i]
+        if ch in "\"'`":
+            quote = ch
+            i += 1
+            buf = []
+            while i < len(source) and source[i] != quote:
+                if quote == "`" and source.startswith("${", i):
+                    close = source.index("}", i)
+                    buf.append(bench_value(source[i + 2:close].strip()))
+                    i = close + 1
+                    continue
+                if source[i] == "\\":
+                    esc = source[i + 1]
+                    if esc == "u":
+                        buf.append(chr(int(source[i + 2:i + 6], 16)))
+                        i += 6
+                        continue
+                    buf.append(JS_ESCAPES.get(esc, esc))
+                    i += 2
+                    continue
+                buf.append(source[i])
+                i += 1
+            out.append("".join(buf))
+            i += 1
+            continue
+        if ch in ",}":
+            break
+        i += 1
+    return "".join(out)
+
+
+def prompt_snippets(path):
+    """Every runnable code block in one exercise's prompt, in prompt order."""
+    source = path.read_text()
+    return [js_string_chain(source, m.end())
+            for m in re.finditer(r"\bcode:\s*", source)]
+
+
+# Where a prompt's prose tells the reader what its snippet prints, the printed
+# output has to contain the chapter's own committed value. Each entry is a
+# dotted path into src/bench/chapter1.json. This is the check that caught
+# chapter 1's sampler printing the chapter's loop with its first character
+# missing (casebook 21) and its tally counting the whole corpus where the
+# chapter's table counts nine tenths of it.
+SNIPPET_MUST_PRINT = {
+    "count-pairs": ["rows.q.total"],
+    "sample-next": ["sample.text", "favourite_loop.text"],
+}
+
+
+def check_prompt_snippets(datasets, problems):
+    """Run each prompt's experiment the way the scratch pad runs it."""
+    ran = 0
+    for path in PROMPTS:
+        section = path.parent.name
+        if section not in wb.BY_ID:
+            continue
+        # The document a reader holds when they meet this prompt: every
+        # section up to and including this one, in course order. A snippet may
+        # compose two sections (chapter 1's sampler feeds on chapter 1's
+        # tally) without the sections themselves calling each other, which is
+        # what `requires` in sections.json records.
+        order = [s["id"] for s in wb.SECTIONS]
+        ids = order[: order.index(section) + 1]
+        document = wb.assemble(wb.with_givens(ids), "solution")
+        for n, code in enumerate(prompt_snippets(path), start=1):
+            label = f"{section} snippet {n}"
+            ns, _ = worker_globals(datasets)
+            # The scratch pad runs in the namespace the learner's own file
+            # made, with load_corpus lent from the course module: see
+            # run_document_scratch in src/python/harness.py.
+            ns["load_corpus"] = ns["course"].load_corpus
+            printed = io.StringIO()
+            real_stdout = sys.stdout
+            try:
+                sys.stdout = printed
+                exec(compile(document, "scribe.py", "exec"), ns)  # noqa: S102
+                exec(compile(code, "scratch.py", "exec"), ns)  # noqa: S102
+            except Exception as exc:  # noqa: BLE001
+                sys.stdout = real_stdout
+                problems.append(f"{label}: {type(exc).__name__}: {exc}")
+                print(f"{label:26} FAILED  {type(exc).__name__}: {exc}")
+                continue
+            finally:
+                sys.stdout = real_stdout
+            ran += 1
+            if not printed.getvalue().strip():
+                problems.append(f"{label}: printed nothing, so the reader who runs "
+                                "it sees an empty output panel")
+            for dotted in SNIPPET_MUST_PRINT.get(section, []):
+                want = bench_value(f"bench.{dotted}")
+                if want not in printed.getvalue():
+                    problems.append(
+                        f"{label}: the prompt says it prints the chapter's "
+                        f"{dotted}, and {want[:40]!r} is not in what it printed")
+            lines = printed.getvalue().splitlines()
+            head = lines[0][:40] if lines else ""
+            print(f"{label:26} ok  {len(lines)} line(s) printed, first: {head!r}")
+    return ran
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--fast", action="store_true", help="tiny model, 12 steps")
@@ -252,14 +394,18 @@ def main():
         else:
             print(f"{label:26} ok  {len(reports)} report(s)")
 
+    snippets = check_prompt_snippets(datasets, problems)
+
     print()
     if problems:
         print(f"{len(problems)} problem(s):")
         for p in problems:
             print(" -", p)
         return 1
-    print(f"{ran} panel snippet(s) run outside the browser: every one executes, "
-          "streams progress, and returns numbers in range.")
+    print(f"{ran} panel snippet(s) and {snippets} prompt snippet(s) run outside the "
+          "browser: the panels execute, stream progress and return numbers in range, "
+          "and every experiment a prompt hands the reader runs against a solved "
+          "document and prints something.")
     return 0
 
 

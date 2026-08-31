@@ -49,14 +49,18 @@ export type WorkerRequest =
       dataUrl?: string;
     }
   // The scratch pad's run: the whole document, then the scratch pad, in one
-  // namespace.
+  // namespace. dataUrl is required rather than optional, and that is the
+  // point: the scratch pad is where the prompts' snippets land, every one of
+  // them opens with load_corpus(), and the pad belongs to no exercise, so
+  // there is nothing to read a dataset off. Making the field required puts
+  // the corpus in the runtime by construction instead of by remembering.
   | {
       type: "runDocumentScratch";
       id: number;
       document: string;
       scratchCode: string;
       spec: RunSpec;
-      dataUrl?: string;
+      dataUrl: string;
     }
   // First-party Python snippets from interactives. The snippet reads its
   // input by json.loads(_args_json), may stream progress via

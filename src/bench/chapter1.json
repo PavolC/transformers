@@ -72,22 +72,22 @@
         {
           "char": "e",
           "count": 16418,
-          "share": 0.3539
+          "share": 0.3539124811381763
         },
         {
           "char": "a",
           "count": 8723,
-          "share": 0.188
+          "share": 0.18803621470144427
         },
         {
           "char": "i",
           "count": 6395,
-          "share": 0.1379
+          "share": 0.13785298555723216
         },
         {
           "char": "o",
           "count": 4665,
-          "share": 0.1006
+          "share": 0.10056046561759
         }
       ]
     },
@@ -97,22 +97,22 @@
         {
           "char": "e",
           "count": 261,
-          "share": 0.8156
+          "share": 0.815625
         },
         {
           "char": "a",
           "count": 17,
-          "share": 0.0531
+          "share": 0.053125
         },
         {
           "char": "i",
           "count": 11,
-          "share": 0.0344
+          "share": 0.034375
         },
         {
           "char": "o",
           "count": 7,
-          "share": 0.0219
+          "share": 0.021875
         }
       ]
     },
@@ -122,22 +122,22 @@
         {
           "char": "t",
           "count": 21591,
-          "share": 0.1409
+          "share": 0.14086445930517044
         },
         {
           "char": "a",
           "count": 12054,
-          "share": 0.0786
+          "share": 0.07864296199641167
         },
         {
           "char": "s",
           "count": 10960,
-          "share": 0.0715
+          "share": 0.0715054640352308
         },
         {
           "char": "h",
           "count": 10818,
-          "share": 0.0706
+          "share": 0.07057902462893492
         }
       ]
     }
@@ -145,25 +145,29 @@
   "favourite_guess": {
     "hits": 30096,
     "of": 111538,
-    "share": 0.2698,
+    "share": 0.26982732342340726,
     "baseline_char": " ",
     "baseline_hits": 16617,
-    "baseline_share": 0.149
+    "baseline_share": 0.14898061647151645
   },
   "sample": {
     "seed": 7,
-    "chars": 220,
+    "steps": 220,
+    "chars": 221,
+    "start_char": "\n",
     "text": "\nNouces\nTince ineyory bo ICKemed CES:\n\nTELinoso mes, OLI tewirgife h was th; wor by,\nWhe.\nA the, HO ay:\nIVIINGORifr\nTieat ounil----the wewhesordont int thirve?\n\nAst oorimy or PUSis wlort I d bl n r fthire n tto gadat: t t",
     "engine": "Python"
   },
   "favourite_loop": {
-    "chars": 24,
+    "steps": 24,
+    "chars": 25,
+    "start_char": "t",
     "text": "the the the the the the t"
   },
   "forgetting": {
     "probe": "th",
     "after_h_top": "e",
-    "after_h_share": 0.3539,
+    "after_h_share": 0.3539124811381763,
     "contexts_collapsed": 65
   }
 }

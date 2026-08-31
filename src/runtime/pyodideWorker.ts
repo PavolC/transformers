@@ -119,6 +119,19 @@ function datasetPath(dataUrl: string): string {
 const fetched = new Set<string>();
 
 async function fetchDataset(pyodide: Pyodide, dataUrl: string): Promise<void> {
+  // Absolute or nothing. A relative URL here resolves against this worker's
+  // own directory rather than the page's, and the site's base is "./", so a
+  // relative dataUrl silently fetches the SPA fallback and writes index.html
+  // into the dataset's path. Callers resolve on the main thread; this is the
+  // assertion that they did.
+  try {
+    new URL(dataUrl);
+  } catch {
+    throw new Error(
+      `dataset URL must be absolute, got ${dataUrl}: a relative URL in a ` +
+        "worker resolves against the worker's own directory, not the page's",
+    );
+  }
   const path = datasetPath(dataUrl);
   if (fetched.has(path)) return;
   status(`Fetching ${path.slice(1)}...`);
@@ -247,7 +260,7 @@ async function runDocumentScratch(
   msg: Extract<WorkerRequest, { type: "runDocumentScratch" }>,
 ): Promise<void> {
   const pyodide = await getPyodide();
-  if (msg.dataUrl) await fetchDataset(pyodide, msg.dataUrl);
+  await fetchDataset(pyodide, msg.dataUrl);
   status("Running your code...");
   pyodide.globals.set("_document", msg.document);
   pyodide.globals.set("_scratch_code", msg.scratchCode);

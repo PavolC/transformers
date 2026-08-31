@@ -480,7 +480,123 @@ taught in the chapter, in the same commit as the exercise".
 was hours old. The generalizable half is cheap and mechanical: before shipping an
 exercise, grep the chapter's prose for every noun the contract uses.
 
-## The pattern behind all eighteen
+## 21. The loop the chapter showed and the loop the exercise printed
+
+**Chapter:** two (transformers), chapter 1, found while re-reading the exercise prompts
+the day after they were rewritten.
+
+**What was wrong.** Chapter 1 closes its writing section by taking each row's most common
+successor instead of drawing one: from a `t` the output is `the the the the the the t`
+forever, a string the prose quotes out of the committed bench. The exercise after it hands
+the reader a snippet that walks the same way, and the snippet printed
+`he the the the the the t`, the chapter's string with its first character missing. The
+bench seeds its list with the character it starts from and the snippet did not. The prompt
+then described the snippet's output as "he the the the", typed by hand from a run rather
+than imported, so the repository held two strings for one walk and nothing connected them.
+
+The same off-by-the-starting-character sat in the bench's own record. `favourite_loop` was
+written `{"chars": 24}` beside a 25-character string, and `sample` `{"chars": 220}` beside
+a 221-character passage, because in both cases the number counts draws rather than
+characters. Chapter 1 read that key out and told the reader "Here is 220 characters of it"
+above a block holding 221.
+
+**Why nothing caught it.** Every check was green and every number was real. The bench ran,
+the chapter imported it, the exercise's tests pass, and both strings are correct outputs of
+correct code: outputs of two walks that disagree about whether the character you start from
+is part of what the walk wrote. The prompt's hand-typed copy was the only place the
+disagreement was visible, and it was on the wrong side of it. It matched the snippet, so a
+reader checking the prompt against the code it ships would find them consistent and the
+chapter, three screens up, wrong.
+
+**The fix.** The snippet seeds its output with the starting character, so it prints the
+chapter's string exactly, and the prompt quotes `bench.favourite_loop.text` instead of a
+typed prefix. The bench records `steps` and `chars` separately for both walks, along with
+the `start_char` each began from, and chapter 1's sentence counts draws where it means
+draws.
+
+**Rules:** "Generated text is a number" and "An experiment the reader re-runs prints what
+the chapter printed", both under Numbers.
+
+**Cost:** four lines, before a reader reached it. The class is what makes it worth an
+entry: a course whose method is "now run this yourself" puts a snippet beside every quoted
+output, and every one of those is a place where two programs can disagree by one character
+with every check green.
+
+## 22. "screatch pad didn't work right after exercise 1"
+
+**Chapter:** two (transformers), chapter 1, found by the learner on the day it shipped,
+one exercise into the course.
+
+**What was wrong.** The learner finished the first exercise, pressed Send to the scratch
+pad on the experiment the prompt hands them, ran it, and got
+`FileNotFoundError: [Errno 44] No such file or directory: '/tinyshakespeare.txt'` on
+line 1. Every prompt in the course opens its experiment with `load_corpus()`.
+
+The worker fetches a dataset when the request carries a `dataUrl`, and the scratch pad's
+request read that field off the exercise belonging to whichever section the caret sat in.
+No exercise sets it. The field had been lifted from course one along with the runtime,
+where its comment records the same bug one course earlier: "Module 10's prompt says to
+open /penguins.json, and nothing had ever put it there." The mechanism was there, unused,
+with the incident that created it written on it.
+
+Running the snippets turned up two more. Chapter 1's tally experiment counted the whole
+corpus, while the chapter's table counts the first nine tenths, so a reader checking their
+own function against the table read 609 where the page said 563, with nothing to explain
+the gap; and its four rows were the four the chapter already showed, under a sentence
+promising rows it had not. Separately, the shares in that table were rounded twice, once
+into the bench at four places and once by the component that renders them at one, which
+showed the space row's `s` as 7.1 percent where 7.2 is right.
+
+Behind that sat a second failure, found by clicking through the fix rather than by any
+check. The corpus URL was `assetUrl("data/tinyshakespeare.txt")`, and the build's base is
+`"./"` so the site works from any subpath, which makes the URL relative. A relative URL
+inside a web worker resolves against the worker script's own directory, `/assets/`, not
+against the page. So the worker fetched `/assets/data/tinyshakespeare.txt`, the static
+host answered the miss with the app's own `index.html` and a 200, and the worker wrote
+that HTML into `/tinyshakespeare.txt`. With the first fix in and this one still open, the
+scratch pad ran happily and reported a vocabulary of 84 characters, a `q` followed 3
+times, and a colon most often followed by a slash: the tally of an HTML file, printed
+without an error anywhere.
+
+**Why nothing caught it.** The prompts' snippets are the one kind of code in the
+repository that nothing ran. `npm run check` builds the app, runs every exercise's tests
+against its solution and its skeleton, runs the training panel's Python outside the
+browser, and checks the classes, the brand and the palette. A copyable code block was
+prose to all of it. The type system had no opinion either, because `dataUrl` was optional
+on a request whose only sensible value is the course's one dataset.
+
+**The fix.** The corpus URL is resolved against `document.baseURI` on the main thread,
+which is the only side that knows where the page is, and `fetchDataset` refuses a URL
+that is not absolute with a message naming the worker-relative trap. `dataUrl` is
+required on the scratch-pad request, so the compiler asks for it:
+reverting the fix now fails `tsc` with "Property 'dataUrl' is missing ... but required".
+The scratch pad sends the corpus URL always, rather than reading it off the current
+section. `load_corpus` turns a missing file into a sentence saying the workbench, not the
+learner's code, is at fault. Both chapter 1 snippets count the same nine tenths the
+chapter counts, so the tally rows now reproduce the chapter's table exactly and the
+sampler reproduces its passage and its stuck loop character for character. The bench
+stores shares unrounded.
+
+`tools/check_panels.py` grew a second half: it lifts every code block out of every
+prompt, runs it against the solved document with the corpus in place, and asserts that
+the chapter's own committed values appear in what it printed. Verified by putting the
+previous defect back: it reports that the sampler no longer prints `sample.text` or
+`favourite_loop.text`.
+
+**Rules:** "Every snippet the course hands the reader is run by a checker, in the
+environment the reader runs it in", "A run path that takes the learner's code loads the
+course's data unconditionally" and "A URL handed to a worker is absolute", in the
+exercises playbook and the runtime rules, plus "Round once, where the number is
+displayed" under Numbers.
+
+**Cost:** two lines of runtime wiring, found by the learner rather than by CI, one
+exercise into a twelve-chapter course. The checker that makes the class impossible is
+90 lines, and it named two further defects on its first run, before it had ever guarded
+anything. The second failure cost more than all of them: it needed a real browser, a
+real worker and a local copy of the pinned runtime to see at all, because every check in
+the repository stands in for the fetch it broke.
+
+## The pattern behind course one's eighteen
 
 Four of them (2, 6, 7, 12) are the same chapter, and it is the one chapter authored outside
 the playbook, in a single 25-file commit that also touched the stylesheet, the app shell and

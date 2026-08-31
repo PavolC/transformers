@@ -307,10 +307,10 @@ export function Chapter1() {
       </p>
       <WheelSampler />
       <p>
-        What comes out is not English, and it is not noise either. Here is{" "}
-        {bench.sample.chars} characters of it, drawn by the same tally in the course's
-        Python rather than in the panel above, which is why the letters differ while the
-        counts behind them are identical:
+        What comes out is not English, and it is not noise either. Here are{" "}
+        {bench.sample.steps} draws of it, starting from a line break, made by the same
+        tally in the course's Python rather than in the panel above, which is why the
+        letters differ while the counts behind them are identical:
       </p>
       <pre className="sample-block">{bench.sample.text}</pre>
       <p>

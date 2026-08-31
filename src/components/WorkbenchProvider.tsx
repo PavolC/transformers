@@ -6,6 +6,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { loadExercise } from "../exercises/loaders";
+import { CORPUS_URL } from "../runtime/assets";
 import type { ScratchRunResult, TestRunResult, WorkerResponse } from "../runtime/messages";
 import { sendRequest, terminateWorker } from "../runtime/workerClient";
 import { emitProgress, saveCompleted } from "../state/progress";
@@ -355,30 +356,30 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
 	const runScratch = useCallback(() => {
 		const target = current ?? SECTION_ORDER[0];
 		beginRun("scratch");
-		const exercise = loadExercise(target);
 		const spec = runSpec(target);
-		const send = (dataUrl?: string) =>
-			sendRequest(
-				{
-					type: "runDocumentScratch",
-					document: loadDocument(),
-					scratchCode: loadScratch(),
-					spec,
-					dataUrl,
-				},
-				(msg: WorkerResponse) => {
-					if (collectCommon(msg)) return;
-					if (msg.type !== "pythonDone") return;
-					const result = msg.result as ScratchRunResult;
-					setRanFor("your code and the scratch pad");
-					setScratchError(result.error);
-					setLent(result.lent ?? []);
-					setBusy(null);
-					setStatus("");
-				},
-			);
-		if (exercise) exercise.then((ex) => send(ex.dataUrl));
-		else send();
+		// The corpus, always. Every prompt's experiment opens with
+		// load_corpus(), and the scratch pad belongs to no exercise: reading
+		// the dataset off whichever section the caret sits in is how a
+		// snippet sent from chapter 1 dies with FileNotFoundError.
+		sendRequest(
+			{
+				type: "runDocumentScratch",
+				document: loadDocument(),
+				scratchCode: loadScratch(),
+				spec,
+				dataUrl: CORPUS_URL,
+			},
+			(msg: WorkerResponse) => {
+				if (collectCommon(msg)) return;
+				if (msg.type !== "pythonDone") return;
+				const result = msg.result as ScratchRunResult;
+				setRanFor("your code and the scratch pad");
+				setScratchError(result.error);
+				setLent(result.lent ?? []);
+				setBusy(null);
+				setStatus("");
+			},
+		);
 	}, [current]);
 
 	const sendToScratch = useCallback(

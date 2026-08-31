@@ -9,8 +9,17 @@ export function assetUrl(path: string): string {
   return `${base}${path}`;
 }
 
-/** The corpus's URL, for handing to the worker as a dataUrl. */
-export const CORPUS_URL = assetUrl("data/tinyshakespeare.txt");
+/** The corpus's URL, for handing to the worker as a dataUrl, resolved here
+ * against the page rather than left relative. The build's base is "./" so the
+ * site works from any subpath, and a relative URL inside a worker resolves
+ * against the worker script's own directory (/assets/), not the page's: the
+ * fetch then lands on the SPA fallback and writes index.html into
+ * /tinyshakespeare.txt, where it reads as an 84-character vocabulary of HTML.
+ * The main thread is the only side that knows where the page is. */
+export const CORPUS_URL = new URL(
+  assetUrl("data/tinyshakespeare.txt"),
+  document.baseURI,
+).href;
 
 async function fetchMaybeGz(url: string): Promise<Uint8Array> {
   const resp = await fetch(url);
