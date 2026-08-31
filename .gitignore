@@ -3,3 +3,4 @@ dist/
 .bench/
 __pycache__/
 *.pyc
+tsconfig.tsbuildinfo

@@ -1,0 +1,6 @@
+# scribe.py: a character-level transformer, written across the Moving Parts
+# Transformers course (https://github.com/PavolC/transformers).
+#
+# Sections written by the learner; any section marked "written for you", and
+# any section still holding the course's reference text, is course code, MIT
+# licensed, (c) 2026 Pavol Chvala. Runs anywhere NumPy is installed.

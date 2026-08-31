@@ -1,0 +1,13 @@
+[
+  {
+    "id": "softmax",
+    "kind": "exercise",
+    "module": "c4",
+    "label": "Chapter 4, Softmax",
+    "marker": "# ---- [section:softmax] Chapter 4, Softmax ----",
+    "provides": ["softmax"],
+    "requires": [],
+    "pulledInBy": [],
+    "checks": []
+  }
+]
