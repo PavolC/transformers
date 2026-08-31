@@ -1,0 +1,126 @@
+{
+  "bench": "corpus",
+  "pyodide": "314.0.5",
+  "generated": "2026-08-31",
+  "line": {
+    "text": "to be, or not to be",
+    "chars": 19,
+    "pairs": 18,
+    "distinct_chars": 8,
+    "rows": {
+      " ": {
+        "b": 2,
+        "o": 1,
+        "n": 1,
+        "t": 1
+      },
+      ",": {
+        " ": 1
+      },
+      "b": {
+        "e": 2
+      },
+      "e": {
+        ",": 1
+      },
+      "n": {
+        "o": 1
+      },
+      "o": {
+        " ": 2,
+        "r": 1,
+        "t": 1
+      },
+      "r": {
+        " ": 1
+      },
+      "t": {
+        "o": 2,
+        " ": 1
+      }
+    }
+  },
+  "corpus": {
+    "chars": 1115394,
+    "lines": 40001,
+    "vocab_size": 65,
+    "vocab": [
+      "\n",
+      " ",
+      "!",
+      "$",
+      "&",
+      "'",
+      ",",
+      "-",
+      ".",
+      "3",
+      ":",
+      ";",
+      "?",
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "U",
+      "V",
+      "W",
+      "X",
+      "Y",
+      "Z",
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m",
+      "n",
+      "o",
+      "p",
+      "q",
+      "r",
+      "s",
+      "t",
+      "u",
+      "v",
+      "w",
+      "x",
+      "y",
+      "z"
+    ],
+    "train_chars": 1003855,
+    "val_chars": 111539,
+    "val_fraction": 0.1
+  },
+  "ladder": {
+    "uniform_bits": 6.0224,
+    "bigram_val_bits": 3.5806,
+    "bigram_train_bits": 3.5412,
+    "unseen_pairs": 2845,
+    "possible_pairs": 4225,
+    "smoothing_alpha": 1
+  }
+}

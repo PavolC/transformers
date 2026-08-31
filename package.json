@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "check": "npm run build && python3 tools/check_exercises.py && python3 tools/check_panels.py --fast && python3 tools/check_brand.py && python3 tools/brand_palette.py --check",
+    "bench": "node tools/bench/run.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -26,6 +27,7 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "pyodide": "314.0.5",
     "typescript": "~5.9.0",
     "vite": "8.2.2"
   }
