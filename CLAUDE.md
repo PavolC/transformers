@@ -87,6 +87,16 @@ is built here, in the order the story needs it and never before.
   a bundler will happily inline the code and leave the notice in the repository. Emit the
   licence file into the build output and link it from the footer. Course one shipped this
   defect.
+- **Never invent a class name.** Every class a component renders must already have a rule
+  in `styles.css` or `brand.css`; if the thing needs new styling, add the class to the
+  family's existing selector list rather than making up a parallel vocabulary. The
+  stylesheet is course one's, lifted whole, and it is the vocabulary. Three pages were
+  broken this way in three days, each silently: an invented `start` dropped the front door
+  out of the reading measure ("start page width leaked out"), invented `control-row`
+  classes let a slider overlap its buttons, and `fig fig-box` kept a diagram out of its
+  figure family's one scale. Nothing detects this by looking, because the page still
+  renders and every other check stays green, so `tools/check_styles.py` enforces it.
+  [casebook: 19]
 - **No em dashes in any user-facing prose.** Commas, colons or parentheses.
 - **No number is written from memory.** See "Numbers" below.
 
@@ -460,8 +470,9 @@ enforced mechanically, and retrofitting it is the most expensive pass in the pro
 
 The commands: `npm run check` runs all of it (typecheck and build via `npm run build`,
 then `python3 tools/check_exercises.py`, `python3 tools/check_panels.py`,
-`python3 tools/check_brand.py`, `python3 tools/brand_palette.py --check`); benches run
-with `npm run bench`. The list is fixed.
+`python3 tools/check_styles.py`, `python3 tools/check_brand.py`,
+`python3 tools/brand_palette.py --check`); benches run with `npm run bench`. The list is
+fixed.
 
 - [ ] Typecheck and production build pass.
 - [ ] The exercise checker passes (solutions green, skeletons red for their own reason,
@@ -525,6 +536,8 @@ says what it needs. This section is how a stranger reproduces the numbers.
   brand checker, palette checker. Needs Node 22, Python 3 with NumPy.
 - `python3 tools/check_exercises.py` alone: solutions pass, skeletons fail for their own
   reason, the untouched document implements nothing, sabotaged providers get noticed.
+- `python3 tools/check_styles.py` alone: every class a component renders has a rule.
+  `--list-unused` prints the other direction, rules nothing renders yet.
 - `npm run bench` regenerates `src/bench/*.json` under the pinned Pyodide in
   Node, printing each prose sentence it backs. CI re-runs it and fails if a
   committed number moved. Needs Node 22 and network for the first

@@ -12,6 +12,13 @@ import downloadNotice from "../python/download_notice.txt?raw";
 // #start, which is where a bare link lands. The chapter outline renders from
 // the chapter registry, never from a second hand-maintained list.
 
+// The article carries BOTH classes, the way course one's front door does, and
+// the reason is not decoration: `module` is what the stylesheet's measure rules
+// select (.module > p, > ul, > ol, > h2) and `start-page` is what the front
+// door's own rules select (.start-page > h3 and its accent rule). Carrying
+// neither, as this page briefly did, drops every paragraph out of the 34rem
+// measure and it runs the full column width.
+
 /** How each section of the file reads in the list below. */
 const STATE_WORDS = {
 	missing: "not in your file yet",
@@ -77,7 +84,7 @@ export function StartPage({ onGoTo }: { onGoTo: (id: string) => void }) {
 	};
 
 	return (
-		<article className="start">
+		<article className="module start-page">
 			<p className="start-lede">
 				Build a small language model from its smallest parts, then teach it to write. You write real Python in the page, one part per chapter, and train your own character-level GPT on
 				Shakespeare, live in this tab, until it writes. The result is one file, <code>scribe.py</code>, that you wrote and can explain matrix by matrix.
@@ -124,10 +131,18 @@ export function StartPage({ onGoTo }: { onGoTo: (id: string) => void }) {
 			<ol className="start-outline">
 				{CHAPTERS.map((chapter) => {
 					const here = EXERCISES.filter((e) => e.module === chapter.id);
+					// The chapter's own number, from its id, not its position in this
+					// list: chapters land out of order while the course is being
+					// written (chapter 4 shipped before chapter 1), so counting
+					// positions would label chapter 4 as the second one.
+					const number = chapter.id.replace(/^c/, "");
 					return (
 						<li key={chapter.id}>
+							{/* The full title here, not the nav label: the strip's labels are
+							    one or two words so twelve of them fit, and this list has room
+							    for the name of the thing. */}
 							<button className="start-outline-title" onClick={() => onGoTo(chapter.id)}>
-								{chapter.navLabel.replace(" · ", ". ")}
+								{number}. {chapter.title}
 							</button>
 							<p>{chapter.covers}</p>
 							{here.length > 0 && (

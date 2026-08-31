@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "check": "npm run build && python3 tools/check_exercises.py && python3 tools/check_panels.py --fast && python3 tools/check_brand.py && python3 tools/brand_palette.py --check",
+    "check": "npm run build && python3 tools/check_exercises.py && python3 tools/check_panels.py --fast && python3 tools/check_styles.py && python3 tools/check_brand.py && python3 tools/brand_palette.py --check",
     "bench": "node tools/bench/run.mjs",
     "preview": "vite preview"
   },
