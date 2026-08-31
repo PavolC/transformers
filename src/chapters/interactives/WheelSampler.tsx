@@ -117,47 +117,45 @@ export function WheelSampler() {
   const widest = row.length ? row[0].share : 1;
 
   return (
-    <div className="panel wheel-sampler">
-      <p className="panel-title">Writing with the corpus tally</p>
-      <p className="panel-legend">
+    <div className="interactive wheel-sampler">
+      <p className="interactive-title">Writing with the corpus tally</p>
+      <p className="interactive-legend">
         The bars are the row for the character just written: its counted successors, the
         longest bar the most common. Drawing picks a bar in proportion to its length;
         whatever comes up is written down and becomes the next row to draw from.
       </p>
 
       {error && (
-        <p className="panel-error">
+        <p className="interactive-error">
           The corpus did not load ({error}). The tally needs it, so this panel stays empty.
         </p>
       )}
 
-      <div className="control-row">
-        <span className="control-buttons">
-          <button onClick={() => setRunning((r) => !r)} disabled={!tally}>
-            {running ? "Pause" : text ? "Keep writing" : "Start writing"}
-          </button>
-          <button
-            className="button-secondary"
-            onClick={() => {
-              setText("");
-              draw.current = mulberry32(20260831);
-              if (tally) setCurrent(tally.index.get("\n") ?? 0);
-            }}
-            disabled={!tally || !text}
-          >
-            Clear
-          </button>
-        </span>
-        <label className="control control-inline">
+      <div className="interactive-controls">
+        <button onClick={() => setRunning((r) => !r)} disabled={!tally}>
+          {running ? "Pause" : text ? "Keep writing" : "Start writing"}
+        </button>
+        <button
+          className="button-secondary"
+          onClick={() => {
+            setText("");
+            draw.current = mulberry32(20260831);
+            if (tally) setCurrent(tally.index.get("\n") ?? 0);
+          }}
+          disabled={!tally || !text}
+        >
+          Clear
+        </button>
+        <label className="checkbox-row">
           <input
             type="checkbox"
             checked={mode === "favourite"}
             onChange={(e) => setMode(e.target.checked ? "favourite" : "draw")}
           />
-          <span className="control-label">Always take the longest bar</span>
+          <span>Always take the longest bar</span>
         </label>
       </div>
-      <p className="wheel-status" role="status">
+      <p className="interactive-status wheel-status" role="status">
         {!tally
           ? "Loading the corpus..."
           : mode === "favourite"

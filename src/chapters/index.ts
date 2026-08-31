@@ -24,6 +24,16 @@ function deferred(load: () => Promise<{ default: ComponentType }>) {
  * the tabs and the picker all render from this one list. */
 export const CHAPTERS: ChapterDef[] = [
   {
+    id: "c1",
+    navLabel: "1 · The next-letter game",
+    title: "The next-letter game",
+    covers:
+      "Language modelling as one game: guess the next character. The tally of what follows " +
+      "what, built by hand on one line and then over a million characters of Shakespeare, " +
+      "writing by drawing from it, and what a model with one row per character cannot know.",
+    ...deferred(() => import("./chapter1").then((m) => ({ default: m.Chapter1 }))),
+  },
+  {
     id: "c4",
     navLabel: "4 · The learned tally",
     title: "The learned tally",

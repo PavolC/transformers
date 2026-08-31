@@ -47,9 +47,9 @@ export function TallyBuilder() {
   const done = step >= pairCount;
 
   return (
-    <div className="panel tally-builder">
-      <p className="panel-title">The tally, built one pair at a time</p>
-      <p className="panel-legend">
+    <div className="interactive tally-builder">
+      <p className="interactive-title">The tally, built one pair at a time</p>
+      <p className="interactive-legend">
         Each cell counts how often the column's character followed the row's. A space is
         drawn <code>{charLabel(" ")}</code>. Darker means counted more often; the row
         totals on the right are how many times that character was followed by anything.
@@ -75,15 +75,15 @@ export function TallyBuilder() {
         })}
       </p>
 
-      <p className="tally-status" role="status">
+      <p className="interactive-status tally-status" role="status">
         {done
           ? `All ${pairCount} pairs counted.`
           : `Pair ${step + 1} of ${pairCount}: ${charLabel(before)} then ${charLabel(after)}.`}
       </p>
 
-      <div className="control-row">
-        <label className="control">
-          <span className="control-label">Pairs counted</span>
+      <div className="interactive-controls">
+        <label className="slider-row slider-row-wide">
+          <span>Pairs counted</span>
           <input
             type="range"
             min={0}
@@ -91,22 +91,20 @@ export function TallyBuilder() {
             value={step}
             onChange={(e) => setStep(Number(e.target.value))}
           />
-          <output className="control-value">
-            {step} / {pairCount}
-          </output>
+          <code>
+            {step}/{pairCount}
+          </code>
         </label>
-        <span className="control-buttons">
-          <button className="button-secondary" onClick={() => setStep(0)} disabled={step === 0}>
-            Start over
-          </button>
-          <button
-            className="button-secondary"
-            onClick={() => setStep((s) => Math.min(pairCount, s + 1))}
-            disabled={done}
-          >
-            Count the next pair
-          </button>
-        </span>
+        <button className="button-secondary" onClick={() => setStep(0)} disabled={step === 0}>
+          Start over
+        </button>
+        <button
+          className="button-secondary"
+          onClick={() => setStep((s) => Math.min(pairCount, s + 1))}
+          disabled={done}
+        >
+          Count the next pair
+        </button>
       </div>
 
       <div className="table-scroll scroll-x" tabIndex={0}>

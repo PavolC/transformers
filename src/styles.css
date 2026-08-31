@@ -4030,3 +4030,246 @@ button:disabled {
 	color: var(--muted);
 	font-size: 0.85em;
 }
+
+/* ---- chapter 1 -------------------------------------------------------- */
+
+/* The line being counted, above the tally grid. Monospace so the space
+   glyph and the letters share a column width, and the pair under the cursor
+   is marked on the characters themselves rather than in a caption. */
+.tally-line {
+	margin: 0.6rem 0 0.2rem;
+	font-family: var(--font-mono);
+	font-size: 1.05rem;
+	line-height: 1.9;
+	text-align: center;
+}
+
+.tally-line-char {
+	padding: 0.1rem 0.02rem;
+	color: var(--muted);
+	border-bottom: 2px solid transparent;
+}
+
+.tally-line-read {
+	color: var(--ink);
+}
+
+.tally-line-before,
+.tally-line-after {
+	background: var(--accent-panel);
+	border-bottom-color: var(--accent);
+	color: var(--ink);
+}
+
+.tally-line-after {
+	background: var(--accent-wash);
+}
+
+/* Reserved height, on top of .interactive-status: these lines change on every
+   step, and a line that appears and disappears moves the grid under the
+   reader's cursor. */
+.tally-status,
+.wheel-status {
+	min-height: 1.5rem;
+	margin: 0.1rem 0 0.5rem;
+	text-align: center;
+}
+
+/* The grid family: fixed cell size, the count in the cell, the fill a share
+   of the accent. Pans inside .table-scroll on a narrow screen rather than
+   shrinking its labels. */
+.tally-grid {
+	border-collapse: collapse;
+	margin: 0 auto;
+	font-family: var(--font-mono);
+	font-size: 0.82rem;
+}
+
+.tally-grid th,
+.tally-grid td {
+	width: 2.1rem;
+	height: 2.1rem;
+	padding: 0;
+	text-align: center;
+	border: 1px solid var(--rule);
+}
+
+.tally-grid th {
+	font-family: var(--font-mono);
+	font-weight: 600;
+	color: var(--muted);
+	background: var(--accent-wash);
+}
+
+.tally-corner,
+.tally-total-head {
+	font-family: var(--font-ui);
+	font-size: 0.62rem;
+	font-weight: var(--label-weight);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.tally-cell-next {
+	outline: 2px solid var(--accent);
+	outline-offset: -2px;
+}
+
+.tally-zero {
+	color: var(--rule-strong);
+}
+
+.tally-total {
+	font-weight: 600;
+	background: var(--accent-wash);
+}
+
+/* The sampler's row of bars: natural scale, longest bar full width, so the
+   shape of one row reads at a glance. */
+.wheel-row {
+	margin: 0.5rem auto 0.7rem;
+	max-width: 30rem;
+}
+
+.wheel-bar-line {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 0.16rem 0;
+}
+
+.wheel-bar-char {
+	flex: none;
+	width: 1.4rem;
+	font-family: var(--font-mono);
+	font-size: 0.9rem;
+	text-align: right;
+	color: var(--ink);
+}
+
+.wheel-bar-track {
+	flex: 1 1 auto;
+	height: 0.75rem;
+	background: var(--accent-wash);
+	border-radius: 2px;
+	overflow: hidden;
+}
+
+.wheel-bar-fill {
+	display: block;
+	height: 100%;
+	background: var(--accent);
+}
+
+.wheel-bar-value {
+	flex: none;
+	width: 8.5rem;
+	font-family: var(--font-ui);
+	font-size: 0.76rem;
+	color: var(--muted);
+}
+
+.wheel-empty {
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	color: var(--muted);
+	text-align: center;
+}
+
+/* Generated text, in both the panel and the prose. Wraps rather than
+   scrolling sideways, because it is prose-shaped output and a reader reads
+   it rather than inspecting a line of it. */
+.wheel-output,
+.sample-block {
+	margin: 0.4rem 0 0;
+	padding: 0.7rem 0.8rem;
+	min-height: 6.5rem;
+	background: var(--accent-wash);
+	border: 1px solid var(--rule);
+	border-radius: 4px;
+	font-family: var(--font-mono);
+	font-size: 0.82rem;
+	line-height: 1.5;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.sample-block {
+	max-width: var(--measure);
+	margin-left: auto;
+	margin-right: auto;
+	min-height: 0;
+}
+
+/* An interactive's own title and reading key. They live on the panel rather
+   than in the prose above it, so the prose keeps only what a panel cannot
+   say: the connection to earlier material and the carrying idea. */
+.interactive-title {
+	margin: 0 0 0.25rem;
+	font-family: var(--font-ui);
+	font-size: 0.86rem;
+	font-weight: 600;
+	color: var(--ink);
+}
+
+.interactive-legend {
+	margin: 0 0 0.6rem;
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	line-height: 1.5;
+	color: var(--muted);
+}
+
+.interactive-error {
+	font-family: var(--font-ui);
+	font-size: 0.84rem;
+	color: var(--loss, #b3423a);
+	text-align: center;
+}
+
+/* A checkbox and its label as one flex item inside .interactive-controls, so
+   it sits on the row with the buttons and wraps with them. */
+.checkbox-row {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	color: var(--muted);
+	min-height: 44px;
+}
+
+.checkbox-row input {
+	accent-color: var(--accent);
+	width: 1.05rem;
+	height: 1.05rem;
+}
+
+/* The box-and-arrow family: one shared viewBox width at full column width. */
+.fig-box-fill {
+	fill: var(--accent-wash);
+	stroke: var(--accent-rule);
+	stroke-width: 1;
+}
+
+.fig-arrow {
+	fill: none;
+	stroke: var(--rule-strong);
+	stroke-width: 1.5;
+}
+
+.fig-arrow-head {
+	fill: var(--rule-strong);
+}
+
+.fig-label {
+	font-family: var(--font-ui);
+	font-size: 12px;
+	fill: var(--ink);
+}
+
+.fig-note {
+	font-family: var(--font-ui);
+	font-size: 10.5px;
+	fill: var(--muted);
+}
