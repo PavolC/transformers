@@ -20,6 +20,18 @@ export interface ExerciseRef {
 
 export const EXERCISES: ExerciseRef[] = [
   {
+    id: "count-pairs",
+    title: "Counting pairs",
+    module: "c1",
+    builds: "count_pairs: the tally, one row per character, over any stream",
+  },
+  {
+    id: "sample-next",
+    title: "Sampling the next character",
+    module: "c1",
+    builds: "sample_next: a draw from one row of the tally, in proportion",
+  },
+  {
     id: "softmax",
     title: "Softmax",
     module: "c4",

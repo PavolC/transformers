@@ -1,0 +1,169 @@
+{
+  "bench": "chapter1",
+  "pyodide": "314.0.5",
+  "line": {
+    "text": "to be, or not to be",
+    "chars": 19,
+    "pairs": 18,
+    "rows": {
+      " ": {
+        "b": 2,
+        "n": 1,
+        "o": 1,
+        "t": 1
+      },
+      ",": {
+        " ": 1
+      },
+      "b": {
+        "e": 2
+      },
+      "e": {
+        ",": 1
+      },
+      "n": {
+        "o": 1
+      },
+      "o": {
+        " ": 2,
+        "r": 1,
+        "t": 1
+      },
+      "r": {
+        " ": 1
+      },
+      "t": {
+        "o": 2,
+        " ": 1
+      }
+    },
+    "row_totals": {
+      " ": 5,
+      ",": 1,
+      "b": 2,
+      "e": 1,
+      "n": 1,
+      "o": 4,
+      "r": 1,
+      "t": 3
+    }
+  },
+  "corpus": {
+    "chars": 1115394,
+    "vocab_size": 65,
+    "train_chars": 1003855,
+    "val_chars": 111539,
+    "pairs_counted": 1003854
+  },
+  "rows": {
+    "q": {
+      "total": 563,
+      "top": [
+        {
+          "char": "u",
+          "count": 563,
+          "share": 1
+        }
+      ]
+    },
+    "h": {
+      "total": 46390,
+      "top": [
+        {
+          "char": "e",
+          "count": 16418,
+          "share": 0.3539
+        },
+        {
+          "char": "a",
+          "count": 8723,
+          "share": 0.188
+        },
+        {
+          "char": "i",
+          "count": 6395,
+          "share": 0.1379
+        },
+        {
+          "char": "o",
+          "count": 4665,
+          "share": 0.1006
+        }
+      ]
+    },
+    "z": {
+      "total": 320,
+      "top": [
+        {
+          "char": "e",
+          "count": 261,
+          "share": 0.8156
+        },
+        {
+          "char": "a",
+          "count": 17,
+          "share": 0.0531
+        },
+        {
+          "char": "i",
+          "count": 11,
+          "share": 0.0344
+        },
+        {
+          "char": "o",
+          "count": 7,
+          "share": 0.0219
+        }
+      ]
+    },
+    " ": {
+      "total": 153275,
+      "top": [
+        {
+          "char": "t",
+          "count": 21591,
+          "share": 0.1409
+        },
+        {
+          "char": "a",
+          "count": 12054,
+          "share": 0.0786
+        },
+        {
+          "char": "s",
+          "count": 10960,
+          "share": 0.0715
+        },
+        {
+          "char": "h",
+          "count": 10818,
+          "share": 0.0706
+        }
+      ]
+    }
+  },
+  "favourite_guess": {
+    "hits": 30096,
+    "of": 111538,
+    "share": 0.2698,
+    "baseline_char": " ",
+    "baseline_hits": 16617,
+    "baseline_share": 0.149
+  },
+  "sample": {
+    "seed": 7,
+    "chars": 220,
+    "text": "\nNouces\nTince ineyory bo ICKemed CES:\n\nTELinoso mes, OLI tewirgife h was th; wor by,\nWhe.\nA the, HO ay:\nIVIINGORifr\nTieat ounil----the wewhesordont int thirve?\n\nAst oorimy or PUSis wlort I d bl n r fthire n tto gadat: t t",
+    "engine": "Python"
+  },
+  "favourite_loop": {
+    "chars": 24,
+    "text": "the the the the the the t"
+  },
+  "forgetting": {
+    "probe": "th",
+    "after_h_top": "e",
+    "after_h_share": 0.3539,
+    "contexts_collapsed": 65
+  }
+}

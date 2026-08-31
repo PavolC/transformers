@@ -59,11 +59,34 @@ def get_batch(ids, block_size, batch_size, rng):
 # The counted bigram (chapter 1 and 3's model, and the ladder's first rung)
 # ---------------------------------------------------------------------------
 
-def bigram_counts(ids, vocab_size):
-    """counts[a, b] = how often character b follows character a."""
+def count_pairs(ids, vocab_size):
+    """counts[a, b] = how often character b follows character a.
+
+    Chapter 1's first exercise. The course's own copy, lent to a run while
+    that section is unwritten.
+    """
     counts = np.zeros((vocab_size, vocab_size), dtype=np.float64)
     np.add.at(counts, (ids[:-1], ids[1:]), 1.0)
     return counts
+
+
+# The field's name for the same table, used by the benches and by every
+# chapter after the first.
+bigram_counts = count_pairs
+
+
+def sample_next(counts, current, rng):
+    """Draw the next character's id in proportion to its row of the tally.
+
+    Chapter 1's second exercise. A row of all zeros (a character the text
+    never continued) would have nothing to draw from, so it falls back to an
+    even choice over the vocabulary.
+    """
+    row = counts[current]
+    total = row.sum()
+    if total <= 0:
+        return int(rng.integers(0, len(row)))
+    return int(rng.choice(len(row), p=row / total))
 
 
 def bigram_probs(counts, alpha=1.0):

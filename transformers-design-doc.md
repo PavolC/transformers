@@ -145,7 +145,7 @@ never quoted in prose.
 | dataset | what | licence | size | arrives | producer |
 |---|---|---|---|---|---|
 | `public/data/tinyshakespeare.txt` | concatenated Shakespeare plays, plain text | public domain | ~1.1 MB (planning figure; measured at fetch) | clean, one file | `tools/fetch_shakespeare.py` (records URL + sha256) |
-| `public/data/bench/*.json` | numbers the prose and interactives quote | course's own | small | generated | `tools/bench/*` under pinned Pyodide |
+| `src/bench/*.json` | numbers the prose, tables and figures quote | course's own | small | generated | `tools/bench/*` under pinned Pyodide (see section 10) |
 | `src/exercises/fixtures/parity.json` | reference logits, loss, gradients for the flagship check | derived from nanoGPT (MIT) | small | committed literal | `tools/fixtures/gen_parity_fixture.py` (offline, torch) |
 
 The raw-data requirement is met by chapter 12: the learner pastes arbitrary text, which is
@@ -380,7 +380,8 @@ Course-specific conventions settled now:
 /src/runtime/           pyodide worker, protocol messages, worker client, python harness
 /src/components/        editor, workbench, dock, exercise card, chapter blocks, figures
 /src/state/             workbench document, progress, storage, export/import
-/public/data/           tinyshakespeare.txt, bench JSON
+/public/data/           tinyshakespeare.txt
+/src/bench/             committed bench output, imported by the chapters
 /tools/                 fetch_shakespeare.py, bench/, fixtures/, check_exercises.py,
                         check_panels.py, check_brand.py, brand_palette.py, og card
 /.github/workflows/     deploy to Pages, checks

@@ -9,6 +9,8 @@
 import type { Exercise } from "./types";
 
 const LOADERS: Readonly<Record<string, () => Promise<Exercise>>> = {
+  "count-pairs": () => import("./count-pairs").then((m) => m.countPairsExercise),
+  "sample-next": () => import("./sample-next").then((m) => m.sampleNextExercise),
   softmax: () => import("./softmax").then((m) => m.softmaxExercise),
 };
 

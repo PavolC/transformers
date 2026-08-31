@@ -1,5 +1,27 @@
 [
   {
+    "id": "count-pairs",
+    "kind": "exercise",
+    "module": "c1",
+    "label": "Chapter 1, Counting pairs",
+    "marker": "# ---- [section:count-pairs] Chapter 1, Counting pairs ----",
+    "provides": ["count_pairs"],
+    "requires": [],
+    "pulledInBy": [],
+    "checks": []
+  },
+  {
+    "id": "sample-next",
+    "kind": "exercise",
+    "module": "c1",
+    "label": "Chapter 1, Sampling the next character",
+    "marker": "# ---- [section:sample-next] Chapter 1, Sampling the next character ----",
+    "provides": ["sample_next"],
+    "requires": [],
+    "pulledInBy": [],
+    "checks": []
+  },
+  {
     "id": "softmax",
     "kind": "exercise",
     "module": "c4",

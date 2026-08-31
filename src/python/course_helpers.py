@@ -40,6 +40,8 @@ def load_corpus():
 # them. Each is the reference implementation the benches and the parity
 # fixture run; a lend is reported to the reader by name.
 
+count_pairs = _rs.count_pairs
+sample_next = _rs.sample_next
 softmax = _rs.softmax
 
 # ----------------------------------------------------- shared, never exercises

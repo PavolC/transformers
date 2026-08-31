@@ -5,8 +5,9 @@
 // makes "the same code path" true down to the interpreter: it boots the
 // pinned Pyodide in Node, registers reference_scribe.py and course_helpers.py
 // exactly as src/runtime/pyodideWorker.ts does, hands the bench the same
-// corpus the app fetches, and writes the result to public/data/bench/, which
-// the interactives replay so a panel and a paragraph cannot disagree.
+// corpus the app fetches, and writes the result to src/bench/, which the
+// chapters import directly, so a table in a chapter and a sentence beside it
+// cannot disagree and a figure cannot 404 on its own numbers.
 //
 //   npm run bench              # every bench in tools/bench/*.py
 //   npm run bench -- corpus    # just this one
@@ -27,7 +28,7 @@ import { loadPyodide, version as pyodideVersion } from "pyodide";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const BENCH_DIR = path.join(ROOT, "tools", "bench");
-const OUT_DIR = path.join(ROOT, "public", "data", "bench");
+const OUT_DIR = path.join(ROOT, "src", "bench");
 const CACHE_DIR = path.join(ROOT, ".pyodide-cache");
 
 // The pin lives in the worker; this reads it from there rather than restating
@@ -111,7 +112,7 @@ _ns["main"]()
     const out = { bench: name, pyodide: pyodideVersion, ...JSON.parse(resultJson) };
     const file = path.join(OUT_DIR, `${name}.json`);
     await writeFile(file, `${JSON.stringify(out, null, 2)}\n`);
-    console.log(`\n-> public/data/bench/${name}.json\n`);
+    console.log(`\n-> src/bench/${name}.json\n`);
   } catch (err) {
     failed++;
     console.error(`${name} FAILED:\n${err?.message ?? err}\n`);

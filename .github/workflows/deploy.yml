@@ -74,9 +74,9 @@ jobs:
       # The bench output carries no timestamp, so this compares numbers only.
       - name: The committed bench output still reproduces
         run: |
-          if ! git diff --quiet -- public/data/bench; then
+          if ! git diff --quiet -- src/bench; then
             echo "A bench no longer reproduces its committed numbers:"
-            git --no-pager diff -- public/data/bench
+            git --no-pager diff -- src/bench
             exit 1
           fi
 
