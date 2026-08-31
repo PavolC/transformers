@@ -29,8 +29,16 @@ def load_corpus():
     """
     global _corpus_cache
     if _corpus_cache is None:
-        with open("/tinyshakespeare.txt", "r", encoding="utf-8") as f:
-            _corpus_cache = f.read()
+        try:
+            with open("/tinyshakespeare.txt", "r", encoding="utf-8") as f:
+                _corpus_cache = f.read()
+        except FileNotFoundError:
+            raise RuntimeError(
+                "The corpus is not in this runtime: /tinyshakespeare.txt does not "
+                "exist. Nothing in your own code caused this. The workbench "
+                "fetches the file before it runs anything, so a missing corpus "
+                "is a bug in the workbench, not in your scribe."
+            ) from None
     return _corpus_cache
 
 

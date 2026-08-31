@@ -40,12 +40,15 @@ export const sampleNextExercise: Exercise = {
         "chars = sorted(set(text))\n" +
         "stoi = {c: i for i, c in enumerate(chars)}\n" +
         "ids = np.array([stoi[c] for c in text], dtype=np.int64)\n" +
-        "counts = count_pairs(ids, len(chars))\n" +
+        "\n" +
+        "# The same nine tenths the chapter counted, so the same tally.\n" +
+        "train = ids[: len(ids) - len(ids) // 10]\n" +
+        "counts = count_pairs(train, len(chars))\n" +
         "\n" +
         "rng = np.random.default_rng(7)\n" +
         'current = stoi["\\n"]\n' +
-        "out = []\n" +
-        "for _ in range(220):\n" +
+        "out = [chars[current]]\n" +
+        `for _ in range(${bench.sample.steps}):\n` +
         "    current = sample_next(counts, current, rng)\n" +
         "    out.append(chars[current])\n" +
         'print("".join(out))\n' +
@@ -53,15 +56,18 @@ export const sampleNextExercise: Exercise = {
         "# And the same walk taking the row's favourite every time instead.\n" +
         'current = stoi["t"]\n' +
         "greedy = [chars[current]]\n" +
-        "for _ in range(24):\n" +
+        `for _ in range(${bench.favourite_loop.steps}):\n` +
         "    current = int(counts[current].argmax())\n" +
         "    greedy.append(chars[current])\n" +
         'print("".join(greedy))',
     },
-    "The sampled passage is the same shape of text the chapter showed. The second " +
-      "line reproduces the chapter's loop character for character, because taking " +
-      "each row's favourite involves no draw at all: from a 't' it always gives " +
-      `"${bench.favourite_loop.text}". That is why the draw has to stay random.`,
+    "Both lines print exactly what the chapter printed. The passage is the same " +
+      "because the tally, the seed and the generator are all the same, and the " +
+      "chapter's passage came from this same Python rather than from the panel above " +
+      "it. Change the 7 and you get a different one from the same tally.",
+    "The second line is why the draw has to stay random. Taking each row's favourite " +
+      "involves no draw at all, so from a 't' it always gives " +
+      `"${bench.favourite_loop.text}", and it would go on giving it forever.`,
   ],
   skeleton,
   tests,

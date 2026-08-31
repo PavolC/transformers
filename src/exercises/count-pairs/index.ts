@@ -1,4 +1,5 @@
 import type { Exercise } from "../types";
+import bench from "../../bench/chapter1.json";
 import skeleton from "./skeleton.py?raw";
 import tests from "./tests.py?raw";
 import solution from "./solution.py?raw";
@@ -33,27 +34,38 @@ export const countPairsExercise: Exercise = {
       "once however often it appears, so every pair that happens more than once " +
       "lands as a 1. np.add.at(counts, (ids[:-1], ids[1:]), 1.0) does accumulate, " +
       "and so does a plain Python loop over the pairs.",
-    "Once the tests pass, run your own counting over the whole corpus and look up " +
-      "a row the chapter did not show you. The first four lines are the turning-into-" +
-      "numbers step, done here so you can see it; chapter 2 builds it properly. Send " +
-      "this to the scratch pad and run it:",
+    "Once the tests pass, count the corpus yourself. The first four lines are the " +
+      "turning-into-numbers step, done here so you can see it; chapter 2 builds it " +
+      "properly. The line after them counts the same nine tenths the chapter counted, " +
+      "so the first row printed is the chapter's own and the other three are rows it " +
+      "never showed. Send this to the scratch pad and run it:",
     {
       code:
         "text = load_corpus()\n" +
         "chars = sorted(set(text))\n" +
         "stoi = {c: i for i, c in enumerate(chars)}\n" +
         "ids = np.array([stoi[c] for c in text], dtype=np.int64)\n" +
-        "counts = count_pairs(ids, len(chars))\n" +
         "\n" +
-        'for ch in "qhz ":\n' +
+        "# The chapter counted the first nine tenths and held the last tenth\n" +
+        "# back, so count the same characters to get the same numbers.\n" +
+        "train = ids[: len(ids) - len(ids) // 10]\n" +
+        "counts = count_pairs(train, len(chars))\n" +
+        "\n" +
+        "for ch in \"q:'j\":\n" +
         "    row = counts[stoi[ch]]\n" +
         "    order = np.argsort(-row)[:4]\n" +
         '    tops = ", ".join(f"{chars[i]!r} {row[i] / row.sum() * 100:.1f}%" for i in order)\n' +
-        '    print(f"after {ch!r} ({int(row.sum())} times): {tops}")',
+        '    print(f"after {ch!r} ({int(row.sum())} times, {int((row > 0).sum())} ' +
+        'of {len(row)} cells filled): {tops}")',
     },
-    "Those percentages are shares of a row, not of the table: the four numbers " +
-      "after a space do not add up to 100 because a space is followed by more " +
-      "than four different characters.",
+    `The q row is the one the chapter's table shows, ${bench.rows.q.total} times and a ` +
+      "u every one of them, so it doubles as a check on your counting. The other three " +
+      "the chapter never showed: a colon is followed by a line break almost every time, " +
+      "an apostrophe by an s or a d, and a j by a u, an o or an e with no favourite " +
+      "among them.",
+    "The percentages are shares of one row, not of the table, and the filled-cell " +
+      "count in each header says why: a row with only four cells filled has its whole " +
+      "story in the four shares printed, and a row with many more does not.",
   ],
   skeleton,
   tests,
