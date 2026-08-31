@@ -224,19 +224,35 @@ JS_ESCAPES = {"n": "\n", "t": "\t", "r": "\r", "\\": "\\", '"': '"', "'": "'",
               "`": "`", "0": "\0", "b": "\b", "f": "\f", "v": "\v"}
 
 
-def bench_value(dotted):
+def bench_file(path):
+    """Which committed bench a prompt's `bench` import refers to.
+
+    Read out of the import line rather than assumed, because chapter 2's
+    prompts quote chapter2.json and a checker that resolved every ${bench.x}
+    against chapter 1 would silently compare the wrong numbers.
+    """
+    m = re.search(r'^import bench from "\.\./\.\./bench/([a-z0-9]+)\.json";$',
+                  path.read_text(), re.M)
+    if m is None:
+        raise SystemExit(f"{path.parent.name}: a prompt interpolates a bench value "
+                         "but the file imports no bench JSON")
+    return ROOT / "src" / "bench" / f"{m.group(1)}.json"
+
+
+def bench_value(dotted, path):
     """A value out of a committed bench, for a ${bench.a.b} interpolation."""
     parts = dotted.split(".")
     if parts[0] != "bench":
         raise SystemExit(f"a prompt snippet interpolates ${{{dotted}}}; this checker "
                          "resolves only bench values")
-    value = json.loads((ROOT / "src" / "bench" / "chapter1.json").read_text())
+    value = json.loads(bench_file(path).read_text())
     for key in parts[1:]:
-        value = value[key]
+        # A list is indexed by number in the same dotted path: rows.0.x_text.
+        value = value[int(key)] if isinstance(value, list) else value[key]
     return str(value)
 
 
-def js_string_chain(source, start):
+def js_string_chain(source, start, path):
     """Decode the chain of JS string literals beginning at source[start].
 
     A prompt's code block is written as "line\n" + "line\n" + ..., so the
@@ -256,7 +272,7 @@ def js_string_chain(source, start):
             while i < len(source) and source[i] != quote:
                 if quote == "`" and source.startswith("${", i):
                     close = source.index("}", i)
-                    buf.append(bench_value(source[i + 2:close].strip()))
+                    buf.append(bench_value(source[i + 2:close].strip(), path))
                     i = close + 1
                     continue
                 if source[i] == "\\":
@@ -282,19 +298,21 @@ def js_string_chain(source, start):
 def prompt_snippets(path):
     """Every runnable code block in one exercise's prompt, in prompt order."""
     source = path.read_text()
-    return [js_string_chain(source, m.end())
+    return [js_string_chain(source, m.end(), path)
             for m in re.finditer(r"\bcode:\s*", source)]
 
 
 # Where a prompt's prose tells the reader what its snippet prints, the printed
 # output has to contain the chapter's own committed value. Each entry is a
-# dotted path into src/bench/chapter1.json. This is the check that caught
-# chapter 1's sampler printing the chapter's loop with its first character
-# missing (casebook 21) and its tally counting the whole corpus where the
-# chapter's table counts nine tenths of it.
+# dotted path into the bench that prompt imports. This is the check that
+# caught chapter 1's sampler printing the chapter's loop with its first
+# character missing (casebook 21) and its tally counting the whole corpus
+# where the chapter's table counts nine tenths of it.
 SNIPPET_MUST_PRINT = {
     "count-pairs": ["rows.q.total"],
     "sample-next": ["sample.text", "favourite_loop.text"],
+    "build-vocab": ["crossing.corpus_ids", "crossing.own_ids"],
+    "get-batch": ["window.x_text", "window.y_text", "batch.rows.3.y_text"],
 }
 
 
@@ -338,7 +356,7 @@ def check_prompt_snippets(datasets, problems):
                 problems.append(f"{label}: printed nothing, so the reader who runs "
                                 "it sees an empty output panel")
             for dotted in SNIPPET_MUST_PRINT.get(section, []):
-                want = bench_value(f"bench.{dotted}")
+                want = bench_value(f"bench.{dotted}", path)
                 if want not in printed.getvalue():
                     problems.append(
                         f"{label}: the prompt says it prints the chapter's "

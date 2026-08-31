@@ -94,7 +94,60 @@ export const NOTATION: NotationRow[] = [
     id: "space-glyph",
     symbol: <code>␣ ⏎</code>,
     means:
-      "a space and a newline, drawn visibly inside a figure or a table. Both are characters like any other here, and the most common two in the corpus",
+      "a space and a newline, drawn visibly inside a figure or a table. Both are characters like any other here, and the space is the most common character in the corpus",
     from: "Chapter 1",
+  },
+  {
+    id: "token",
+    symbol: <b>a token</b>,
+    means:
+      "the unit a model reads and writes one of. Here it is one character, so the corpus is 1,115,394 tokens over a vocabulary of 65",
+    alsoCalled: "character-level tokens; the field's usual choice is subword tokens, built by byte-pair encoding",
+    from: "Chapter 2",
+  },
+  {
+    id: "stoi",
+    symbol: <code>stoi, itos</code>,
+    means:
+      "the two lookup tables of a vocabulary: character to id, said \"stoy\" for string to int, and id back to character, said \"eye-toss\"",
+    from: "Chapter 2",
+  },
+  {
+    id: "crossing",
+    symbol: <code>encode, decode</code>,
+    means:
+      "the only crossing between text and arrays: a string to a row of ids, and a row of ids back to the string it spells. Ids mean nothing without the vocabulary they were numbered by",
+    alsoCalled: "a tokenizer",
+    from: "Chapter 2",
+  },
+  {
+    id: "window",
+    symbol: <b>a window</b>,
+    means:
+      "T characters in a row, cut out of the stream. It is T training examples rather than one, because every position in it is a question whose answer is the character after it",
+    alsoCalled: "a context window; its length is block_size in the code",
+    from: "Chapter 2",
+  },
+  {
+    id: "shape-bt",
+    symbol: <code>(B, T)</code>,
+    means:
+      "the shape of a batch: B windows down the first axis, T positions in time across the second. Batch first and time second, in every array in this course",
+    alsoCalled: "batch size and block size",
+    from: "Chapter 2",
+  },
+  {
+    id: "xy",
+    symbol: <code>x, y</code>,
+    means:
+      "a batch and its targets. y is the same windows sliced one character later, so y[b, t] is the character that actually followed x[b, t]",
+    from: "Chapter 2",
+  },
+  {
+    id: "slice-stop",
+    symbol: <code>ids[s : s + T]</code>,
+    means:
+      "T characters starting at s. The number after the colon is where the slice stops rather than the last position it takes, so this one does not include ids[s + T], which is exactly the character the targets need",
+    from: "Chapter 2",
   },
 ];

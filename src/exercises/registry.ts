@@ -32,6 +32,18 @@ export const EXERCISES: ExerciseRef[] = [
     builds: "sample_next: a draw from one row of the tally, in proportion",
   },
   {
+    id: "build-vocab",
+    title: "Text to ids, and back",
+    module: "c2",
+    builds: "build_vocab, encode, decode: the crossing between text and arrays",
+  },
+  {
+    id: "get-batch",
+    title: "Batches of windows",
+    module: "c2",
+    builds: "get_batch: B windows of T characters, with their shifted targets",
+  },
+  {
     id: "softmax",
     title: "Softmax",
     module: "c4",

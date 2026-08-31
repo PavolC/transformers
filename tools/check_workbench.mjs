@@ -92,8 +92,24 @@ for (const layout of LAYOUTS) {
     await page.locator(".play-snippet").nth(i).locator("button").nth(1).click();
     await page.waitForTimeout(900);
   };
+  // The prompts' own code, read off the page rather than named here, so this
+  // suite runs against any chapter that carries these buttons: chapter 2 has
+  // two of them too, and the first version of this file asserted on chapter
+  // 1's identifiers, so pointing URL at #c2 failed on the prose rather than
+  // on the app. A snippet's first line is what the pad should be scrolled to
+  // and its last line is what proves the whole snippet arrived.
+  const snippets = await page.locator(".play-snippet pre").allTextContents();
+  if (snippets.length < 2) {
+    check(`${URL} carries two prompt snippets`, false, `found ${snippets.length}`);
+    await page.close();
+    continue;
+  }
+  const firstLine = (i) => snippets[i].trimStart().split("\n")[0].trim();
+  const lastLine = (i) => snippets[i].trimEnd().split("\n").pop().trim();
+
   const noFiller = (v) => !v.visible.some((line) => line.includes("# filler"));
-  const atSnippetTop = (v) => v.visible.some((line) => line.trim() === "text = load_corpus()");
+  const atSnippetTop = (v, i) => v.visible.some((line) => line.trim() === firstLine(i));
+  const bothArrived = (v) => v.stored.includes(lastLine(0)) && v.stored.includes(lastLine(1));
 
   check("the pad starts closed, over 60 filler lines", (await view()).mounted === false);
 
@@ -103,7 +119,7 @@ for (const layout of LAYOUTS) {
   const a = await view();
   check("the first send opens the pad", a.open === true);
   check("it scrolls past the filler", noFiller(a) && a.scrollTop > 0, `scrollTop ${a.scrollTop}`);
-  check("to the snippet just sent", atSnippetTop(a), JSON.stringify(a.visible.slice(0, 2)));
+  check("to the snippet just sent", atSnippetTop(a, 0), JSON.stringify(a.visible.slice(0, 2)));
 
   // The second send, into a pad that is already open. This is the one that was
   // broken: it wrote localStorage and stopped there, because the editor owns
@@ -112,13 +128,10 @@ for (const layout of LAYOUTS) {
   const b = await view();
   check(
     "the second send reaches the editor too",
-    noFiller(b) && atSnippetTop(b) && b.scrollTop > a.scrollTop,
+    noFiller(b) && atSnippetTop(b, 1) && b.scrollTop > a.scrollTop,
     `scrollTop ${a.scrollTop} -> ${b.scrollTop} of ${b.maxScroll}`,
   );
-  check(
-    "both snippets are in the pad",
-    b.stored.includes("count_pairs") && b.stored.includes("greedy"),
-  );
+  check("both snippets are in the pad", bothArrived(b));
 
   // One keystroke, typed where the caret already is. No mouse: a click inside
   // a scrolling contenteditable can leave a selection behind, and then the
@@ -134,8 +147,7 @@ for (const layout of LAYOUTS) {
   check(
     "the next keystroke keeps every snippet",
     c.stored.length === storedBefore.length + 1 &&
-      c.stored.includes("count_pairs") &&
-      c.stored.includes("greedy") &&
+      bothArrived(c) &&
       c.stored.includes("# filler 059"),
     `${storedBefore.length} -> ${c.stored.length} chars`,
   );
@@ -158,7 +170,7 @@ for (const layout of LAYOUTS) {
   const e = await view();
   check(
     "a send into a collapsed pad reopens it, scrolled to the snippet",
-    e.open === true && noFiller(e) && atSnippetTop(e) && e.scrollTop > 0,
+    e.open === true && noFiller(e) && atSnippetTop(e, 0) && e.scrollTop > 0,
     `scrollTop ${e.scrollTop} of ${e.maxScroll}`,
   );
 
