@@ -13,6 +13,15 @@ export interface ChapterDef {
    * eight). */
   title: string;
   covers: string;
+  /** True for a page that exists only to host a finished exercise while its
+   * prose is still unwritten. A draft stays out of the tab strip and out of
+   * the "continue to" button, because a numbered stub in the navigation reads
+   * as a chapter and leaves an unexplained hole where the chapters before it
+   * will go ("why is it chapter 1 and then 4?"). It keeps its own address, so
+   * #c4 still opens it and the exercise stays reachable, and the front door
+   * lists it as being written. METHOD.md: course one shipped its feasibility
+   * spike in the nav for three and a half days for want of this. */
+  draft?: true;
   Component: ComponentType;
   /** Start fetching this chapter's chunk without rendering it. App calls this
    * on idle for every chapter, so a tab switch never waits on a download. */
@@ -43,8 +52,8 @@ export const CHAPTERS: ChapterDef[] = [
     title: "The learned tally",
     covers:
       "The bigram rebuilt as a trained model: scores, softmax, the loss's clean gradient, " +
-      "and training that recovers what counting knew. (Being written; its softmax exercise " +
-      "is live below as the pipeline's first passenger.)",
+      "and training that recovers what counting knew.",
+    draft: true,
     ...deferred(() => import("./chapter4").then((m) => ({ default: m.Chapter4 }))),
   },
 ];

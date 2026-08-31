@@ -82,10 +82,13 @@ function AppShell() {
   }, [tab]);
 
   // Both navigations read the same list: the strip that wraps on a wide
-  // screen, and the picker that replaces it below the fold width.
+  // screen, and the picker that replaces it below the fold width. Drafts are
+  // left out of both: a stub numbered 4 sitting beside chapter 1 reads as a
+  // chapter and asks the reader where 2 and 3 went. Its address still works,
+  // and the front door lists it as being written.
   const navItems = [
     { id: START_TAB, label: "Start" },
-    ...CHAPTERS.map((c) => ({ id: c.id, label: c.navLabel })),
+    ...CHAPTERS.filter((c) => !c.draft).map((c) => ({ id: c.id, label: c.navLabel })),
   ];
   const current = navItems.find((n) => n.id === tab) ?? navItems[0];
   const [navOpen, setNavOpen] = useState(false);
@@ -189,7 +192,9 @@ function AppShell() {
           {/* A chapter renders on first visit and stays rendered after that,
               so tab switches never lose editor or visualization state. */}
           {CHAPTERS.map((c, i) => {
-            const next = CHAPTERS[i + 1];
+            // The next chapter a reader can actually read, so the button at
+            // the foot of a chapter never advertises a stub.
+            const next = CHAPTERS.slice(i + 1).find((c) => !c.draft);
             return (
               <div
                 key={c.id}

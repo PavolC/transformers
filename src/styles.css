@@ -4261,3 +4261,16 @@ button:disabled {
 	font-size: 10.5px;
 	fill: var(--muted);
 }
+
+/* A chapter listed on the front door whose prose is not written yet. Muted and
+   small: it is a status, not a heading, and it sits inside the outline's own
+   title button. */
+.start-draft {
+	margin-left: 0.5rem;
+	font-family: var(--font-ui);
+	font-size: 0.7rem;
+	font-weight: var(--label-weight);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
