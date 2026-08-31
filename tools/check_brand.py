@@ -43,6 +43,12 @@ def fail(problems: list[str], message: str) -> None:
     problems.append(message)
 
 
+def has_flex_rule(text: str, selector: str) -> bool:
+    """Whether selector's first rule lays its children out in one row."""
+    rule = re.search(rf"{re.escape(selector)}\s*\{{([^}}]*)\}}", text, re.S)
+    return bool(rule and re.search(r"display:\s*(?:inline-)?flex\s*;", rule.group(1)))
+
+
 def resolve_accent(css: str) -> tuple[str, str]:
     """The hue token --accent points at, and its value."""
     token = re.search(r"--accent:\s*var\(--hue-([a-z]+)\);", css)
@@ -88,9 +94,17 @@ def main() -> int:
                        "[(11, 0), (11, 11), (10, 22)]")
     if not re.search(r'<rect width="32" height="32" rx="7"', monogram):
         fail(problems, "Monogram.tsx has no 32-unit rounded clipping tile")
-    for placement in ("Masthead.tsx", "SeriesFooter.tsx"):
-        if "<Monogram />" not in (BRAND / placement).read_text():
-            fail(problems, f"{placement} does not render the series mark")
+    masthead_source = (BRAND / "Masthead.tsx").read_text()
+    footer_source = (BRAND / "SeriesFooter.tsx").read_text()
+    if not re.search(r'<Monogram\s*/>\s*<span className="brand-wordmark">', masthead_source):
+        fail(problems, "Masthead.tsx does not keep the series mark beside its wordmark")
+    if not has_flex_rule(css, ".brand-mark"):
+        fail(problems, "the masthead's mark-and-name lockup is not a flex row")
+    footer_lockup = re.search(r'<div className="series-band">(.*?)</div>', footer_source, re.S)
+    if not footer_lockup or "<Monogram />" not in footer_lockup.group(1) or "SERIES.name" not in footer_lockup.group(1):
+        fail(problems, "SeriesFooter.tsx does not keep the series mark beside its name")
+    if not has_flex_rule(css, ".series-band"):
+        fail(problems, "the footer's mark-and-name lockup is not a flex row")
 
     # The favicon, as index.html declares it.
     icon = re.search(r'rel="icon"\s*\n?\s*href="data:image/svg\+xml,([^"]+)"', html)
@@ -236,6 +250,16 @@ def main() -> int:
         src = card_src.read_text()
         if accent not in src.lower():
             fail(problems, f"tools/og_card.html never uses {accent}, but --accent resolves to it")
+        series_lockup = re.search(r'<div class="brandrow">(.*?)</div>', src, re.S)
+        if not series_lockup or "series-tile" not in series_lockup.group(1) or "wordmark" not in series_lockup.group(1):
+            fail(problems, "the social card does not keep the series mark beside its name")
+        if not has_flex_rule(src, ".brandrow"):
+            fail(problems, "the social card's series lockup is not a flex row")
+        course_lockup = re.search(r'<div class="course-lockup">(.*?)</div>', src, re.S)
+        if not course_lockup or "course-tile" not in course_lockup.group(1) or "<h1>" not in course_lockup.group(1):
+            fail(problems, "the social card does not keep the course glyph beside its name")
+        if not has_flex_rule(src, ".course-lockup"):
+            fail(problems, "the social card's course lockup is not a flex row")
         # The course tile is the only <path> on the card (the series bands are
         # rects), so match any path rather than a hardcoded prefix: course
         # one's copy of this check was pinned to its own sigmoid's first curve
