@@ -34,6 +34,42 @@ const rows = bench.rows as Record<string, { total: number; top: { char: string; 
 const line = bench.line;
 const fav = bench.favourite_guess;
 
+/** The line's own characters in sorted order, which is the order that gives
+ * each one its number. Derived from the bench's line rather than typed out, so
+ * this strip, the chapter's prose and the exercise's tests cannot disagree. */
+const lineVocab = [...new Set(line.text)].sort();
+
+/** The vocabulary strip: every character the line uses, and the number that
+ * stands for it. Grid family, one row of fixed cells. */
+function VocabStrip() {
+  return (
+    <div className="table-scroll scroll-x" tabIndex={0}>
+      <table className="vocab-strip">
+        <caption>
+          The line's {lineVocab.length} characters in sorted order. A character's number is
+          simply its place in this row, counting from 0.
+        </caption>
+        <tbody>
+          <tr>
+            <th scope="row">character</th>
+            {lineVocab.map((c) => (
+              <td key={c}>{charLabel(c)}</td>
+            ))}
+          </tr>
+          <tr>
+            <th scope="row">its number</th>
+            {lineVocab.map((c, i) => (
+              <td key={c} className="vocab-strip-id">
+                {i}
+              </td>
+            ))}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 /** A row of the corpus tally, as the chapter shows it: the character, how
  * often it appeared, and its four most common successors with shares. */
 function RowTable() {
@@ -346,6 +382,33 @@ export function Chapter1() {
         and pays for it in parameters. Chapters 6 and 7 let the model choose which earlier
         characters to look at, which is attention, and pay for it in arithmetic. The tally
         is the floor all of that is measured against.
+      </p>
+
+      <SectionHeader id="c1-numbers" title="The same table, in numbers" />
+      <p>
+        One thing has to change before you can write this down as code. The tally you have
+        been reading has characters along its edges, and an array in Python does not: its
+        rows and columns are numbered. So each character gets a number, and the simplest
+        honest choice is its position in the sorted list of the characters that occur.
+      </p>
+      <VocabStrip />
+      <p>
+        For this line that gives <code>{charLabel(" ")}</code> the number 0, the comma 1,{" "}
+        <code>b</code> 2, and so on up to <code>t</code> at{" "}
+        {lineVocab.length - 1}. Nothing about the tally changes: the cell that held "how
+        often <code>o</code> followed <code>t</code>" is now the cell at row{" "}
+        {lineVocab.indexOf("t")}, column {lineVocab.indexOf("o")}, holding the same{" "}
+        {line.rows.t.o}. The letters were never in the table, only on its edges.
+      </p>
+      <p>
+        Three words for the three pieces, because the code below uses them. The sorted list
+        of characters is the <b>vocabulary</b>. A character's number is its <b>id</b>. How
+        many characters the vocabulary holds is <b>vocab_size</b>, which is exactly how
+        wide and how tall the table has to be: {lineVocab.length} for this line, and{" "}
+        {corpusBench.corpus.vocab_size} for the corpus, whose vocabulary you saw a moment
+        ago. Chapter 2 builds this properly for the corpus, with the two functions that
+        cross between text and numbers; this is the smallest version of it, and it is all
+        the next exercise needs.
       </p>
 
       <SectionHeader id="c1-exercise" title="Your turn: the tally, and the draw" />

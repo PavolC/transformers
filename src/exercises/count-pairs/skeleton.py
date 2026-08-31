@@ -1,23 +1,34 @@
-# The tally: one row per character, one column per character, and in each
-# cell the number of times that column's character followed that row's
-# character.
+# The tally: how often each character follows each other character.
+#
+# You are handed the text. This function does not open a file or fetch
+# anything: the caller passes the stream in, already turned into numbers.
+# The tests pass the line "to be, or not to be"; the prompt's snippet passes
+# the whole corpus.
+#
+# What you are counting is neighbours. Walk the stream one step at a time,
+# look at each character together with the one right after it, and add one to
+# that pair's cell. A stream of n characters holds n - 1 pairs, because every
+# character except the last has a character after it.
 #
 # Contract:
-# - count_pairs(ids, vocab_size): ids is a NumPy array of character ids (each
-#   one an index into the vocabulary, so every id is between 0 and
-#   vocab_size - 1). Return a float64 array of shape (vocab_size, vocab_size)
-#   where entry [a, b] counts how many times character b came directly after
-#   character a.
+# - count_pairs(ids, vocab_size):
+#     ids         the stream, one number per character. A character's number
+#                 is its place in the sorted list of the characters in use,
+#                 so for this chapter's line a space is 0, a comma is 1, and
+#                 b is 2. Numbers rather than letters because the answer is a
+#                 NumPy array, and an array is indexed by numbers.
+#     vocab_size  how many characters that sorted list holds, which is how
+#                 wide and how tall the table has to be.
 #
-#   Read the ids as overlapping pairs: (ids[0], ids[1]), (ids[1], ids[2]),
-#   and so on. An array of n ids therefore holds n - 1 pairs, and every id
-#   except the first and last belongs to two of them, once as the character
-#   before and once as the character after.
+#   Return a float64 array of shape (vocab_size, vocab_size) where entry
+#   [a, b] counts how many times the character with id b came directly after
+#   the character with id a. There is a row and a column for every character
+#   in the vocabulary, whether or not this stream uses it, and a row of all
+#   zeros is a real answer: the text never continued that character.
 #
 #   Start from np.zeros((vocab_size, vocab_size)), which is float64 by
 #   default: counts are whole numbers, and floats are what every later
-#   chapter divides them by. A row of all zeros is a real answer, for a
-#   character the text never continued.
+#   chapter divides them by.
 
 
 def count_pairs(ids, vocab_size):

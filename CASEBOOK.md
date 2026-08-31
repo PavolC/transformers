@@ -1,7 +1,7 @@
 # Casebook
 
-Nineteen incidents, the first eighteen from course one (neural networks) and the
-nineteenth from course two (transformers), each a place where the work failed a real
+Twenty incidents, the first eighteen from course one (neural networks) and the last two
+from course two (transformers), each a place where the work failed a real
 reader, and each the reason a rule exists in `CLAUDE.md`. Read this once. The rules
 are what you follow; these are what makes them credible, and what tells you whether a rule
 you are tempted to bend is load-bearing.
@@ -435,6 +435,50 @@ reintroducing the defect and watching the checker name it.
 
 **Cost:** the fix was one word; finding it took a reader on a deployed site, and the
 checker that makes it impossible again is 120 lines written the same day.
+
+## 20. "where is the text i'm counting. what am i counting? what are ids?"
+
+**Chapter:** two (transformers), chapter 1's first exercise, on the day it shipped.
+
+**What was wrong.** The learner read the Counting pairs prompt and reported it "very
+unclear", with three questions. Each one names something the page never said.
+
+*Where is the text.* The prompt opened on the function's signature and never mentioned
+that the stream is handed in by the caller, so the obvious reading is that the exercise
+expects you to find the corpus yourself.
+
+*What am I counting.* "Pairs" had been concrete in the chapter's prose, where the reader
+counted them by hand, and turned abstract in the prompt, which said "entry [a, b] is the
+number of times character b came directly after character a" without ever saying the plain
+version: look at each character together with the one right after it.
+
+*What are ids.* The load-bearing one. Chapter 1's prose never used the word: it spoke of
+characters throughout, and the words id, vocabulary and vocab_size appeared for the first
+time inside the exercise contract. The design doc had planned ids for chapter 2, so the
+first exercise of the course was written in the representation of the chapter after it.
+The notation reference had a row for it, which is no help: that lookup exists for a reader
+returning weeks later, not for first use.
+
+**Why nothing caught it.** Every check was green, and the exercise itself is correct: the
+tests pass, the solution passes, the skeleton fails for its own reason. A contract can be
+complete and still be unreadable, because completeness is measured against someone who
+already knows the nouns.
+
+**The fix.** A beat in the chapter, at the point the story first needs numbers rather than
+letters, immediately before the exercises: the tally has characters on its edges and an
+array does not, so each character gets its place in the sorted list of characters, shown
+as a strip of the line's own eight characters with 0 to 7 under them, and named as the
+small version of what chapter 2 builds properly. Then both prompts and both skeletons
+rewritten to open with where the input comes from, what is being counted in plain words,
+and what each argument is, before any shape.
+
+**Rules:** "A prompt opens by answering where the input comes from, what the thing being
+computed is, and what every argument means", and "A word the exercise cannot avoid is
+taught in the chapter, in the same commit as the exercise".
+
+**Cost:** one chapter beat, one figure, two prompts and two skeletons, on a chapter that
+was hours old. The generalizable half is cheap and mechanical: before shipping an
+exercise, grep the chapter's prose for every noun the contract uses.
 
 ## The pattern behind all eighteen
 

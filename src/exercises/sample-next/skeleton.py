@@ -1,13 +1,22 @@
 # Drawing the next character, in proportion to a row of the tally.
 #
+# Everything this function needs is handed to it: the tally, which character
+# was just written, and the generator to draw with. It fetches nothing.
+#
 # Contract:
-# - sample_next(counts, current, rng): counts is a tally like the one your
-#   count_pairs returns, current is the id of the character just written, and
-#   rng is a NumPy random generator (np.random.default_rng(...)) handed in by
-#   the caller. Return the id of the next character, as a plain int, drawn in
-#   proportion to row `current` of the tally: a successor counted 30 times
-#   must come up ten times as often as one counted 3 times, and one counted 0
-#   times must never come up at all.
+# - sample_next(counts, current, rng):
+#     counts   a tally like the one your count_pairs returns, so row a,
+#              column b holds how often b followed a.
+#     current  the id of the character just written, which picks the row. An
+#              id is a character's place in the sorted vocabulary: for this
+#              chapter's line a space is 0, a comma is 1, and b is 2.
+#     rng      a NumPy random generator, np.random.default_rng(...), made by
+#              the caller and passed in.
+#
+#   Return the id of the next character, as a plain int, drawn in proportion
+#   to row `current`: a successor counted 30 times must come up ten times as
+#   often as one counted 3 times, and one counted 0 times must never come up
+#   at all.
 #
 #   The row holds counts, and a draw needs shares, so divide the row by its
 #   own total. rng.choice(len(row), p=shares) draws one index for you, and it

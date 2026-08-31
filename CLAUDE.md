@@ -401,6 +401,26 @@ its reason, plus the sentence that the small case is a sub-case and not a detour
 - **Exercises are visible.** The output panel shows everything printed, tagged by source.
   A "run my code" path executes the editor without tests. The test source is viewable in
   the page. Hidden test code breeds guessing.
+- **A prompt opens by answering where the input comes from, what the thing being
+  computed is, and what every argument means.** In that order, before any signature or
+  shape. The first exercise of this course opened on
+  `count_pairs(ids, vocab_size) returns a (vocab_size, vocab_size) table` and got back
+  "very unclear. where is the text i'm counting. what am i counting? what are ids?", three
+  questions the prompt had answered nowhere: the caller passes the stream in, a pair is a
+  character and its neighbour, and an id is a character's place in the sorted vocabulary.
+  A contract states obligations to someone who already knows the nouns, so a prompt that
+  starts with the contract is written for the person who has already done the exercise.
+  Say what arrives, say what to do with it, then state the shape. [casebook: 20]
+- **A word the exercise cannot avoid is taught in the chapter, in the same commit as the
+  exercise, however late in the chapter that beat has to sit.** The representation the code
+  works in is not an implementation detail to be met in a docstring: chapter 1's prose
+  spoke only of characters while its exercise took ids, and the plan put ids in chapter 2,
+  so the reader hit the notation of a later chapter inside the first one's exercise. The
+  fix is a beat at the point the story first needs it ("the tally has letters on its
+  edges, an array has numbers"), shown concretely on the chapter's own small case, and
+  named as the sub-case of what the later chapter builds properly. Grep the chapter's
+  prose for every noun its exercise's contract uses before shipping the pair.
+  [casebook: 20]
 - **Every prompt carries a concrete experiment** tied back to an earlier chapter's
   numbers, shipped as a copyable code block with Copy and Send-to-the-scratch-pad buttons.
   Never woven into a prose sentence: an experiment the reader must retype is an experiment
@@ -484,6 +504,11 @@ fixed.
       pan-in-wrapper figures excepted).
 - [ ] Every new symbol or coined term has a row in the notation reference, and every word
       this chapter coins hands over to the field's word at its first use.
+- [ ] Every noun the new exercise's contract leans on is defined in its chapter's prose,
+      at first use, not only in the notation reference. Read the prompt as somebody who
+      has not done the exercise: does it say where the input comes from before it says
+      what shape to return? (Deliberately not a script: a checker comparing contract
+      names to prose flags every internal parameter and gets switched off.)
 - [ ] Every backward claim in the new prose was checked against the chapter it cites.
 - [ ] If this commit fixes a confusion: this file has the new rule and `CASEBOOK.md` has
       the incident.

@@ -7,25 +7,36 @@ export const countPairsExercise: Exercise = {
   id: "count-pairs",
   title: "Counting pairs",
   prompt: [
-    "The tally you built by hand on one line, now over any stream of characters. " +
-      "count_pairs(ids, vocab_size) returns a (vocab_size, vocab_size) table of " +
-      "float64 where entry [a, b] is the number of times character b came " +
-      "directly after character a.",
-    "The ids are indices into the vocabulary, so the table has a row and a column " +
-      "for every character the vocabulary knows, whether or not this particular " +
-      "stream uses it. A row of all zeros is a real answer: it says the text " +
-      "never continued that character.",
-    "Read the ids as overlapping pairs, (ids[0], ids[1]) then (ids[1], ids[2]) " +
-      "and so on, which is why n ids hold n - 1 pairs. Every id except the first " +
-      "and the last belongs to two of them, once as the character before and once " +
-      "as the character after.",
+    "You are handed the text; you do not go and fetch it. count_pairs(ids, vocab_size) " +
+      "receives a stream of characters that has already been turned into numbers, and " +
+      "your job is to count, for every pair of neighbours in it, how often the second " +
+      "character followed the first. The tests hand you the line from the top of this " +
+      "chapter. The snippet at the end of this prompt hands you the whole corpus. Both " +
+      "call the same function you are about to write.",
+    "What you are counting, exactly: neighbours. Walk the stream one step at a time and " +
+      "look at each character together with the one right after it. \"to be\" holds the " +
+      "pairs t-o, o-space, space-b, b-e. That is why a stream of n characters holds " +
+      "n - 1 pairs: every character except the last has a character after it.",
+    "What the two arguments are. ids is that stream, one number per character, where " +
+      "a character's number is its place in the sorted list of characters (the strip " +
+      "above the exercises: a space is 0, a comma is 1, b is 2). vocab_size is how many " +
+      "characters that list holds, which is how wide and tall your table has to be. You " +
+      "get numbers rather than letters because the answer is a NumPy array, and an array " +
+      "is indexed by numbers.",
+    "What to return: a (vocab_size, vocab_size) array of float64, where entry [a, b] is " +
+      "the number of times the character with id b came directly after the character " +
+      "with id a. It has a row and a column for every character in the vocabulary, used " +
+      "or not, and a row of all zeros is a real answer: it says the text never continued " +
+      "that character.",
     "One trap, and a test for it. Vectorizing this with counts[ids[:-1], ids[1:]] " +
       "+= 1 does not accumulate: fancy-index assignment writes each coordinate " +
       "once however often it appears, so every pair that happens more than once " +
       "lands as a 1. np.add.at(counts, (ids[:-1], ids[1:]), 1.0) does accumulate, " +
       "and so does a plain Python loop over the pairs.",
     "Once the tests pass, run your own counting over the whole corpus and look up " +
-      "a row the chapter did not show you. Send this to the scratch pad and run it:",
+      "a row the chapter did not show you. The first four lines are the turning-into-" +
+      "numbers step, done here so you can see it; chapter 2 builds it properly. Send " +
+      "this to the scratch pad and run it:",
     {
       code:
         "text = load_corpus()\n" +
