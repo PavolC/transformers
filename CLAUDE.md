@@ -22,6 +22,16 @@ confused, the same commit does three things: fixes the passage, adds a rule to t
 in the learner's own words, and adds the incident to `CASEBOOK.md`. One file, one commit,
 provoking quote included. This is the single practice that produced everything below.
 
+**And a fix that was never checked against the confused reader is a guess.** A confusion
+report is a symptom, so before any passage changes: re-explain the idea in chat a
+structurally different way, and confirm it landed by making the learner use it rather than
+by asking whether it made sense. Then port what the working explanation *did*, which is
+usually an order, a concrete instance, a named misconception or a missing prerequisite,
+rather than what it said. "No change to this passage" is a real outcome of that loop, and
+one the old version could not reach. Defects skip it: a crash or a wrong number has a
+known mechanism and nothing to diagnose. `/stuck` runs the loop and `METHOD.md` phase 3
+states it. [casebook: 24]
+
 ## What this project is
 
 At the end the learner can write a working character-level GPT from a blank file, train
@@ -557,8 +567,11 @@ fixed.
       what shape to return? (Deliberately not a script: a checker comparing contract
       names to prose flags every internal parameter and gets switched off.)
 - [ ] Every backward claim in the new prose was checked against the chapter it cites.
-- [ ] If this commit fixes a confusion: this file has the new rule and `CASEBOOK.md` has
-      the incident.
+- [ ] If this commit fixes a confusion: the diagnosis was checked against the learner
+      before the passage changed, this file has the new rule, and `CASEBOOK.md` has the
+      incident with what the misunderstanding turned out to be. If the check was skipped,
+      because the learner said to just fix it or because two re-explanations died, the
+      commit and the incident say so rather than implying a diagnosis nobody made.
 
 ## Pinned versions
 
