@@ -204,6 +204,16 @@ change. [casebook: 11]
 - **Backward claims get checked like numbers.** Every "chapter N taught X", every
   cross-reference, and every outside-world fact is verified against the source before
   commit. [casebook: 10]
+- **Generated text is a number.** A sampled passage, a decoded sequence, a stuck loop:
+  anything a run produced gets imported from the bench wherever it is quoted, including
+  inside an exercise prompt. Prompts read like prose, so a string typed into one from
+  what the run looked like last time passes every check and still contradicts the chapter.
+  [casebook: 21]
+- **An experiment the reader re-runs prints what the chapter printed.** A walk either
+  includes the character it started from or does not, and the chapter, the bench record
+  and the exercise snippet make the same choice. Record the number of draws and the
+  number of characters under names that say which is which, because they differ by one
+  and the wrong one in a sentence is invisible. [casebook: 21]
 
 ## Chapter template
 
@@ -498,7 +508,8 @@ fixed.
 - [ ] The exercise checker passes (solutions green, skeletons red for their own reason,
       and if the exercises are one file: nothing passing when it is untouched).
 - [ ] Every panel that runs the learner's code has been run outside the browser.
-- [ ] Every bench whose numbers you touched has been re-run, and the prose matches it.
+- [ ] Every bench whose numbers you touched has been re-run, the prose matches it, and
+      every snippet the reader runs to reproduce a bench number prints the same thing.
 - [ ] You looked at every string you added **in the real artifact**, not just in the diff.
 - [ ] Nothing scrolls sideways at 375px, the narrowest supported viewport (deliberate
       pan-in-wrapper figures excepted).

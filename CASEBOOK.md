@@ -480,7 +480,49 @@ taught in the chapter, in the same commit as the exercise".
 was hours old. The generalizable half is cheap and mechanical: before shipping an
 exercise, grep the chapter's prose for every noun the contract uses.
 
-## The pattern behind all eighteen
+## 21. The loop the chapter showed and the loop the exercise printed
+
+**Chapter:** two (transformers), chapter 1, found while re-reading the exercise prompts
+the day after they were rewritten.
+
+**What was wrong.** Chapter 1 closes its writing section by taking each row's most common
+successor instead of drawing one: from a `t` the output is `the the the the the the t`
+forever, a string the prose quotes out of the committed bench. The exercise after it hands
+the reader a snippet that walks the same way, and the snippet printed
+`he the the the the the t`, the chapter's string with its first character missing. The
+bench seeds its list with the character it starts from and the snippet did not. The prompt
+then described the snippet's output as "he the the the", typed by hand from a run rather
+than imported, so the repository held two strings for one walk and nothing connected them.
+
+The same off-by-the-starting-character sat in the bench's own record. `favourite_loop` was
+written `{"chars": 24}` beside a 25-character string, and `sample` `{"chars": 220}` beside
+a 221-character passage, because in both cases the number counts draws rather than
+characters. Chapter 1 read that key out and told the reader "Here is 220 characters of it"
+above a block holding 221.
+
+**Why nothing caught it.** Every check was green and every number was real. The bench ran,
+the chapter imported it, the exercise's tests pass, and both strings are correct outputs of
+correct code: outputs of two walks that disagree about whether the character you start from
+is part of what the walk wrote. The prompt's hand-typed copy was the only place the
+disagreement was visible, and it was on the wrong side of it. It matched the snippet, so a
+reader checking the prompt against the code it ships would find them consistent and the
+chapter, three screens up, wrong.
+
+**The fix.** The snippet seeds its output with the starting character, so it prints the
+chapter's string exactly, and the prompt quotes `bench.favourite_loop.text` instead of a
+typed prefix. The bench records `steps` and `chars` separately for both walks, along with
+the `start_char` each began from, and chapter 1's sentence counts draws where it means
+draws.
+
+**Rules:** "Generated text is a number" and "An experiment the reader re-runs prints what
+the chapter printed", both under Numbers.
+
+**Cost:** four lines, before a reader reached it. The class is what makes it worth an
+entry: a course whose method is "now run this yourself" puts a snippet beside every quoted
+output, and every one of those is a place where two programs can disagree by one character
+with every check green.
+
+## The pattern behind course one's eighteen
 
 Four of them (2, 6, 7, 12) are the same chapter, and it is the one chapter authored outside
 the playbook, in a single 25-file commit that also touched the stylesheet, the app shell and

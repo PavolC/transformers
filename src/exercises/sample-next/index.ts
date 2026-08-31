@@ -1,4 +1,5 @@
 import type { Exercise } from "../types";
+import bench from "../../bench/chapter1.json";
 import skeleton from "./skeleton.py?raw";
 import tests from "./tests.py?raw";
 import solution from "./solution.py?raw";
@@ -51,15 +52,16 @@ export const sampleNextExercise: Exercise = {
         "\n" +
         "# And the same walk taking the row's favourite every time instead.\n" +
         'current = stoi["t"]\n' +
-        "greedy = []\n" +
+        "greedy = [chars[current]]\n" +
         "for _ in range(24):\n" +
         "    current = int(counts[current].argmax())\n" +
         "    greedy.append(chars[current])\n" +
         'print("".join(greedy))',
     },
-    "The sampled passage is the same shape of text the chapter showed, and the " +
-      "second line is why the draw has to be random: taking the favourite every " +
-      "time from a 't' gives \"he the the the\" and never stops.",
+    "The sampled passage is the same shape of text the chapter showed. The second " +
+      "line reproduces the chapter's loop character for character, because taking " +
+      "each row's favourite involves no draw at all: from a 't' it always gives " +
+      `"${bench.favourite_loop.text}". That is why the draw has to stay random.`,
   ],
   skeleton,
   tests,

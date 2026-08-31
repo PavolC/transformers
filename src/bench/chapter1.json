@@ -152,12 +152,16 @@
   },
   "sample": {
     "seed": 7,
-    "chars": 220,
+    "steps": 220,
+    "chars": 221,
+    "start_char": "\n",
     "text": "\nNouces\nTince ineyory bo ICKemed CES:\n\nTELinoso mes, OLI tewirgife h was th; wor by,\nWhe.\nA the, HO ay:\nIVIINGORifr\nTieat ounil----the wewhesordont int thirve?\n\nAst oorimy or PUSis wlort I d bl n r fthire n tto gadat: t t",
     "engine": "Python"
   },
   "favourite_loop": {
-    "chars": 24,
+    "steps": 24,
+    "chars": 25,
+    "start_char": "t",
     "text": "the the the the the the t"
   },
   "forgetting": {

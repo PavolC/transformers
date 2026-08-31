@@ -135,13 +135,31 @@ def main():
         stuck.append(int(favourite[stuck[-1]]))
     loop = rs.decode(np.array(stuck, dtype=np.int64), itos)
 
-    out["sample"] = {"seed": 7, "chars": SAMPLE_CHARS, "text": sample, "engine": "Python"}
-    out["favourite_loop"] = {"chars": 24, "text": loop}
-    print(f"\nSampling by proportion for {SAMPLE_CHARS} characters (seed 7, this file's "
-          "Python generator):")
+    # Both texts begin with the character the walk started from, so the length
+    # of the text is one more than the number of draws that made it. Record
+    # both numbers under names that say which is which: a chapter sentence
+    # that quotes the text has to count what the reader sees, and an exercise
+    # snippet that reproduces the text has to print the starting character too.
+    out["sample"] = {
+        "seed": 7,
+        "steps": SAMPLE_CHARS,
+        "chars": len(sample),
+        "start_char": "\n",
+        "text": sample,
+        "engine": "Python",
+    }
+    out["favourite_loop"] = {
+        "steps": 24,
+        "chars": len(loop),
+        "start_char": "t",
+        "text": loop,
+    }
+    print(f"\nSampling by proportion for {SAMPLE_CHARS} draws from a line break "
+          f"(seed 7, this file's Python generator), {len(sample)} characters "
+          "including the line break it started from:")
     print("    " + sample.replace("\n", "\\n"))
     print(f"  Always taking the favourite instead falls into a loop after a few "
-          f"characters: {loop.replace(chr(10), chr(92) + 'n')!r}")
+          f"characters, starting from 't': {loop!r}")
 
     # ------------------------------------------- what the pair model forgets
     # The same character gets the same guess list however it got there, which
