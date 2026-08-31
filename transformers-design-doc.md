@@ -306,19 +306,21 @@ Titles are working titles. Each chapter: what it covers; interactives; the exerc
     `adamw_step`, `eval_loss`, then a supervised training run through the driver.
 11. **Assembly.** The summit. From a blank editor section, the learner writes
     `generate()` and the full training loop that runs their own parts, no driver. The
-    parity check runs and gets its banner. The translation table: tally to bigram counts,
-    scores to logits, guess list to softmax distribution, surprise to cross-entropy
-    (bits to nats, one sentence), mixing to attention, the scribe to a decoder-only
-    transformer language model. The honest not-taught list: BPE, dropout, GPU batching
-    and mixed precision, KV-cache inference, fine-tuning and RLHF, encoder-decoder
-    architectures. *Interactives:* the workbench itself; the static translation table.
-    *Exercise:* `generate`, `train` (the loop), run end to end.
+    parity check runs and gets its banner. No translation table: every field word was
+    handed over in the chapter that earned it, so what this chapter carries is the
+    inverted list, the words that were only ever ours with nothing in the field to go
+    looking for (the line, the ladder, and whatever else the writing coins). The honest
+    not-taught list: BPE, dropout, GPU batching and mixed precision, KV-cache inference,
+    fine-tuning and RLHF, encoder-decoder architectures. *Interactives:* the workbench
+    itself. *Exercise:* `generate`, `train` (the loop), run end to end.
 12. **Your own words.** The artifact meets uncurated input: paste anything (song lyrics,
     code, French, emoji). What breaks and what it means: unseen characters at encode time
     (the vocabulary is the corpus's, so the learner hardens `build_vocab` with an
     explicit policy), tiny corpora memorize (the probe: longest generated substring found
     verbatim in the source, a score with its breakdown), rare characters starve, unicode
     multi-codepoint surprises. Ends at the door BPE opens, pointed but not built.
+    Chapter 12 is the last page in the course, so it carries the where-to-go-next reading
+    list; a thirteenth chapter would take the list with it.
     *Interactives:* paste-and-train workbench with diagnostics (vocab diff against
     Shakespeare, memorization meter, rare-character table). *Exercise:* vocabulary
     hardening, the memorization probe, a written experiment protocol on their own text.
@@ -336,12 +338,23 @@ the sentence-shape bands.
 
 Course-specific conventions settled now:
 
-- **Units:** bits, everywhere, from chapter 3 on. One conversion sentence in chapter 11.
-- **Coined vocabulary policy:** invented words are bridges (the tally, the guess list,
-  surprise, mixing); each is retired into the field's word at the moment the field's word
-  is earned (logits, distribution, cross-entropy, attention), except persistent artifact
-  names (the scribe, the tally, the ladder), which appear in chapter 11's translation
-  table. Every coined word and symbol gets a notation-reference row in the same change.
+- **Units:** bits, everywhere, from chapter 3 on. One bits-to-nats conversion sentence in
+  chapter 4, where cross-entropy is named, rather than at the end of the course.
+- **Coined vocabulary policy:** invented words are bridges, and each hands over to the
+  field's word in the chapter that earns it, in one short unlabelled paragraph at its
+  first use, after which both words are in play. There is no translation table at the end.
+  By tier: **switch** (the field's word becomes primary in the formal registers, the plain
+  word stays wherever it carries the intuition) for scores to logits and the guess list to
+  a distribution in chapter 4, and mixing to attention in chapter 6, primary from chapter
+  7 on; **run both** (the plain word stays primary and the field's word rides along in
+  equations and code) for surprise and cross-entropy in chapter 4, since the ladder is in
+  bits for twelve chapters and `cross_entropy` is a function the learner writes, for the
+  tally and bigram counts in chapter 1 and the embedding table in chapter 4, and for the
+  scribe and a decoder-only transformer language model in chapter 9; **local only**, never
+  handed over, for the line and the ladder, which chapter 11 lists as ours with nothing to
+  go looking for. Nothing is swept downstream: a handover declares an equivalence, it does
+  not retire the plain word. Every coined word and symbol gets a notation-reference row in
+  the same change, with the field's name on its "also called" line.
 - **Anatomy (ownership ontology):** ids live in the stream; parameters live on modules;
   the embedding table owns its rows (a character indexes a row, it does not own one);
   activations live at positions (a position owns its channel vector); attention weights
@@ -391,6 +404,7 @@ Every `FILL:` in the kit's `CLAUDE.md`, closed on day one with the values in thi
 - Tally quantity: bits of average surprise on held-out Shakespeare (the ladder).
 - Chapter go-deeper targets: section 2's table.
 - Anatomy: section 5's ownership ontology.
+- Coined vocabulary policy, its three tiers and its per-chapter handovers: section 5.
 - Figure families and phone behaviour: section 5.
 - Exercises one file, with the three invariants and the mutation check named.
 - Before-commit commands, pinned versions, commands section: filled with real commands
