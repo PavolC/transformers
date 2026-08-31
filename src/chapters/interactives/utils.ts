@@ -45,3 +45,12 @@ export function cellFill(count: number, max: number): string {
   const mix = 8 + Math.round(share * 54);
   return `color-mix(in oklab, var(--accent) ${mix}%, var(--bg))`;
 }
+
+/** The sorted vocabulary of a text, and the id of each character: the same
+ * numbering build_vocab makes, in JavaScript, for panels that show ids. Both
+ * sides count characters and sort them, which agrees exactly across the two
+ * engines; nothing here is ever quoted in prose (CLAUDE.md, "Numbers"). */
+export function vocabOf(text: string): { chars: string[]; index: Map<string, number> } {
+  const chars = [...new Set(text)].sort();
+  return { chars, index: new Map(chars.map((c, i) => [c, i] as const)) };
+}

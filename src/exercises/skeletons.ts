@@ -8,12 +8,16 @@
 
 import countPairs from "./count-pairs/skeleton.py?raw";
 import sampleNext from "./sample-next/skeleton.py?raw";
+import buildVocab from "./build-vocab/skeleton.py?raw";
+import getBatch from "./get-batch/skeleton.py?raw";
 import softmax from "./softmax/skeleton.py?raw";
 
 /** Section id to the body it starts life with. */
 export const SECTION_BODIES: Readonly<Record<string, string>> = {
   "count-pairs": countPairs,
   "sample-next": sampleNext,
+  "build-vocab": buildVocab,
+  "get-batch": getBatch,
   softmax,
 };
 

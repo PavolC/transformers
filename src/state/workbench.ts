@@ -430,6 +430,28 @@ export function lendFor(target: string): string[] {
 	return [...new Set(names)].sort();
 }
 
+/** Which names the course lends to the scratch pad.
+ *
+ * The pad belongs to no exercise, so there is no target to compute a lend
+ * list around: every section the learner has not written is lent, not just
+ * the ones some exercise happens to call into. Chapter 2's prompt asks the
+ * reader to draw a batch and then look its pairs up in chapter 1's tally,
+ * and count_pairs is not in get-batch's closure, so a reader who had not
+ * done chapter 1 would have met a NameError instead of a lend.
+ *
+ * Nothing the learner has written is ever lent over: an untouched or absent
+ * section is not their work, and the panel names what it borrowed.
+ */
+export function lendForScratch(): string[] {
+	const doc = currentDoc();
+	const names: string[] = [];
+	for (const section of SECTIONS) {
+		if (doc.byId.has(section.id) && (section.kind === "given" || !isUntouched(section.id))) continue;
+		names.push(...section.provides);
+	}
+	return [...new Set(names)].sort();
+}
+
 export interface RunSpec {
 	target: string;
 	sections: ReturnType<typeof lineMap>;
@@ -438,6 +460,12 @@ export interface RunSpec {
 
 export function runSpec(target: string): RunSpec {
 	return { target, sections: lineMap(currentDoc()), lend: lendFor(target) };
+}
+
+/** The spec for a scratch-pad run: the same shape, a whole-file lend list.
+ * The target is only used to report which section an error landed in. */
+export function scratchSpec(target: string): RunSpec {
+	return { target, sections: lineMap(currentDoc()), lend: lendForScratch() };
 }
 
 /** The sections `target` runs on, nearest first: where to look when a failure

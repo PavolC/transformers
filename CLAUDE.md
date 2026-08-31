@@ -546,7 +546,9 @@ fixed.
       every snippet the reader runs to reproduce a bench number prints the same thing.
 - [ ] You looked at every string you added **in the real artifact**, not just in the diff.
 - [ ] Nothing scrolls sideways at 375px, the narrowest supported viewport (deliberate
-      pan-in-wrapper figures excepted).
+      pan-in-wrapper figures excepted). A figure's caption is not part of that
+      exception: it is prose about the figure, it travels inside the table that
+      pans, and a reader should never scroll sideways to finish a sentence.
 - [ ] Every new symbol or coined term has a row in the notation reference, and every word
       this chapter coins hands over to the field's word at its first use.
 - [ ] Every noun the new exercise's contract leans on is defined in its chapter's prose,
