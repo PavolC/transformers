@@ -216,11 +216,39 @@ Per chapter, repeat until the reading is clean:
    thought X". Course one's best fixes came from questions like "is this a single neuron
    per layer? what are we talking about here?" and "changing by 0.01 changes it by 0.01,
    so what?"
-4. Claude fixes the passage, adds the generalized rule to `CLAUDE.md` with your quote as
-   its evidence, and adds the incident to `CASEBOOK.md`. One commit.
-5. **Seam review.** Before moving on, reconcile the new chapter against its neighbours:
+4. **Claude diagnoses it with you before touching the chapter.** A confusion report is a
+   symptom, and a rewrite driven by a guess about the symptom is how a fix lands in the
+   wrong place, or replaces prose that was never the problem. The loop, which is what
+   `/stuck` runs:
+   1. Claude says what it thinks you misread, and which rule the passage broke.
+   2. Claude re-explains it in chat, structurally differently: another order, a concrete
+      instance first, the misconception named, a missing prerequisite. Not slower.
+   3. Claude checks by making you use it. Predict a number, apply it to a case it did not
+      use, say what would break if a piece changed. Never "does that make sense?", which
+      a tired reader answers yes to.
+   4. Not landed: back to (1). Twice not landed: the chapter has a structural problem
+      rather than a wording one, and that is the finding.
+   5. Landed: write down the explanation that worked, then diff it against the chapter.
+      What it *did* is what gets ported, not what it said.
+
+   Defects skip the loop. A crash, a wrong number or a dead control has a known mechanism
+   and nothing to diagnose.
+5. Claude fixes the passage, adds the generalized rule to `CLAUDE.md` with your quote as
+   its evidence, and adds the incident to `CASEBOOK.md` with what the misunderstanding
+   turned out to be. One commit. **"No change to this chapter" is a real outcome:** the
+   confusion may belong to an earlier chapter, to a panel you never reached, or to one
+   word read differently than it was meant.
+6. **Seam review.** Before moving on, reconcile the new chapter against its neighbours:
    shared vocabulary, numbers quoted across chapters, cross-references, and anything the
    new chapter renamed.
+
+Two things to know about what step 4 buys and costs. It buys the only evidence this
+process can get about whether an explanation teaches, because the chat re-explanation is
+a real explanation tested on a real confused reader, where a rewritten passage is tested
+on nobody. It costs the reader as a test subject for that passage: once you have
+understood the idea from chat you cannot read the revision cold, so the evidence is always
+"this explanation worked on someone who was confused" and never "the new passage works".
+Write the working explanation down before revising, while it is still uncontaminated.
 
 For the hardest conceptual chapter in the course, a review is not enough: **book a live
 tutoring session** on it. Course one's backpropagation chapter was restructured four times

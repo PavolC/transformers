@@ -1,13 +1,16 @@
 # Casebook
 
-Twenty-three incidents, the first eighteen from course one (neural networks) and the last
-five from course two (transformers), each a place where the work failed a real
+Twenty-four incidents, the first eighteen from course one (neural networks) and the last
+six from course two (transformers), each a place where the work failed a real
 reader, and each the reason a rule exists in `CLAUDE.md`. Read this once. The rules
 are what you follow; these are what makes them credible, and what tells you whether a rule
 you are tempted to bend is load-bearing.
 
 Every quote is the learner's own. The cost column is the commit that fixed it, so you can
-see what a late-settled convention actually costs.
+see what a late-settled convention actually costs. From incident 24 on, an entry that came
+out of the `/stuck` loop also records **what the misunderstanding turned out to be**, which
+is frequently not what the learner's quote pointed at, and **which re-explanation landed**,
+which is the part a later chapter can reuse.
 
 ---
 
@@ -654,6 +657,61 @@ defect back: 12 of its 20 cases go red, including the keystroke, which reports
 class. Found by the learner, one exercise into the course, on the button that had been
 fixed hours earlier. The class is worth naming once: **an always-mounted editor is not the
 same object as the storage under it**, and any control that seeds one has to name both.
+
+## 24. "i don't really want you to immediately assume the course is bad and rewrite"
+
+**Chapter:** none. This one is the feedback loop itself, and it is the first entry written
+before the failure rather than after it.
+
+**What was wrong.** `/stuck` took a confusion report straight to a rewrite. Its second step
+read "Ask me at most two questions if you genuinely cannot tell what I misread. Otherwise
+just work", which was written to protect the learner's time and to stop the author being
+defensive, and bought both by making the diagnosis unverifiable. Twenty-three fixes shipped
+that way. Every one of them was the author's guess about what the learner had misread, and
+no fix was ever tested on the reader who reported the confusion: the replacement passage
+went in on the author's say-so, and the incident recorded the symptom and the guess.
+
+Three things that loop could not do. It could not tell a misdiagnosis from a good one,
+because nothing checked. It threw away the one piece of evidence it did produce, since the
+author usually re-explains in chat and then writes the fix from introspection instead of
+from the explanation that had just visibly worked. And it could not reach "no change to
+this passage" at all: the command's own description was "Fix the passage" and its step
+three was "Fix it structurally", so a confusion whose real cause was an earlier chapter, an
+unreached panel or one misread word had nowhere to land but the passage the learner had
+quoted.
+
+The learner named it while nothing was visibly broken: "if i say i'm confused about
+something, i don't really want you to immediately assume the course is bad and rewrite. i
+want you to perform a loop of: understand what i'm confused about; re-explain in another
+way; confirm i understand what was trying to be taught; if not restart loop; if i
+understand, assess the original, your revised method and see what should be updated."
+
+**The fix.** `/stuck` is that loop. Name the suspected misreading, re-explain in chat a
+structurally different way, then confirm by making the learner use it rather than by asking
+whether it made sense, because a tired reader says yes. Two failed re-explanations are
+themselves the finding: the chapter has a structural problem rather than a wording one.
+Only then does the chapter change, and what gets ported is what the working explanation
+*did* rather than what it said, since chat prose is tuned for one person who has just
+described his confusion and chapter prose is read cold, weeks later, by someone with nobody
+to ask.
+
+Three guards came with it. Defects skip the loop entirely, because a crash, a wrong number
+or a dead control has a known mechanism and nothing to diagnose, and running a teach-back
+on incident 22 would have wasted the learner's evening. The learner can say "just fix it"
+and short-circuit it. And the working explanation is written down *before* the revision,
+because the re-explanation spends the reader as a test subject for that passage: once he
+has understood the idea in chat he can never read the new version cold, so the evidence is
+always "this explanation worked on a confused reader" and never "the new passage works".
+
+**Rules:** rule zero's second half, "a fix that was never checked against the confused
+reader is a guess", and `METHOD.md` phase 3, which now states the loop as the process
+rather than as one line about fixing the passage.
+
+**Cost:** none yet, and that is the entry's point. Every other incident here was paid for
+in a rewrite, a retrofit or a reader who stopped; this one was caught by the learner
+watching his own feedback loop and asking for a different one before it produced a bad fix.
+It is the cheapest incident in the file, and the only one whose cost is unknown, because
+nobody can now say which of the twenty-three fixes above would have survived the check.
 
 ## The pattern behind course one's eighteen
 
