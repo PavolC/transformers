@@ -37,21 +37,37 @@ navigation. Fix those directly and skip to step 5. Everything else runs the loop
    understood it from chat I can never read the revision cold, so what you hold is
    evidence about an explanation rather than evidence about a passage. Capture it while it
    is still uncontaminated by your rewrite.
-5. **Diff the two, then fix the chapter.** Ask what the explanation that worked *did* that
-   the chapter did not, and port that mechanism rather than those words: chat prose is
-   tuned for one person who has just said what confused him, and chapter prose is read
-   cold, weeks later, by someone with nobody to ask. The fixes that worked in course one
-   were reorderings, figures and worked examples, not adjectives: move the interactive
-   earlier, log the numbers first, draw the thing, pick an example where the mechanism is
-   visible, name the pattern and sort the instances into kinds.
-   **"No change to this passage" is a real answer.** The confusion may belong to an
-   earlier chapter, to a panel I never reached, or to one word I read differently than you
-   meant it. Fix it where it lives, and say that is what you did.
+5. **Fix the chapter, structurally.** The fixes that worked in course one were
+   reorderings, figures and worked examples, not adjectives: move the interactive earlier,
+   log the numbers first, draw the thing, pick an example where the mechanism is visible,
+   name the pattern and sort the instances into kinds.
+
+   What briefs that fix depends on how you got here, and there are three doors:
+   - **Through the loop.** The diff is the brief. Ask what the explanation that worked
+     *did* that the chapter did not, and port that mechanism rather than those words: chat
+     prose is tuned for one person who has just said what confused him, and chapter prose
+     is read cold, weeks later, by someone with nobody to ask.
+   - **Through the twice-failed branch.** There is no working explanation to diff, but two
+     dead attempts are evidence: what neither of them could get across, in the space the
+     chapter gives it, is the thing the chapter has to be rebuilt around. Say what that is
+     before you rebuild.
+   - **Through a defect, or through "just fix it".** You have no diagnosis at all, and you
+     must not invent one to fill the shape of the other two doors. Fix the mechanism you
+     can point at: the crash, the wrong number, the passage I named. Then say in the commit
+     that the fix went in unchecked, because a fix with no diagnosis behind it is exactly
+     the guess rule zero warns about, and the casebook entry has to record that rather
+     than dress it up as a diagnosis.
+
+   **"No change to this passage" is a real answer**, through any of the three doors. The
+   confusion may belong to an earlier chapter, to a panel I never reached, or to one word
+   I read differently than you meant it. Fix it where it lives, and say that is what you
+   did.
 6. **Then generalize, in the same commit:**
    - a rule in `CLAUDE.md`, imperative, one or two sentences, in my words where they are
      better than yours;
-   - the incident in `CASEBOOK.md`: my quote, **what the misunderstanding turned out to
-     be**, **which re-explanation landed**, the fix, the cost;
+   - the incident in `CASEBOOK.md`: my quote, the fix, the cost, and, when the loop ran,
+     **what the misunderstanding turned out to be** and **which re-explanation landed**.
+     When it did not run, the entry says that instead of guessing at either;
    - a `[casebook: N]` pointer from the rule to the incident.
 7. **Then sweep.** The same bug is almost never in one place. Check every other chapter for
    it and say what you found, even if you do not fix it all now.

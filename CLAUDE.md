@@ -569,7 +569,9 @@ fixed.
 - [ ] Every backward claim in the new prose was checked against the chapter it cites.
 - [ ] If this commit fixes a confusion: the diagnosis was checked against the learner
       before the passage changed, this file has the new rule, and `CASEBOOK.md` has the
-      incident with what the misunderstanding turned out to be.
+      incident with what the misunderstanding turned out to be. If the check was skipped,
+      because the learner said to just fix it or because two re-explanations died, the
+      commit and the incident say so rather than implying a diagnosis nobody made.
 
 ## Pinned versions
 
