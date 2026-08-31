@@ -58,8 +58,8 @@ interface Props {
   /** The section the last finished run was for, so the output can say. */
   ranFor: string | null;
   revealRequest: { id: string; at: number } | null;
-  /** Bumped when a prompt sends a snippet to the scratch pad. */
-  scratchRequest: number;
+  /** The last snippet a prompt sent to the scratch pad, and where it landed. */
+  scratchRequest: { from: number; seq: number } | null;
   onEditorReady(ready: boolean): void;
   onDocumentChange(text: string): void;
   onScratchChange(text: string): void;
@@ -110,7 +110,10 @@ export function Workbench(props: Props) {
   const resultsRef = useRef<HTMLDivElement>(null);
   const outputRef = useRef<HTMLPreElement>(null);
   const [scratchOpen, setScratchOpen] = useState(false);
+  const [scratchReady, setScratchReady] = useState(false);
   const scratchDetailsRef = useRef<HTMLDetailsElement>(null);
+  /** The last send this panel has actually put in front of the reader. */
+  const appliedScratch = useRef(0);
   const sectionsRef = useRef<HTMLDetailsElement>(null);
   const [spliceNote, setSpliceNote] = useState<string | null>(null);
   const [exercise, setExercise] = useState<Exercise | null>(null);
@@ -185,18 +188,30 @@ export function Workbench(props: Props) {
     resultsRef.current?.scrollIntoView({ block: "nearest" });
   }, [result]);
 
-  // A snippet arriving from a prompt opens the scratch pad and brings it into
-  // view: it sits at the foot of a column that can be thousands of pixels
-  // long, and code sent somewhere the reader cannot see was not sent.
+  // A snippet arriving from a prompt opens the scratch pad, puts the appended
+  // text into the editor, and brings both into view: the pad sits at the foot
+  // of a column that can be thousands of pixels long and shows 180px of code
+  // at a time, and code sent somewhere the reader cannot see was not sent.
+  //
+  // The editor owns its copy of the pad, exactly like the document editor
+  // above, so writing storage is not sending: the first send of a session
+  // arrived only because it was what opened the pad, every send after it
+  // stopped at localStorage, and the next keystroke wrote the editor's stale
+  // copy back over it, taking the snippet out of Run the scratch pad too.
   useEffect(() => {
-    if (!scratchRequest) return;
+    if (!scratchRequest || scratchRequest.seq === appliedScratch.current) return;
     setScratchOpen(true);
-    const id = window.setTimeout(
-      () => scratchDetailsRef.current?.scrollIntoView({ block: "nearest" }),
-      60,
-    );
+    // No editor yet, because the pad was closed: it mounts with the appended
+    // text already in it, and this runs again on its onReady.
+    if (!scratchReady) return;
+    appliedScratch.current = scratchRequest.seq;
+    scratchRef.current?.setDoc(loadScratch());
+    const id = window.setTimeout(() => {
+      scratchDetailsRef.current?.scrollIntoView({ block: "nearest" });
+      scratchRef.current?.revealAt(scratchRequest.from);
+    }, 60);
     return () => window.clearTimeout(id);
-  }, [scratchRequest]);
+  }, [scratchRequest, scratchReady]);
 
   // Follow the tail while a run streams, unless the reader has scrolled up.
   useEffect(() => {
@@ -604,6 +619,7 @@ export function Workbench(props: Props) {
                   onChange={props.onScratchChange}
                   onRun={() => props.onRunScratch()}
                   handleRef={scratchRef}
+                  onReady={setScratchReady}
                 />
               </Suspense>
             )}

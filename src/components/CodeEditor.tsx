@@ -131,6 +131,9 @@ export interface CodeEditorHandle {
   setDoc(doc: string): void;
   /** Scroll a range into view and put the caret at its start. */
   reveal(from: number, to: number): void;
+  /** Put the caret at one position and scroll it into view, without marking
+   * anything: the scratch pad has no sections to mark. */
+  revealAt(pos: number): void;
   /** Highlight the lines of the section the Run buttons are pointed at. */
   markSection(from: number, to: number): void;
   focus(): void;
@@ -271,6 +274,17 @@ export function CodeEditor({
       }),
     ];
     const view = new EditorView({ doc: initialDoc, parent: hostRef.current!, extensions });
+    // Caret plus scroll, shared by both reveals. The section mark is a second
+    // dispatch on top of it rather than part of it, because one of the two
+    // editors this component serves has no sections.
+    const caretTo = (pos: number) => {
+      const at = Math.max(0, Math.min(pos, view.state.doc.length));
+      view.dispatch({
+        selection: { anchor: at },
+        effects: EditorView.scrollIntoView(at, { y: "start", yMargin: 24 }),
+      });
+      return at;
+    };
     handleRef.current = {
       getDoc: () => view.state.doc.toString(),
       setDoc: (doc: string) => {
@@ -278,14 +292,12 @@ export function CodeEditor({
         view.setState(EditorState.create({ doc, extensions }));
       },
       reveal: (from: number, to: number) => {
-        const length = view.state.doc.length;
-        const start = Math.max(0, Math.min(from, length));
-        const end = Math.max(start, Math.min(to, length));
-        view.dispatch({
-          selection: { anchor: start },
-          effects: EditorView.scrollIntoView(start, { y: "start", yMargin: 24 }),
-        });
+        const start = caretTo(from);
+        const end = Math.max(start, Math.min(to, view.state.doc.length));
         view.dispatch({ effects: setSectionRange.of({ from: start, to: end }) });
+      },
+      revealAt: (pos: number) => {
+        caretTo(pos);
       },
       markSection: (from: number, to: number) => {
         view.dispatch({ effects: setSectionRange.of({ from, to }) });
