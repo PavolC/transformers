@@ -405,10 +405,10 @@ export function Chapter1() {
         of characters is the <b>vocabulary</b>. A character's number is its <b>id</b>. How
         many characters the vocabulary holds is <b>vocab_size</b>, which is exactly how
         wide and how tall the table has to be: {lineVocab.length} for this line, and{" "}
-        {corpusBench.corpus.vocab_size} for the corpus, whose vocabulary you saw a moment
-        ago. Chapter 2 builds this properly for the corpus, with the two functions that
-        cross between text and numbers; this is the smallest version of it, and it is all
-        the next exercise needs.
+        {corpusBench.corpus.vocab_size} for the corpus. Chapter 2 lays out all{" "}
+        {corpusBench.corpus.vocab_size} of the corpus's characters and builds this
+        properly, with the two functions that cross between text and numbers; the strip
+        above is the smallest version of it, and it is all the next exercise needs.
       </p>
 
       <SectionHeader id="c1-exercise" title="Your turn: the tally, and the draw" />
