@@ -432,6 +432,9 @@ Each ends deployable. Deploy exists from M1 onward.
 1. **Accent hue.** Green is course one's, and `BRAND.md` names "Ciphers" as another
    sibling, hue unknown from here. Proposal: indigo. Pavol confirms which hues are taken
    before day one edits `brand.css`.
+   **Answered 2026-08-31, by Pavol: "Ciphers" never shipped (a placeholder example in the
+   kit, since corrected to Transformers in the moving-parts repo). Only green is taken.
+   Indigo confirmed, and "the scribe" confirmed as the artifact's name.**
 2. **Pyodide hosting.** Pinned CDN URL versus self-hosting the core plus NumPy wheels
    (repo weight versus immortality and the nothing-leaves-your-machine promise). Default:
    pinned CDN. The spike measures cold-load either way and decides.
@@ -449,6 +452,9 @@ Each ends deployable. Deploy exists from M1 onward.
    (worker protocol, harness.py, Workbench, DockShell, state layer, checkers). Public
    repo; fetch at M1. If unreachable from the build environment, rebuild to the kit's
    descriptions and note it in section 10.
+   **Answered 2026-08-31: cloned read-only in the build environment. The lift happens,
+   with each file adapted at the kit's named coupling points. Course one also pins
+   Pyodide 314.0.5, which becomes this spike's first candidate.**
 7. **Corpus slice sizes per chapter** (chapter 1's on-page tally, bench windows): bench
    decides once it exists; the constraint is that every printed number reproduces.
 
