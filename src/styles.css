@@ -4018,6 +4018,15 @@ button:disabled {
 	color: var(--accent);
 }
 
-.module-lede {
+/* .module-kicker is a direct child of article.module, so it picks up the
+   reading measure from the .module > p rules above. */
+
+/* The field's name for a coined term, under its meaning in the notation
+   lookup rather than in a fourth column: two columns of prose pan the whole
+   table at the prose measure. */
+.notation-also {
+	display: block;
+	margin-top: 0.15rem;
 	color: var(--muted);
+	font-size: 0.85em;
 }

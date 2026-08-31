@@ -10,6 +10,7 @@ import {
   subscribeProgress,
 } from "../state/progress";
 import { downloadText, sectionState, SECTIONS } from "../state/workbench";
+import { NOTATION } from "./notation";
 import downloadNotice from "../python/download_notice.txt?raw";
 
 // The course's front door, and the only page that talks about the course
@@ -172,6 +173,53 @@ export function StartPage({ onGoTo }: { onGoTo: (id: string) => void }) {
           );
         })}
       </ol>
+
+      {/* The lookup the course's own rule asks for: chapters are written
+          assuming weeks pass between them, and every symbol is defined once,
+          thousands of words before a reader comes back wanting it. Rows are
+          added by the chapter that introduces the symbol, in the same change,
+          and sit in the order a reader meets them. */}
+      <details className="notation">
+        <summary>
+          Notation and NumPy reference: every symbol, and where it was introduced
+        </summary>
+        <p className="notation-note">
+          The course defines each of these once, at the moment it first matters. This is
+          the lookup for when weeks have passed since then.
+        </p>
+        {NOTATION.length === 0 ? (
+          <p className="notation-note">
+            Empty so far. Chapter 1 is the first to put rows here, and every chapter after
+            it adds its own symbols as it introduces them.
+          </p>
+        ) : (
+          <div className="table-scroll scroll-x" tabIndex={0}>
+            <table className="truth-table">
+              <thead>
+                <tr>
+                  <th>you will see</th>
+                  <th>it means</th>
+                  <th>from</th>
+                </tr>
+              </thead>
+              <tbody>
+                {NOTATION.map((row) => (
+                  <tr key={row.id}>
+                    <td className="notation-symbol">{row.symbol}</td>
+                    <td>
+                      {row.means}
+                      {row.alsoCalled && (
+                        <span className="notation-also">Also called {row.alsoCalled}.</span>
+                      )}
+                    </td>
+                    <td>{row.from}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </details>
 
       <h3 id="start-progress">Your file, and what this browser has stored</h3>
       <p>
