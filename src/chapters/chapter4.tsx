@@ -20,8 +20,7 @@ export function Chapter4() {
   }, []);
   return (
     <article className="module">
-      <p className="module-kicker">Chapter 4</p>
-      <h2>The learned tally</h2>
+      <h2>Chapter 4: The learned tally</h2>
       <p>
         This chapter is being written. Its first exercise is already live below, because
         the course's exercise pipeline was built against it: softmax is the machine that

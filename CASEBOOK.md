@@ -1,7 +1,8 @@
 # Casebook
 
-Eighteen incidents from course one (neural networks), each a place where a chapter failed a
-real reader, and each the reason a rule exists in `CLAUDE.md`. Read this once. The rules
+Nineteen incidents, the first eighteen from course one (neural networks) and the
+nineteenth from course two (transformers), each a place where the work failed a real
+reader, and each the reason a rule exists in `CLAUDE.md`. Read this once. The rules
 are what you follow; these are what makes them credible, and what tells you whether a rule
 you are tempted to bend is load-bearing.
 
@@ -392,6 +393,48 @@ at least twice.
 chapter is added.
 
 ---
+
+## 19. "start page width leaked out"
+
+**Course:** two (transformers), day one, found by the learner on the deployed site.
+
+**What was wrong.** The front door's prose ran the full 1140px column instead of the
+34rem measure, so the page read lopsided against its own centred masthead. The cause was
+one word: the article was written `className="start"`, and nothing in the stylesheet
+selects `.start`. Course one's front door carries `className="module start-page"`, and
+both halves are load-bearing: `module` is what the measure rules select
+(`.module > p, > ul, > ol`), `start-page` is what the front door's own section headings
+and their accent rules select.
+
+The same mistake had already been made twice in the same week, both times by inventing a
+name instead of reading the stylesheet: a control row built from `control-row`,
+`control-label` and `control-value`, none of which existed, which let a slider overlap its
+own buttons; and a figure marked `fig fig-box`, which kept it out of the box-and-arrow
+family's one scale. A repository whose Decisions section already said "component
+vocabulary: course one's names, kept so cribbed code stays readable" got it wrong three
+times in three days, which is what makes this a tooling problem rather than a discipline
+problem.
+
+**Why nothing caught it.** Every check was green. The build compiles unknown class names
+happily, the typechecker has no opinion about strings, and the page still looks like a
+page: prose, headings, a footer, all present and all painted. Only a reader comparing it
+against its sibling saw it. The two chapter pages were fine throughout, which is what made
+the front door's version look plausible.
+
+**The fix.** `tools/check_styles.py`: every class a component states outright must have a
+rule in `styles.css` or `brand.css`, with a short allow-list of deliberately unstyled
+hooks carrying a reason each. It reads only the unambiguous forms, a plain
+`className="a b"` and a template's static text, because a first version that also read
+ternaries reported `?`, `===` and the comparison string `"passing"` as missing classes,
+and a checker with false positives gets switched off. All three real bugs were plain
+literals, so the narrow rule loses nothing that has ever broken a page. Verified by
+reintroducing the defect and watching the checker name it.
+
+**Rule:** "Never invent a class name", in the hard rules, plus the checker in
+`npm run check` and in CI.
+
+**Cost:** the fix was one word; finding it took a reader on a deployed site, and the
+checker that makes it impossible again is 120 lines written the same day.
 
 ## The pattern behind all eighteen
 

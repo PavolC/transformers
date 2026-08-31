@@ -2035,7 +2035,8 @@ button:disabled {
 .chain-ripple,
 .chain-net,
 .bp-diagram,
-.ripple-slice {
+.ripple-slice,
+.c1-loop {
 	display: block;
 	width: min(calc(var(--fig-units) * var(--fig-scale)), 100%);
 	height: auto;
@@ -4007,19 +4008,6 @@ button:disabled {
 .start-steps li {
 	margin: 0.35rem 0;
 }
-
-.module-kicker {
-	margin: 0 0 0.2rem;
-	font-family: var(--font-ui);
-	font-size: var(--label-size);
-	font-weight: var(--label-weight);
-	letter-spacing: var(--label-tracking);
-	text-transform: uppercase;
-	color: var(--accent);
-}
-
-/* .module-kicker is a direct child of article.module, so it picks up the
-   reading measure from the .module > p rules above. */
 
 /* The field's name for a coined term, under its meaning in the notation
    lookup rather than in a fourth column: two columns of prose pan the whole

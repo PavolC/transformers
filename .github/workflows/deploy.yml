@@ -54,6 +54,7 @@ jobs:
       - run: python3 tools/spike/native_check.py
       - run: python3 tools/check_exercises.py
       - run: python3 tools/check_panels.py --fast
+      - run: python3 tools/check_styles.py
       - run: python3 tools/check_brand.py
       - run: python3 tools/brand_palette.py --check
 

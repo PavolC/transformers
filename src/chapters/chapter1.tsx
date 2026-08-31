@@ -89,7 +89,11 @@ function RowTable() {
 function LoopFigure() {
   return (
     <Figure caption="The writing loop. The tally is read one row at a time: the character just written picks the row, the draw picks a character from that row in proportion to its counts, and the character drawn becomes the one that picks the next row. Nothing else is remembered.">
-      <svg {...fig(0, 0, 526, 168)} className="fig fig-box" role="img" aria-label="The writing loop: a character picks a row of the tally, a draw picks the next character, and that character picks the next row.">
+      {/* Named for itself and joined to the box-and-arrow family by adding
+          .c1-loop to that family's selector list in the stylesheet, which is
+          how a diagram gets the family's one scale. The generic fig-* classes
+          below are this course's shared box, arrow and label ink. */}
+      <svg {...fig(0, 0, 526, 168)} className="c1-loop" role="img" aria-label="The writing loop: a character picks a row of the tally, a draw picks the next character, and that character picks the next row.">
         <rect x="12" y="44" width="118" height="52" rx="6" className="fig-box-fill" />
         <text x="71" y="66" className="fig-label" textAnchor="middle">
           character
@@ -151,8 +155,7 @@ export function Chapter1() {
 
   return (
     <article className="module">
-      <p className="module-kicker">Chapter 1</p>
-      <h2>The next-letter game</h2>
+      <h2>Chapter 1: The next-letter game</h2>
 
       <AfterThis
         items={[

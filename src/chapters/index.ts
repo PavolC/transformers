@@ -2,6 +2,10 @@ import { lazy, type ComponentType } from "react";
 
 export interface ChapterDef {
   id: string;
+  /** Short, one or two words after the number: the tab strip carries twelve of
+   * these, and a strip that cannot fit them either wraps to three rows or pans
+   * sideways, which is the worst way to offer a list (BRAND.md). The full name
+   * is `title` below. */
   navLabel: string;
   /** The start page's outline line: what this chapter covers. One copy, here,
    * so the front door renders from the registry and can never disagree with
@@ -25,7 +29,7 @@ function deferred(load: () => Promise<{ default: ComponentType }>) {
 export const CHAPTERS: ChapterDef[] = [
   {
     id: "c1",
-    navLabel: "1 · The next-letter game",
+    navLabel: "1 · Counting",
     title: "The next-letter game",
     covers:
       "Language modelling as one game: guess the next character. The tally of what follows " +
@@ -35,7 +39,7 @@ export const CHAPTERS: ChapterDef[] = [
   },
   {
     id: "c4",
-    navLabel: "4 · The learned tally",
+    navLabel: "4 · Learning",
     title: "The learned tally",
     covers:
       "The bigram rebuilt as a trained model: scores, softmax, the loss's clean gradient, " +
