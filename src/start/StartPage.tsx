@@ -40,6 +40,10 @@ export function StartPage({ onGoTo }: { onGoTo: (id: string) => void }) {
 
 	const fileRef = useRef<HTMLInputElement>(null);
 	const passed = EXERCISES.filter((e) => loadCompleted(e.id));
+	// A draft is a page that hosts a finished exercise while its prose is still
+	// unwritten. It is listed here, and named as a draft, but the heading counts
+	// only the chapters a reader can actually read.
+	const ready = CHAPTERS.filter((c) => !c.draft);
 
 	const download = () => {
 		const blob = new Blob([exportProgress()], { type: "application/json" });
@@ -126,7 +130,7 @@ export function StartPage({ onGoTo }: { onGoTo: (id: string) => void }) {
           cannot claim a number the list does not contain. The design doc
           plans twelve chapters; this list is the ones that exist. */}
 			<h3 id="start-chapters">
-				{CHAPTERS.length} of the 12 planned chapters {CHAPTERS.length === 1 ? "is" : "are"} up
+				{ready.length} of the 12 planned chapters {ready.length === 1 ? "is" : "are"} up
 			</h3>
 			<ol className="start-outline">
 				{CHAPTERS.map((chapter) => {
@@ -143,8 +147,12 @@ export function StartPage({ onGoTo }: { onGoTo: (id: string) => void }) {
 							    for the name of the thing. */}
 							<button className="start-outline-title" onClick={() => onGoTo(chapter.id)}>
 								{number}. {chapter.title}
+								{chapter.draft && <span className="start-draft">being written</span>}
 							</button>
-							<p>{chapter.covers}</p>
+							<p>
+								{chapter.covers}
+								{chapter.draft && " The prose is still being written; its first exercise is already live on the page."}
+							</p>
 							{here.length > 0 && (
 								<p className="start-outline-writes">
 									You write:{" "}
