@@ -104,12 +104,11 @@ _ns = {"__name__": "__bench__"}
 exec(compile(_bench_src, "${name}.py", "exec"), _ns)
 _ns["main"]()
 `);
-    const out = {
-      bench: name,
-      pyodide: pyodideVersion,
-      generated: new Date().toISOString().slice(0, 10),
-      ...JSON.parse(resultJson),
-    };
+    // Deliberately no timestamp: CI asserts that a re-run reproduces the
+    // committed file byte for byte, and a date would make that assertion fail
+    // on every run and then get switched off. The commit that changed a
+    // bench's numbers is the record of when they changed.
+    const out = { bench: name, pyodide: pyodideVersion, ...JSON.parse(resultJson) };
     const file = path.join(OUT_DIR, `${name}.json`);
     await writeFile(file, `${JSON.stringify(out, null, 2)}\n`);
     console.log(`\n-> public/data/bench/${name}.json\n`);

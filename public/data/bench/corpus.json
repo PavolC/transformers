@@ -1,7 +1,6 @@
 {
   "bench": "corpus",
   "pyodide": "314.0.5",
-  "generated": "2026-08-31",
   "line": {
     "text": "to be, or not to be",
     "chars": 19,
