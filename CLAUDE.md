@@ -608,6 +608,17 @@ without knowing.
 - **2026-08-31, Pyodide loads from the pinned jsDelivr CDN URL** (course one's pattern).
   Rejected for now: self-hosting the ~15 MB runtime subset in the repo; revisit only if
   CDN reliability bites a real reader.
+- **2026-08-31, a unit of this course is a chapter, and the code still says module.**
+  The reader sees "Chapter 1: The next-letter game", the tabs say "1 · Counting", and
+  section ids are prefixed `c1-`, because this file, `METHOD.md`, the design-doc template
+  and the `/chapter` command all prescribe chapter. The stylesheet and the shared
+  components keep course one's `module` vocabulary (`.module > p`, `ModuleBits`,
+  `module-picker`), which is what makes them liftable and is invisible to a reader. Do not
+  half-fix this: renaming the code buys nothing and breaks the lift, and renaming the
+  prose contradicts four documents. Rejected: matching course one's reader-facing
+  "modules", which would mean stripping chapter out of three kit docs and changing the
+  `c4-` id convention for every future course. Course one is the outlier and is renamed
+  separately, with `#m1` to `#c1` hash aliases so shared links survive.
 - **2026-08-31, dev server port 5175, strictPort** (course one pinned 5174; different
   port so both courses can run side by side). localStorage keys are prefixed `tf:`.
 

@@ -39,6 +39,19 @@ together into something recognizably related to the system itself, not just an a
 The short descriptor is already shipping in every course, as `SERIES.note` in `brand.ts`,
 so a second description does not replace the first one, it contradicts it in the masthead.
 
+**A unit of a course is a chapter.** One word, series-wide, in the heading ("Chapter 4:
+The learned tally"), the nav, the picker and the section ids (`c4-`). This file, the rules
+file, the design-doc template and the `/chapter` command already say chapter everywhere,
+so a course that ships "modules" disagrees with its own conventions. Course one predates
+the word and ships modules; it is the outlier, and renaming it wants hash aliases from
+`#m1` to `#c1` rather than a straight swap, because those addresses are in bookmarks and
+in shared links.
+
+The code underneath is a separate matter and is deliberately left alone: the stylesheet
+and the shared components say `module` (`.module > p`, `ModuleBits`, `module-picker`), and
+that vocabulary is what makes them liftable between courses. A reader never sees it, and
+renaming it would be a large diff whose only effect is to break the lift.
+
 ### The Moving Parts fit test
 
 Put the topic through these five before Phase 0, because a topic that fails one of them
