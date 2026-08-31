@@ -4274,3 +4274,53 @@ button:disabled {
 	text-transform: uppercase;
 	color: var(--muted);
 }
+
+/* The vocabulary strip (chapter 1): every character in use and the number
+   that stands for it. Grid family, one fixed cell per character, so the
+   characters and their numbers line up in columns. */
+.vocab-strip {
+	border-collapse: collapse;
+	margin: 0 auto;
+	font-family: var(--font-mono);
+	font-size: 0.86rem;
+}
+
+.vocab-strip th,
+.vocab-strip td {
+	min-width: 2.1rem;
+	height: 2rem;
+	padding: 0 0.35rem;
+	text-align: center;
+	border: 1px solid var(--rule);
+}
+
+.vocab-strip th {
+	font-family: var(--font-ui);
+	font-size: 0.72rem;
+	font-weight: 600;
+	color: var(--muted);
+	text-align: right;
+	white-space: nowrap;
+	background: var(--accent-wash);
+}
+
+.vocab-strip-id {
+	color: var(--accent);
+	font-weight: 600;
+}
+
+/* The caption is prose about the table, not part of it, so it takes the UI
+   font and the muted ink the other tables' captions take. Left to inherit, it
+   picked up the strip's monospace and read like code. It is also allowed to
+   run wider than the strip, which is narrow: a caption confined to a
+   nine-column table wraps into a column three words wide. */
+.vocab-strip caption {
+	caption-side: bottom;
+	width: max-content;
+	max-width: var(--measure);
+	margin: 0.45rem auto 0;
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	line-height: 1.45;
+	color: var(--muted);
+}

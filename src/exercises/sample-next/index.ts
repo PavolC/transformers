@@ -8,10 +8,16 @@ export const sampleNextExercise: Exercise = {
   title: "Sampling the next character",
   prompt: [
     "The tally says what tends to follow what. This function is the part that " +
-      "acts on it: sample_next(counts, current, rng) returns the id of the next " +
-      "character, drawn in proportion to row `current`. A successor counted 30 " +
-      "times comes up ten times as often as one counted 3 times, and one counted " +
-      "0 times never comes up.",
+      "acts on it, and everything it needs is handed to it: sample_next(counts, " +
+      "current, rng) returns the id of the next character, drawn in proportion to " +
+      "row current. A successor counted 30 times comes up ten times as often as " +
+      "one counted 3 times, and one counted 0 times never comes up.",
+    "The three arguments. counts is a tally like the one your count_pairs " +
+      "returns, so row a, column b holds how often b followed a. current is the " +
+      "id of the character just written, which picks the row: an id is a " +
+      "character's place in the sorted vocabulary, the numbering the strip above " +
+      "the exercises shows. rng is a random generator the caller made and passed " +
+      "in, and it is the only randomness you may use.",
     "The row holds counts and a draw needs shares, so divide the row by its own " +
       "total. rng.choice(len(row), p=shares) makes the draw, and it insists the " +
       "shares sum to 1, which they do once you have divided.",
