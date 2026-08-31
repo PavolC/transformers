@@ -5,7 +5,9 @@
     "module": "c1",
     "label": "Chapter 1, Counting pairs",
     "marker": "# ---- [section:count-pairs] Chapter 1, Counting pairs ----",
-    "provides": ["count_pairs"],
+    "provides": [
+      "count_pairs"
+    ],
     "requires": [],
     "pulledInBy": [],
     "checks": []
@@ -16,7 +18,37 @@
     "module": "c1",
     "label": "Chapter 1, Sampling the next character",
     "marker": "# ---- [section:sample-next] Chapter 1, Sampling the next character ----",
-    "provides": ["sample_next"],
+    "provides": [
+      "sample_next"
+    ],
+    "requires": [],
+    "pulledInBy": [],
+    "checks": []
+  },
+  {
+    "id": "build-vocab",
+    "kind": "exercise",
+    "module": "c2",
+    "label": "Chapter 2, Text and numbers",
+    "marker": "# ---- [section:build-vocab] Chapter 2, Text and numbers ----",
+    "provides": [
+      "build_vocab",
+      "encode",
+      "decode"
+    ],
+    "requires": [],
+    "pulledInBy": [],
+    "checks": []
+  },
+  {
+    "id": "get-batch",
+    "kind": "exercise",
+    "module": "c2",
+    "label": "Chapter 2, Batches of windows",
+    "marker": "# ---- [section:get-batch] Chapter 2, Batches of windows ----",
+    "provides": [
+      "get_batch"
+    ],
     "requires": [],
     "pulledInBy": [],
     "checks": []
@@ -27,7 +59,9 @@
     "module": "c4",
     "label": "Chapter 4, Softmax",
     "marker": "# ---- [section:softmax] Chapter 4, Softmax ----",
-    "provides": ["softmax"],
+    "provides": [
+      "softmax"
+    ],
     "requires": [],
     "pulledInBy": [],
     "checks": []

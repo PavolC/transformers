@@ -11,7 +11,7 @@ import type { ScratchRunResult, TestRunResult, WorkerResponse } from "../runtime
 import { sendRequest, terminateWorker } from "../runtime/workerClient";
 import { emitProgress, saveCompleted } from "../state/progress";
 import { loadUi, loadUiFlag, saveUi, saveUiFlag } from "../state/ui";
-import { currentDoc, ensureSection, isUntouched, loadDocument, loadScratch, markPassed, runSpec, saveDocument, saveScratch, sectionPresent, upstreamOf } from "../state/workbench";
+import { currentDoc, ensureSection, isUntouched, loadDocument, loadScratch, markPassed, runSpec, saveDocument, saveScratch, scratchSpec, sectionPresent, upstreamOf } from "../state/workbench";
 import { SECTION_BY_ID, SECTION_ORDER, type SectionDef } from "../state/workbenchDoc";
 import { Workbench } from "./Workbench";
 
@@ -356,7 +356,8 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
 	const runScratch = useCallback(() => {
 		const target = current ?? SECTION_ORDER[0];
 		beginRun("scratch");
-		const spec = runSpec(target);
+		// A whole-file lend list, not the caret section's: see scratchSpec.
+		const spec = scratchSpec(target);
 		// The corpus, always. Every prompt's experiment opens with
 		// load_corpus(), and the scratch pad belongs to no exercise: reading
 		// the dataset off whichever section the caret sits in is how a

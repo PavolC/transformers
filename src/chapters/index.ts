@@ -47,6 +47,17 @@ export const CHAPTERS: ChapterDef[] = [
     ...deferred(() => import("./chapter1").then((m) => ({ default: m.Chapter1 }))),
   },
   {
+    id: "c2",
+    navLabel: "2 · Tokens",
+    title: "Tokens and the corpus",
+    covers:
+      "The unit the model reads, priced against reading the same corpus as words. The " +
+      "vocabulary as a measurement of one file, the two functions that cross between text " +
+      "and ids, and windows of T characters stacked into (B, T) batches with their " +
+      "shifted targets.",
+    ...deferred(() => import("./chapter2").then((m) => ({ default: m.Chapter2 }))),
+  },
+  {
     id: "c4",
     navLabel: "4 · Learning",
     title: "The learned tally",

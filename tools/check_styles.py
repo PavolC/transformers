@@ -52,6 +52,8 @@ ALLOWED_UNSTYLED: dict[str, str] = {
     # and screenshots, and every rule inside them is scoped to a child.
     "tally-builder": "panel identity hook; its rules are on its children",
     "wheel-sampler": "panel identity hook; its rules are on its children",
+    "vocab-grid": "panel identity hook; its rules are on its children",
+    "window-slicer": "panel identity hook; its rules are on its children",
     "tally-cell": "grid cell; painted inline and by tally-cell-next",
 }
 

@@ -4324,3 +4324,279 @@ button:disabled {
 	line-height: 1.45;
 	color: var(--muted);
 }
+
+/* ---- chapter 2 -------------------------------------------------------- */
+
+/* The vocabulary strip as a grid: thirteen fixed cells across, five rows,
+   which is exactly the 65 characters of this corpus. Grid family, so the
+   cells keep their size and the whole block pans inside .table-scroll on a
+   narrow screen rather than reflowing into a different rectangle. */
+.vocab-cells {
+	display: grid;
+	grid-template-columns: repeat(13, 2.6rem);
+	gap: 2px;
+	width: max-content;
+	margin: 0.4rem auto 0.6rem;
+}
+
+/* One cell of the vocabulary grid: a button, so it is clickable and reachable
+   from the keyboard, laid out as a character over its id. */
+.vocab-cell {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.05rem;
+	width: 2.6rem;
+	height: 2.6rem;
+	padding: 0;
+	border: 1px solid var(--rule);
+	border-radius: 3px;
+	font-family: var(--font-mono);
+	cursor: pointer;
+}
+
+/* The same two-line cell inside a table. It must NOT be display:flex: a table
+   cell told to be a flex container leaves the table's row layout, and every
+   cell of the window then stacks into one tall column. The two lines stack
+   because their spans are blocks, not because the cell is. */
+.slicer-cell {
+	width: 2.6rem;
+	height: 2.6rem;
+	padding: 0;
+	text-align: center;
+	vertical-align: middle;
+	font-family: var(--font-mono);
+}
+
+.vocab-cell-char,
+.slicer-cell-char {
+	display: block;
+	font-size: 0.9rem;
+	line-height: 1.15;
+	color: var(--ink);
+}
+
+.vocab-cell-id,
+.slicer-cell-id {
+	display: block;
+	font-size: 0.6rem;
+	line-height: 1;
+	color: var(--muted);
+}
+
+.vocab-cell-on {
+	outline: 2px solid var(--accent);
+	outline-offset: -2px;
+}
+
+/* The selected character's line, and where it first occurs. Both keep a
+   reserved height: they change on every click, and a line that grows or
+   vanishes moves the grid the reader is clicking in. */
+.vocab-readout,
+.slicer-status {
+	min-height: 1.5rem;
+	margin: 0.1rem 0 0.35rem;
+	text-align: center;
+}
+
+.vocab-context {
+	min-height: 1.6rem;
+	margin: 0 0 0.2rem;
+	font-family: var(--font-ui);
+	font-size: 0.78rem;
+	text-align: center;
+	color: var(--muted);
+}
+
+.vocab-context-label {
+	font-weight: var(--label-weight);
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	font-size: 0.68rem;
+}
+
+.vocab-context-text {
+	font-family: var(--font-mono);
+	font-size: 0.82rem;
+	white-space: pre;
+	color: var(--ink);
+}
+
+.vocab-context-hit {
+	padding: 0.05rem 0.1rem;
+	background: var(--accent-panel);
+	border-bottom: 2px solid var(--accent);
+}
+
+/* Where the window sits in the text: the characters on either side muted, the
+   window itself marked, and the one character past its right edge marked
+   differently because it is the last target and comes from outside. One line,
+   no wrap, so the window never breaks in half. */
+.slicer-strip {
+	margin: 0.5rem 0 0.4rem;
+	font-family: var(--font-mono);
+	font-size: 0.95rem;
+	line-height: 1.9;
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: clip;
+}
+
+.slicer-strip-out {
+	color: var(--rule-strong);
+}
+
+.slicer-strip-in {
+	background: var(--accent-panel);
+	border-bottom: 2px solid var(--accent);
+	color: var(--ink);
+}
+
+.slicer-strip-past {
+	background: var(--accent-wash);
+	border-bottom: 2px dotted var(--accent);
+	color: var(--ink);
+}
+
+/* The window's two rows, and the batch figure in the prose: both join the
+   grid family's one scale (see .tally-grid above). */
+.slicer-grid,
+.c2-batch-grid {
+	border-collapse: collapse;
+	margin: 0 auto;
+	font-family: var(--font-mono);
+	font-size: 0.82rem;
+}
+
+.slicer-grid th,
+.slicer-grid td,
+.c2-batch-grid th,
+.c2-batch-grid td {
+	padding: 0;
+	text-align: center;
+	border: 1px solid var(--rule);
+}
+
+.c2-batch-grid th,
+.c2-batch-grid td {
+	width: 2.1rem;
+	height: 2.1rem;
+}
+
+/* Every column of the window the same width, so the t row, the x row and the
+   y row line up cell for cell. */
+.slicer-grid td {
+	width: 2.6rem;
+}
+
+/* Two sliders in one control row would each get half a line, and .slider-row
+   allows itself to shrink to nothing (so a range input can never overflow its
+   box), which collapses both inputs to a dot. One full-width line each. */
+.window-slicer .slider-row {
+	flex-basis: 100%;
+}
+
+.slicer-grid th,
+.c2-batch-grid th {
+	width: auto;
+	padding: 0 0.45rem;
+	font-family: var(--font-ui);
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--muted);
+	background: var(--accent-wash);
+	white-space: nowrap;
+}
+
+.slicer-t {
+	font-family: var(--font-ui);
+	font-size: 0.66rem;
+	color: var(--muted);
+	background: var(--accent-wash);
+}
+
+.slicer-cell-past {
+	background: var(--accent-wash);
+	border-left: 1px solid var(--rule);
+	box-shadow: inset 0 -2px 0 0 var(--accent);
+}
+
+/* The batch figure's y rows, drawn a shade back from the x rows so a pair of
+   rows reads as one window rather than as two. */
+.c2-batch-y {
+	background: var(--accent-wash);
+}
+
+/* The window read as T examples: every prefix and what followed it. The
+   context column is right-aligned and fixed at the widest window the slider
+   offers, so dragging T changes the number of rows and never the width. */
+.slicer-log {
+	border-collapse: collapse;
+	margin: 0.2rem auto 0;
+	font-size: 0.82rem;
+}
+
+.slicer-log caption {
+	caption-side: bottom;
+	width: max-content;
+	max-width: var(--measure);
+	margin: 0.45rem auto 0;
+	font-family: var(--font-ui);
+	font-size: 0.8rem;
+	line-height: 1.45;
+	color: var(--muted);
+}
+
+.slicer-log th {
+	padding: 0.2rem 0.5rem;
+	font-family: var(--font-ui);
+	font-size: 0.7rem;
+	font-weight: var(--label-weight);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--muted);
+	border-bottom: 1px solid var(--rule);
+}
+
+.slicer-log td {
+	padding: 0.12rem 0.5rem;
+	border-bottom: 1px solid var(--rule);
+}
+
+.slicer-log-context {
+	/* The widest window the slider offers, so dragging T changes the number of
+	   rows and never the width. */
+	width: 16ch;
+	font-family: var(--font-mono);
+	text-align: right;
+	white-space: pre;
+	color: var(--ink);
+}
+
+.slicer-log-target {
+	font-family: var(--font-mono);
+	text-align: center;
+	color: var(--accent);
+	font-weight: 600;
+}
+
+/* A caption travels with its table, and a table wider than the screen pans
+   inside .table-scroll, so on a phone the caption pans with it: chapter 1's
+   vocabulary strip and chapter 2's two numberings both ended sentences 600px
+   to the right of the viewport. Captions are prose about the figure rather
+   than part of it, so on a narrow screen they are capped at the screen and
+   pinned to the table's left edge, where they are whole before any scrolling.
+   Nothing changes on a wide screen, where the tables fit. */
+@media (max-width: 560px) {
+	.table-scroll caption {
+		/* auto, not a width: a caption given an explicit width wider than its
+		   table stretches the table box and makes a table that fitted pan. */
+		width: auto;
+		max-width: min(var(--measure), calc(100vw - 3.5rem));
+		margin-left: 0;
+		margin-right: auto;
+		text-align: left;
+	}
+}

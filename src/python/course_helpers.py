@@ -50,12 +50,12 @@ def load_corpus():
 
 count_pairs = _rs.count_pairs
 sample_next = _rs.sample_next
+build_vocab = _rs.build_vocab
+encode = _rs.encode
+decode = _rs.decode
+get_batch = _rs.get_batch
 softmax = _rs.softmax
 
 # ----------------------------------------------------- shared, never exercises
 
-build_vocab = _rs.build_vocab
-encode = _rs.encode
-decode = _rs.decode
 split_data = _rs.split_data
-get_batch = _rs.get_batch
