@@ -15,33 +15,33 @@ import { Monogram } from "./Monogram";
  * reaches the series name first and then the course.
  *
  * `compact` marks an inner page, and on a phone it drops the tagline and sizes
- * the title down. The tagline is the course's pitch, which is what the front
- * door is for; on page seven of a course the reader has bought it already, and
+ * the title down. The tagline summarizes the course's concrete arc, which is
+ * what the front door is for. By page seven it carries no new information, and
  * on a 390px screen it costs four lines, a fifth of the first screenful. The
  * flag changes nothing above 560px, where the masthead costs nothing.
  */
 export function Masthead({ nav, compact }: { nav?: ReactNode; compact?: boolean }) {
-  const wordmark = (
-    <>
-      <Monogram />
-      <span className="brand-wordmark">{SERIES.name}</span>
-    </>
-  );
-  return (
-    <header className={compact ? "masthead masthead-compact" : "masthead"}>
-      <p className="brand-row">
-        {SERIES.homeUrl ? (
-          <a className="brand-mark" href={SERIES.homeUrl}>
-            {wordmark}
-          </a>
-        ) : (
-          <span className="brand-mark">{wordmark}</span>
-        )}
-        <span className="brand-series-note">{SERIES.note}</span>
-      </p>
-      <h1 className="masthead-title">{COURSE.subject}</h1>
-      <p className="masthead-tagline">{COURSE.tagline}</p>
-      {nav}
-    </header>
-  );
+	const wordmark = (
+		<>
+			<Monogram />
+			<span className="brand-wordmark">{SERIES.name}</span>
+		</>
+	);
+	return (
+		<header className={compact ? "masthead masthead-compact" : "masthead"}>
+			<p className="brand-row">
+				{SERIES.homeUrl ? (
+					<a className="brand-mark" href={SERIES.homeUrl}>
+						{wordmark}
+					</a>
+				) : (
+					<span className="brand-mark">{wordmark}</span>
+				)}
+				<span className="brand-series-note">{SERIES.note}</span>
+			</p>
+			<h1 className="masthead-title">{COURSE.subject}</h1>
+			<p className="masthead-tagline">{COURSE.tagline}</p>
+			{nav}
+		</header>
+	);
 }

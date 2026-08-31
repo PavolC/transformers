@@ -1,7 +1,9 @@
 <!doctype html>
 <html>
-<head><meta charset="utf-8"><style>
-  /* The course's social card, 1200x630, screenshotted to public/og-image.png by
+	<head>
+		<meta charset="utf-8" />
+		<style>
+			/* The course's social card, 1200x630, screenshotted to public/og-image.png by
      tools/make_og_image.sh.
 
      A rendered page rather than a drawn image, for the same reason the rest of
@@ -22,64 +24,128 @@
      nothing in the site's stylesheet reaches a file that is rendered for
      deployment; the accent, the three bands and the glyph are the ones
      check_brand.py compares. */
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html,body { width:1200px; height:630px; overflow:hidden; }
-  body { background:#fdfdfb; color:#1a1a1a; font-family:"DejaVu Serif",Georgia,serif; position:relative; }
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			html,
+			body {
+				width: 1200px;
+				height: 630px;
+				overflow: hidden;
+			}
+			body {
+				background: #fdfdfb;
+				color: #1a1a1a;
+				font-family: "DejaVu Serif", Georgia, serif;
+				position: relative;
+			}
 
-  /* The course's own hue, the way the series index draws it down the left edge
+			/* The course's own hue, the way the series index draws it down the left edge
      of this course's card. */
-  .rule { position:absolute; top:0; left:0; right:0; height:8px; background:#4b5894; }
+			.rule {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 8px;
+				background: #4b5894;
+			}
 
-  /* The series row, in the masthead's order: the three-band mark, the wordmark,
+			/* The series row, in the masthead's order: the three-band mark, the wordmark,
      then what the series is. */
-  .brandrow { position:absolute; top:96px; left:110px;
-              display:flex; align-items:center; gap:14px; }
-  .series-tile { width:40px; height:40px; flex:none; }
-  .wordmark { font-family:"DejaVu Sans",sans-serif; font-size:21px; font-weight:700;
-              letter-spacing:.13em; text-transform:uppercase; color:#4b5894; }
-  .note { font-family:"DejaVu Sans",sans-serif; font-size:14px; letter-spacing:.1em;
-          text-transform:uppercase; color:#5a5a5a; padding-left:14px; border-left:1px solid #d8d8d2; }
+			.brandrow {
+				position: absolute;
+				top: 96px;
+				left: 110px;
+				display: flex;
+				align-items: center;
+				gap: 14px;
+			}
+			.series-tile {
+				width: 40px;
+				height: 40px;
+				flex: none;
+			}
+			.wordmark {
+				font-family: "DejaVu Sans", sans-serif;
+				font-size: 21px;
+				font-weight: 700;
+				letter-spacing: 0.13em;
+				text-transform: uppercase;
+				color: #4b5894;
+			}
+			.note {
+				font-family: "DejaVu Sans", sans-serif;
+				font-size: 14px;
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				color: #5a5a5a;
+				padding-left: 14px;
+				border-left: 1px solid #d8d8d2;
+			}
 
-  /* The course mark, directly above the name it identifies and on the same left
+			/* The course mark, directly above the name it identifies and on the same left
      axis as everything else, so each mark sits with its own name and the card
      still reads down one line. */
-  .course-tile { position:absolute; top:196px; left:110px; width:56px; height:56px; }
+			.course-tile {
+				position: absolute;
+				top: 196px;
+				left: 110px;
+				width: 56px;
+				height: 56px;
+			}
 
-  h1 { position:absolute; top:288px; left:110px;
-       font-size:92px; line-height:1; letter-spacing:-.02em; font-weight:400; }
+			h1 {
+				position: absolute;
+				top: 288px;
+				left: 110px;
+				font-size: 92px;
+				line-height: 1;
+				letter-spacing: -0.02em;
+				font-weight: 400;
+			}
 
-  /* The course's one-line pitch. Its line break is explicit so the composition
+			/* The course's one-line pitch. Its line break is explicit so the composition
      holds at this size. */
-  .tagline { position:absolute; top:428px; left:113px;
-             font-size:30px; line-height:1.45; color:#3a3a3a; width:980px; }
-</style></head>
-<body>
-  <div class="rule"></div>
+			.tagline {
+				position: absolute;
+				top: 428px;
+				left: 113px;
+				font-size: 30px;
+				line-height: 1.45;
+				color: #3a3a3a;
+				width: 980px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="rule"></div>
 
-  <div class="brandrow">
-    <svg class="series-tile" viewBox="0 0 32 32">
-      <clipPath id="band-clip"><rect width="32" height="32" rx="7"/></clipPath>
-      <g clip-path="url(#band-clip)">
-        <rect width="11" height="32" x="0" fill="#0b6e4f"/>
-        <rect width="11" height="32" x="11" fill="#12648d"/>
-        <rect width="10" height="32" x="22" fill="#83456a"/>
-      </g>
-    </svg>
-    <span class="wordmark">Moving Parts</span>
-    <span class="note">build-it-yourself courses</span>
-  </div>
+		<div class="brandrow">
+			<svg class="series-tile" viewBox="0 0 32 32">
+				<clipPath id="band-clip"><rect width="32" height="32" rx="7" /></clipPath>
+				<g clip-path="url(#band-clip)">
+					<rect width="11" height="32" x="0" fill="#0b6e4f" />
+					<rect width="11" height="32" x="11" fill="#12648d" />
+					<rect width="10" height="32" x="22" fill="#83456a" />
+				</g>
+			</svg>
+			<span class="wordmark">Moving Parts</span>
+			<span class="note">build-it-yourself courses</span>
+		</div>
 
-  <svg class="course-tile" viewBox="0 0 32 32">
-    <rect width="32" height="32" rx="7" fill="#4b5894"/>
-    <path d="M7 6 V26 H27 V21 H22 V16 H17 V11 H12 V6 Z" fill="none"
-          stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round"/>
-  </svg>
+		<svg class="course-tile" viewBox="0 0 32 32">
+			<rect width="32" height="32" rx="7" fill="#4b5894" />
+			<path d="M7 6 V26 H27 V21 H22 V16 H17 V11 H12 V6 Z" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round" />
+		</svg>
 
-  <h1>Transformers</h1>
+		<h1>Transformers</h1>
 
-  <p class="tagline">
-    A course on transformers that you finish<br>
-    by building a small GPT, in Python, in your browser.
-  </p>
-</body>
+		<p class="tagline">
+			Build a small language model from its smallest parts,<br />
+			then teach it to write.
+		</p>
+	</body>
 </html>

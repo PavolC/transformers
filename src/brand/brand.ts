@@ -69,7 +69,7 @@ export const COURSE = {
 	subject: "Transformers",
 	/** One sentence, in the masthead under the title. What the reader does
 	 *  here, not what the topic is: the heading already carries the topic. */
-	tagline: "Build a small GPT one part at a time, and train it in your browser until it writes.",
+	tagline: "Build a small language model from its smallest parts, then teach it to write.",
 	/** The causal mask: the lower-triangular grid from chapter 6, the one
 	 *  figure this course draws that no other course would. The stepped
 	 *  hypotenuse is the mask boundary; each position sees itself and its

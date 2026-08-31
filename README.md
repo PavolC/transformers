@@ -1,11 +1,11 @@
 # Transformers
 
-An interactive course in the [Moving Parts](https://pavolc.github.io/moving-parts/)
-series: build-it-yourself courses. This one teaches transformers by making you build
-one: you write real Python in the page, one part per chapter (the counting model, the
+Build a small language model from its smallest parts, then teach it to write. This
+interactive course in the [Moving Parts](https://pavolc.github.io/moving-parts/) series
+has you write real Python in the page, one part per chapter (the counting model, the
 vocabulary, the loss, softmax, embeddings, attention with its causal mask, the
-transformer block, the training loop), and finish by training your own character-level
-GPT on Shakespeare, live in the browser tab, until it writes.
+transformer block, the training loop), then train your own character-level GPT on
+Shakespeare, live in the browser tab, until it writes.
 
 Everything runs client-side: Python via a pinned Pyodide in a web worker, NumPy only,
 no installs, no accounts, no backend. Your code and progress stay in your browser and
