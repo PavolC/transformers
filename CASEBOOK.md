@@ -1,7 +1,7 @@
 # Casebook
 
-Twenty incidents, the first eighteen from course one (neural networks) and the last two
-from course two (transformers), each a place where the work failed a real
+Twenty-three incidents, the first eighteen from course one (neural networks) and the last
+five from course two (transformers), each a place where the work failed a real
 reader, and each the reason a rule exists in `CLAUDE.md`. Read this once. The rules
 are what you follow; these are what makes them credible, and what tells you whether a rule
 you are tempted to bend is load-bearing.
@@ -595,6 +595,65 @@ exercise into a twelve-chapter course. The checker that makes the class impossib
 anything. The second failure cost more than all of them: it needed a real browser, a
 real worker and a local copy of the pinned runtime to see at all, because every check in
 the repository stands in for the fetch it broke.
+
+## 23. "sometimes it does on the first try but then repeated tries don't work"
+
+**Chapter:** two (transformers), chapter 1, found by the learner the same day as incident
+22, on the same button, hours after that fix landed.
+
+**What was wrong.** Send to the scratch pad wrote the appended text to localStorage and
+told the panel to open the pad. The panel opened it, scrolled it into view, and never
+touched the editor. The editor is a CodeMirror that takes its document once, when it
+mounts, so:
+
+- the first send of a session arrived, because it was the thing that mounted the editor,
+  and the editor read storage on the way up;
+- every send after it stopped at localStorage, with the pad on screen showing the old
+  text;
+- and the reader's next keystroke ran the editor's onChange, which writes the editor's
+  whole document to storage, so the stale copy overwrote the appended snippet and took it
+  out of Run the scratch pad as well as out of view.
+
+Measured in a headless Chromium against the built site: two sends, then one keystroke, and
+storage fell from 2,139 characters to 1,416. The second snippet was gone from the one place
+the reader could still have run it.
+
+The panel had the fix already, ten lines above, for the same reason on the other editor:
+"Follow an import or a splice that happened somewhere else. Without this the always-
+mounted editor keeps the text it had and the next keystroke writes it back over what was
+just loaded." One editor was guarded and its neighbour was not.
+
+A second defect sat behind it, invisible while the first one held: the pad is 180px, about
+six lines, and a snippet appended below a pad that already holds one is off screen. So
+"sent" needed a scroll as well as a write, which meant the position the text landed at had
+to travel with the request rather than a bare counter.
+
+**Why nothing caught it.** No check in the repository mounts an editor. `check_exercises`
+runs the Python, `check_panels` runs the prompts' snippets outside the browser,
+`check_styles` reads the components' class names, and the build only typechecks. All four
+were green through both defects. The failure also needs three interactions in order (open,
+send, type) and leaves no trace in any file, so reading the diff would not have shown it
+either.
+
+**The fix.** The provider computes the appended text, writes it, and reports where the
+snippet landed; the panel pushes that text into the editor with `setDoc` and scrolls to
+the offset. Both paths are covered: the pad already open, where the editor exists and gets
+the text pushed in, and the pad closed, where the editor mounts holding it and gets
+scrolled once its `onReady` fires. A sequence number rather than a timestamp, and a ref
+holding the last one applied, so a send is applied exactly once and opening the pad by
+hand does not re-scroll the reader.
+
+`tools/check_workbench.mjs` drives the real workbench in headless Chromium, in the dock
+and in the phone sheet both: it seeds the pad with 60 filler lines, presses Send twice, and
+asserts that no filler line is on screen afterwards, that the top of the pad is the snippet
+just sent, and that one keystroke afterwards keeps every snippet. Verified by putting the
+defect back: 12 of its 20 cases go red, including the keystroke, which reports
+"2139 -> 1416 chars" in each layout.
+
+**Cost:** three files, 57 lines added and 23 replaced, plus a 170-line checker for the
+class. Found by the learner, one exercise into the course, on the button that had been
+fixed hours earlier. The class is worth naming once: **an always-mounted editor is not the
+same object as the storage under it**, and any control that seeds one has to name both.
 
 ## The pattern behind course one's eighteen
 
