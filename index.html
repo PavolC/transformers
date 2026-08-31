@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Transformers · Moving Parts</title>
+		<meta name="description" content="Build a small language model from its smallest parts, then teach it to write. Interactive course, Python in your browser, no installs or accounts." />
+		<meta name="theme-color" content="#4b5894" />
+		<!-- The course mark, inline so the tab has an icon without costing a
+          request: the course's glyph in white on a tile of its accent hue.
+          The glyph is the causal mask, the lower-triangular grid from chapter
+          6. Moving Parts has a separate three-band mark beside its name in the
+          masthead and footer. This path and its two colours are checked against
+          src/brand/brand.ts and src/brand/brand.css by tools/check_brand.py,
+          because a favicon is one copy no component can generate. -->
+		<link
+			rel="icon"
+			href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%234b5894'/%3E%3Cpath d='M7 6 V26 H27 V21 H22 V16 H17 V11 H12 V6 Z' fill='none' stroke='%23ffffff' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E"
+		/>
+		<!-- The social card. Every one of these URLs has to be absolute: a share
+         is unfurled by a crawler that has no page to resolve a relative path
+         against, so "./og-image.png" fetches nothing and the link renders as
+         bare text. That is why the deployed origin is spelled out here as a
+         literal even though vite.config.ts sets base to "./" so the build
+         itself is subpath-safe. It is the same trade the favicon makes above,
+         and tools/check_brand.py checks this one too.
+
+         Regenerate the image with tools/og_card.html (see tools/make_og_image.sh). -->
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Moving Parts" />
+		<meta property="og:url" content="https://pavolc.github.io/transformers/" />
+		<meta property="og:title" content="Transformers · Moving Parts" />
+		<meta property="og:description" content="Build a small language model from its smallest parts, then teach it to write. Python runs in your browser, with no installs or accounts." />
+		<meta property="og:image" content="https://pavolc.github.io/transformers/og-image.png" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<!-- What a reader gets instead of the image: a screen reader, a client that
+         blocks images, a crawler that only reads the tags. It has to describe
+         the card that exists, so it changes when tools/og_card.html changes. -->
+		<meta property="og:image:alt" content="Moving Parts, build-it-yourself courses: Transformers. Build a small language model from its smallest parts, then teach it to write." />
+		<link rel="canonical" href="https://pavolc.github.io/transformers/" />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content="Transformers · Moving Parts" />
+		<meta name="twitter:description" content="Build a small language model from its smallest parts, then teach it to write. No installs or accounts." />
+		<meta name="twitter:image" content="https://pavolc.github.io/transformers/og-image.png" />
+	</head>
+	<body>
+		<!-- The workbench's width, before any of the bundle has parsed. A reader
+         who left the panel open would otherwise watch the column jump left
+         when React mounts, which is the one thing the panel is not allowed to
+         do. Reads the same keys state/ui.ts writes, and does nothing at all if
+         the panel is shut, which is the default. -->
+		<script>
+			try {
+				if (localStorage.getItem("tf:ui:dock") === "1" && window.innerWidth >= 1360) {
+					var stored = Number(localStorage.getItem("tf:ui:dock-w"));
+					var max = Math.max(380, window.innerWidth - 752);
+					var width = stored ? Math.max(380, Math.min(stored, max)) : Math.min(Math.max(380, window.innerWidth - 935), max);
+					document.documentElement.style.setProperty("--dock-w", width + "px");
+				}
+			} catch (e) {
+				/* storage disabled: the panel opens at its default and nothing jumps */
+			}
+		</script>
+		<div id="root">
+			<!-- Replaced as soon as React mounts. Without it the whole bundle
+           downloads against a blank white page. It is centred inside #root,
+           which the stylesheet holds away from the panel, so it lands where
+           the real column will. -->
+			<div style="max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem; font-family: Georgia, &quot;Times New Roman&quot;, serif; color: #1a1a1a">
+				<p style="margin: 0; font-family: system-ui, sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: #4b5894">Moving Parts</p>
+				<h1 style="font-size: 2.5rem; line-height: 1.08; margin: 0.35rem 0 0.3rem">Transformers</h1>
+				<p style="color: #5a5a5a; font-style: italic">Loading the course...</p>
+			</div>
+		</div>
+		<noscript>
+			<p style="max-width: 40em; margin: 2rem auto; font-family: Georgia, serif">This course runs its visualizations and its Python entirely in the browser, so it needs JavaScript enabled.</p>
+		</noscript>
+		<script type="module" src="/src/main.tsx"></script>
+	</body>
+</html>

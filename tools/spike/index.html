@@ -1,0 +1,26 @@
+<!doctype html>
+<!-- The feasibility spike: the reference scribe training in a real browser
+     tab under the pinned Pyodide, against the M0 budget in the design doc.
+     This page is a measuring instrument, not part of the course; it is never
+     linked from the app (course one's spike sat in the shipping nav for three
+     and a half days, which is why this one lives in tools/).
+
+     Serve the repo root and open
+       tools/spike/index.html?dist=<pyodide indexURL>&T=64&C=64&H=4&L=2&B=16&lr=0.002&budget=90
+     or drive it with tools/spike/measure.mjs. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>spike: the scribe in a tab</title>
+    <style>
+      body { font: 14px/1.4 ui-monospace, monospace; margin: 2rem; }
+      #log { white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <h1>feasibility spike</h1>
+    <div id="status">booting...</div>
+    <pre id="log"></pre>
+    <script type="module" src="./spike.js"></script>
+  </body>
+</html>

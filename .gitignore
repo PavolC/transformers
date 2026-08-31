@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.bench/
+__pycache__/
+*.pyc
+tsconfig.tsbuildinfo
+.pyodide-cache/

@@ -1,62 +1,59 @@
-Course kit: license
-===================
+Transformers (Moving Parts): license and attribution
+=====================================================
 
-Two kinds of material, two licenses. Both are permissive; the split is about
-what each kind of thing is, not about how freely you may use it.
+This project contains a few kinds of material under different terms. All of
+them are permissive; nothing here is NonCommercial. In short:
+
+    Code                        MIT
+      the application (src/), the exercises (skeletons, tests, solutions),
+      the Python reference implementation, the brand components, and the
+      tools/ scripts
+
+    Prose and figures           CC BY 4.0
+      the chapter text, the exercise prompts, the diagrams, and the course
+      documents (CLAUDE.md, CASEBOOK.md, METHOD.md, BRAND.md, the design doc)
+
+    Data                        public domain
+      public/data/tinyshakespeare.txt is Shakespeare's text, public domain,
+      in the concatenated form circulated by Andrej Karpathy's char-rnn
+      repository (see tools/fetch_shakespeare.py for provenance and hash)
+
+    Third-party notices         THIRD_PARTY_NOTICES.md
+      the offline parity-fixture generator derives from nanoGPT (MIT,
+      (c) Andrej Karpathy); its notice travels there
 
 
-The documents
--------------
+Code: MIT License
+-----------------
 
-CLAUDE.md, METHOD.md, CASEBOOK.md, BRAND.md, DESIGN-DOC-TEMPLATE.md, README.md
-and the files in .claude/commands/ are licensed under the Creative Commons
-Attribution 4.0 International License (CC BY 4.0):
+Copyright (c) 2026 Pavol Chvala
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+Prose and figures: CC BY 4.0
+----------------------------
+
+The course's written content and figures are licensed under the Creative
+Commons Attribution 4.0 International License:
 
     https://creativecommons.org/licenses/by/4.0/
 
-Share and adapt them for any purpose, including commercially, with attribution.
-Adapting the rules file into your own project is the intended use; that is what
-the FILL holes are for.
-
-Attribute to Pavol Chvala, and link back to the course they were extracted
-from if you can: https://github.com/PavolC/neural-nets
-
-
-The brand layer
----------------
-
-brand/ is code, and is licensed under the MIT License:
-
-    MIT License
-
-    Copyright (c) 2026 Pavol Chvala
-
-    Permission is hereby granted, free of charge, to any person obtaining a
-    copy of this software and associated documentation files (the "Software"),
-    to deal in the Software without restriction, including without limitation
-    the rights to use, copy, modify, merge, publish, distribute, sublicense,
-    and/or sell copies of the Software, and to permit persons to whom the
-    Software is furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in
-    all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-    THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-    DEALINGS IN THE SOFTWARE.
-
-
-What is not licensed here
--------------------------
-
-The name "Moving Parts" and the sigmoid glyph that brand.ts draws are not
-granted by either license above. The MIT grant covers the code that draws a
-mark, not the mark itself.
-
-This is not a restriction you will feel: brand.ts is the file a new course
-edits anyway. Change the accent, the glyph and the series name, and the
-identity is yours. See BRAND.md.
+Share and adapt them for any purpose, including commercially, with attribution
+to Pavol Chvala and a link to this repository.

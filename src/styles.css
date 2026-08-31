@@ -1,0 +1,4275 @@
+/* The series brand layer: the accent family, the ground, the two inks, the two
+   rule weights, the type roles, the masthead, the tab strip and the footer.
+   Loaded first so everything below can override it; see src/brand/brand.css
+   for what a sibling course changes.
+
+   --bg, --ink, --muted, --rule and --rule-strong are declared there, not here.
+   They used to be declared here and referenced there, which meant the layer
+   only worked in this repo, by load order, and a sibling that dropped the
+   folder into an empty one got three invalid accent mixes. */
+@import "./brand/brand.css";
+
+:root {
+	--loss: #b3423a;
+	/* The accuracy line's hue, which happens to equal this course's accent
+     today. Kept as its own literal rather than aliased to --accent: one is a
+     brand colour and one names a quantity in a chart, and a sibling course
+     that picks a different accent must not silently repaint its charts. */
+	--acc: #0b6e4f;
+	/* Disabled controls, as explicit colors rather than an opacity wash. A
+     faded control still has to be readable: the label is often the only thing
+     explaining why it is disabled. */
+	--disabled-bg: #ecefea;
+	--disabled-fg: #4f5a54;
+	--disabled-rule: #cfd4ce;
+	/* The surface a horizontal scroll container sits on, so its edge-fade
+     affordance blends in. Defaults to the page ground; white panels below
+     redeclare it. */
+	/* The surface a figure, an equation or a table is drawn on. The scroll
+     covers and the SVG label halos take their colour from this rather than
+     from --bg, because a panel or a card inside the page has a ground of its
+     own: painting the page's ground over it leaves a visible band, which is
+     what the equation card in Module 4's stepper had down both sides, and a
+     wire label's halo was a grey ring on a white panel. Any element that sets
+     a background of its own sets this to match, below. */
+	--fig-ground: var(--bg);
+
+	/* The box-and-arrow family's one scale, calibrated so the widest diagram in
+     the course fills the column exactly: Module 4's ripple log is 817 units
+     across, the column is 873px, so one unit is 873/817 px. Every diagram in
+     the family renders at this scale and is centred, so one with fewer boxes
+     in it is smaller rather than differently drawn: same stroke weight, same
+     label size, whatever it contains. Each carries its own width as
+     --fig-units, set by fig() in ModuleBits.
+
+     The literal below is the value for a column at its full width, and it is
+     what paints before any script runs. Once the shell has measured the
+     article it publishes the real one on the root, as --col-content / 817,
+     because the workbench can be dragged wider than the room beside the
+     column and the column then narrows. The calibration is the same
+     statement it always was; it is computed now rather than assumed, which
+     is what lets it stay true at more than one column width. */
+	--fig-scale: 1.0685px;
+	/* The floor it stops shrinking at on a phone, where it pans instead: the
+     same 620px the widest one used to take, in the same proportion. */
+	--fig-scale-min: 0.7589px;
+
+	/* Ink for text sitting on a saturated fill (--accent, --acc, --loss).
+     The #fff used as a *surface* is still a literal, at thirteen sites, so
+     this is a note to whoever tokenizes those rather than a separation the
+     sheet already holds: one is ink, one is a ground, and they would move for
+     different reasons. Do not point the new surface token at this one. */
+	--on-accent: #fff;
+
+	/* Figure and data hues, each naming one thing in one diagram family.
+     Aliases of the values already in use, at those values. They are well
+     apart from each other (the closest pair, gold and orange, is sixteen
+     times the just-noticeable difference), so the risk here is not a merge:
+     it is repainting them from the brand accent. Each names a different
+     quantity and they move independently of the accent and of each other.
+     Module 1's two hidden neurons keep their identity colours across the
+     wiring diagram, the plots and the legend swatches. */
+	--data-purple: #6a51a3; /* h1 */
+	--data-teal: #1b7a99; /* h2 */
+	--data-gold: #c8a24a; /* the hard-threshold curve, and class 0 */
+	--data-orange: #d17a22;
+	--data-green: #2a9f65;
+
+	/* Panel surfaces, likewise aliased at their existing values. All three sit
+     within a hair of each other and of #fff; collapsing them would be a
+     visible change, however small, so they stay distinct. */
+	--surface-card: #fbfbf7; /* bordered cards: hints, recap, snippet footer */
+	--surface-sunken: #f4f4f0; /* code strips and table headers */
+	--surface-note: #f6f6f2; /* inline notes and asides */
+	--node-idle: #e8e8e2; /* an unlit neuron or input box */
+
+	/* The reading column and the gutter table of contents beside it. The toc's
+     position is computed from these rather than hardcoded, so moving the
+     column cannot silently leave the toc behind. */
+	/* The sticky section bar, and with it the workbench's head: the two sit at
+     the same top when the panel is docked, so their bottom rules have to land
+     on one line. They were 53.4 and 57.1, and four pixels apart reads as a
+     misalignment rather than as two different things. Also what the in-page
+     jump offset clears, keyed to it so the two cannot drift. */
+	--bar-h: 54px;
+	--col-width: 920px;
+	--toc-width: 190px;
+	--toc-gap: 28px;
+
+	/* Corner radii: controls, panels, and pills. The scrollbar thumb's old 4px
+     is the same shape as the pill, because 999px clamps to half of its 8px
+     height. */
+	--radius-sm: 3px;
+	--radius: 6px;
+	--radius-lg: 8px;
+	--radius-pill: 999px;
+	color-scheme: light;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	/* On html (not body) so that rem-based sizes share the same base and the
+     UI chrome scales with the prose. */
+	font-size: 19px;
+}
+
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--ink);
+	font-family: var(--font-prose);
+	line-height: 1.6;
+}
+
+.app {
+	max-width: var(--col-width);
+	margin: 0 auto;
+	padding: 2.5rem 1.25rem 4rem;
+}
+
+h2 {
+	font-size: 1.3rem;
+	margin: 2rem 0 0.5rem;
+}
+
+button {
+	font: inherit;
+	font-size: 1rem;
+	padding: 0.5rem 1.1rem;
+	border: 1px solid var(--accent);
+	border-radius: var(--radius);
+	background: var(--accent);
+	color: var(--on-accent);
+	cursor: pointer;
+}
+
+button:disabled {
+	background: var(--disabled-bg);
+	border-color: var(--disabled-rule);
+	color: var(--disabled-fg);
+	cursor: default;
+}
+
+/* One visible focus ring everywhere, rather than relying on each browser's
+   default surviving the custom backgrounds and removed borders below. */
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+	border-radius: var(--radius-sm);
+}
+
+.button-secondary {
+	background: transparent;
+	color: var(--accent);
+}
+
+/* Its own hover, at its own specificity, so nothing has to outrank anything. */
+.button-secondary:hover:not(:disabled) {
+	background: var(--accent-wash);
+}
+
+.badge-done {
+	display: inline-block;
+	margin-left: 0.6rem;
+	padding: 0.1rem 0.55rem;
+	border-radius: var(--radius-pill);
+	background: var(--acc);
+	color: var(--on-accent);
+	font-size: 0.7rem;
+	font-family: var(--font-ui);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	vertical-align: middle;
+}
+
+.code-editor {
+	border: 1px solid var(--rule);
+	border-radius: var(--radius-lg);
+	overflow: hidden;
+	margin: 1rem 0;
+	font-size: 0.85rem;
+	height: 430px;
+	min-height: 140px;
+	resize: vertical; /* drag the bottom edge */
+}
+
+.code-editor .cm-editor {
+	height: 100%;
+}
+
+.code-editor .cm-editor.cm-focused {
+	outline: 2px solid var(--accent);
+	outline-offset: -1px;
+}
+
+/* A row of controls, under the editor or beside an interactive. */
+.exercise-controls,
+.interactive-controls {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	flex-wrap: wrap;
+	margin-bottom: 0.5rem;
+}
+
+.play-snippet {
+	/* auto: the reading-measure rule caps this box, and a margin shorthand
+	   with a 0 here would silently reset the centring it needs. */
+	margin: 0.8rem auto;
+}
+
+.play-snippet pre {
+	background: var(--surface-sunken);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius) var(--radius) 0 0;
+	border-bottom: none;
+	padding: 0.7rem;
+	margin: 0;
+	font-size: 0.82rem;
+	overflow-x: auto;
+}
+
+.play-snippet-buttons {
+	display: flex;
+	gap: 0.5rem;
+	border: 1px solid var(--rule);
+	border-radius: 0 0 var(--radius) var(--radius);
+	padding: 0.35rem 0.5rem;
+	background: var(--surface-card);
+}
+
+.play-snippet-buttons button {
+	font-size: 0.8rem;
+	padding: 0.2rem 0.7rem;
+}
+
+.exercise-tip {
+	font-size: 0.88rem;
+	font-family: var(--font-ui);
+	color: var(--muted);
+	margin: -0.4rem 0 0.7rem;
+}
+
+.output-panel {
+	margin: 0.8rem 0;
+}
+
+.output-panel h5 {
+	font-size: 0.85rem;
+	font-family: var(--font-ui);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--muted);
+	margin: 0 0 0.3rem;
+}
+
+.output-panel pre {
+	background: #1e1e1c;
+	color: #e6e6e0;
+	border-radius: var(--radius);
+	padding: 0.75rem;
+	font-size: 0.85rem;
+	overflow: auto;
+	min-height: 2.4em;
+	/* Capped everywhere, not only in fullscreen: a chatty run used to push the
+     test results off the bottom of the page. */
+	max-height: 22em;
+	margin: 0 0 0.4rem;
+	white-space: pre-wrap;
+}
+
+.test-results {
+	margin: 1rem 0;
+}
+
+/* Same weight as the pass summary: a failure is where the reader needs
+   orientation, so it should not be the quieter of the two. */
+.test-summary {
+	font-size: 0.95rem;
+	font-weight: bold;
+	color: var(--ink);
+}
+
+.test-summary-pass {
+	color: var(--acc);
+}
+
+.test-orient {
+	font-size: 0.92rem;
+	color: var(--ink);
+	background: var(--surface-note);
+	border-radius: var(--radius);
+	padding: 0.5rem 0.7rem;
+	margin: 0.3rem 0 0.7rem;
+}
+
+/* Results left standing while the next run is in flight, or after the editor
+   ran on its own: still there (so the page does not collapse), and marked by a
+   rule plus the note below rather than by fading. Dimming them with opacity
+   dropped the failure messages and the cross marks under 4.5:1, and a stale
+   result is still a result the reader has to be able to read. */
+.test-results-stale {
+	border-left: 3px solid var(--rule-strong);
+	padding-left: 0.7rem;
+}
+
+.test-stale-note {
+	font-size: 0.85rem;
+	font-family: var(--font-ui);
+	color: var(--muted);
+	margin: 0 0 0.3rem;
+}
+
+.test-also {
+	font-size: 0.85rem;
+	font-family: var(--font-ui);
+	color: var(--muted);
+	margin: 0.15rem 0 0;
+}
+
+/* Prominent success state for an exercise's flagship test (Module 5's
+   gradient check; see the design doc's exercise/test contract). */
+.flagship-banner {
+	border: 2px solid var(--acc);
+	border-radius: var(--radius-lg);
+	background: var(--accent-wash);
+	color: var(--ink);
+	padding: 0.8rem 1rem;
+	margin: 0.6rem 0 0.8rem;
+	font-size: 0.95rem;
+}
+
+.test-result {
+	display: flex;
+	gap: 0.6rem;
+	padding: 0.5rem 0.7rem;
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	margin-bottom: 0.4rem;
+	font-size: 0.9rem;
+}
+
+.test-result p {
+	margin: 0.3rem 0 0;
+	white-space: pre-wrap;
+	color: var(--muted);
+}
+
+.test-pass {
+	border-left: 3px solid var(--acc);
+}
+
+.test-fail {
+	border-left: 3px solid var(--loss);
+}
+
+.test-mark {
+	font-family: var(--font-ui);
+	font-weight: bold;
+}
+
+.test-pass .test-mark {
+	color: var(--acc);
+}
+
+.test-fail .test-mark {
+	color: var(--loss);
+}
+
+.hint {
+	border: 1px solid var(--rule);
+	border-radius: var(--radius-lg);
+	padding: 0.2rem 1rem 0.8rem;
+	margin-bottom: 0.8rem;
+	background: var(--surface-card);
+}
+
+.hint h5 {
+	font-size: 0.95rem;
+	margin: 0.8rem 0 0.4rem;
+}
+
+.hint p,
+.hint-pre {
+	font-size: 0.9rem;
+	margin: 0.4rem 0;
+}
+
+.hint-pre {
+	white-space: pre-wrap;
+	font-size: 0.8rem;
+	background: var(--surface-sunken);
+	border-radius: var(--radius);
+	padding: 0.7rem;
+	overflow-x: auto;
+}
+
+.button-hint {
+	font-size: 0.9rem;
+}
+
+/* ---------- the reading measure ---------- */
+
+/* Two widths, and only two, and the rule is about the ink, not the boxes.
+   The eye judges alignment by ragged left text edges, so everything that has
+   one puts it on the prose axis at --measure: prose, headings, captions, the
+   cards, the equations, the blocks that hold code, and the start page's rows
+   of buttons. The full column belongs only to ink that centres or to boxes
+   that show their own extent: figures, tables, interactive panels, the
+   editor. A centred figure reads as a picture sized to its content however
+   wide it is; code and buttons cannot centre their ink, so at full column
+   they started it at the column edge, 100 to 113px left of every paragraph,
+   which is the lopsidedness this rule exists to prevent. A third width in
+   between is what the equations used to have, and three widths on one page
+   read as an accident rather than as a rule.
+
+   The selectors are all direct-child, which is what makes this safe in a
+   stylesheet with twenty-five interactives in it: a paragraph inside a panel
+   or a figure caption is not a child of the article and never sees this.
+   Headings are in the set too, the exercise's h4 included: left out, they
+   started at the column's left edge while the prose under them started
+   further in, which reads as a mistake.
+
+   margin-inline: auto is the load-bearing half. Left-aligned in a wider
+   column, every block wider than the prose (a figure, a table) hangs off to
+   its right and the page looks lopsided, which is exactly what it did.
+   Centred, the prose, the equations and the figures all share one axis: an
+   equation sits dead centre over the paragraph that introduces it, and a
+   figure grows symmetrically around it. */
+.module > h2,
+.module > p,
+.module > ul,
+.module > ol,
+.module > .eq,
+.module-section-title,
+.start-page > h3,
+.start-cta,
+.start-storage,
+.exercise > p,
+.exercise > .eq,
+.exercise-title,
+.after-this,
+.recap,
+.module-aside,
+.notation,
+.play-snippet,
+.module > .hint-pre,
+.next-module {
+	max-width: var(--measure);
+	margin-inline: auto;
+}
+
+/* The cards hold prose, so their lines have to land on the axis at the measure
+   like every other line on the page. That means the box carries the measure
+   plus everything outside it: the 2.2rem of padding and the two 1px borders.
+   The borders were the part left out, and the recap's lines ran 4px short of
+   the paragraph above them because its accent rule is 3px rather than 1. That
+   asymmetry is given back in the padding below, so the card's inner edges are
+   even and the box can still centre itself. */
+.after-this,
+.recap,
+.module-aside {
+	max-width: calc(var(--measure) + 2.2rem + 2px);
+}
+
+/* The notation lookup and the code blocks carry the measure the same way the
+   cards do: box = measure + own padding + own borders, so the first character
+   inside lands on the axis. The paddings differ per box, which is why these
+   are not one rule: the notation card pads 1rem inside 1px borders, the play
+   snippet's pre 0.7rem inside 1px, Module 1's five-ideas block 0.7rem with no
+   border.
+
+   A block whose code cannot wrap gets width: max-content over that floor: the
+   box grows to its longest line (up to the column) before anything scrolls,
+   so a 72-character print is not clipped by two characters to honour a
+   69-character measure. Short snippets sit exactly on the axis; a longer one
+   widens symmetrically, and its border still encloses the last character. */
+.notation {
+	max-width: calc(var(--measure) + 2rem + 2px);
+}
+
+.play-snippet {
+	width: max-content;
+	min-width: min(calc(var(--measure) + 1.4rem + 2px), 100%);
+	max-width: 100%;
+}
+
+.module > .hint-pre {
+	max-width: calc(var(--measure) + 1.4rem);
+}
+
+/* ---------- module pages ---------- */
+
+/* Direct child only: the module's own title. A descendant selector here used
+   to hand the module-title size to any nested h2 (the exercise's), which then
+   outranked the section heading above it. */
+.module > h2 {
+	font-size: 1.5rem;
+}
+
+/* The exercise sits inside a section, so its title ranks below a section
+   heading (1.15rem) and above body text. The title is its own span so the
+   badge does not run into it in the accessible name ("A sigmoid neuronpassed").
+   */
+.exercise-title {
+	font-size: 1.05rem;
+	margin: 2.2rem auto 0.5rem;
+	display: flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+}
+
+/* Visible to a screen reader, not to the eye. Used for the run announcements
+   and for the pass/fail state that the check and cross glyphs alone did not
+   carry. */
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+.after-this,
+.recap {
+	border: 1px solid var(--rule);
+	border-left: 3px solid var(--accent);
+	border-radius: var(--radius-lg);
+	/* The left padding is short by the 2px the accent rule is wider than the
+     hairline opposite it, so border-plus-padding is 21.9px on both sides. */
+	padding: 0.2rem 1.1rem 0.8rem calc(1.1rem - 2px);
+	margin: 1.6rem auto;
+	background: var(--surface-card);
+}
+
+/* The opener is a promise and the recap is a summary, and they were the same
+   box. Tinting the opener in the accent is the cheapest way to tell a reader
+   arriving at the top of a module from one arriving at the bottom. */
+.after-this {
+	background: var(--accent-wash);
+	border-color: var(--accent-rule);
+}
+
+/* The opener's summary carries the card's heading treatment, plus the marker
+   that says it folds. The marker takes the accent, not --accent-rule: that
+   token is a 30 percent tint meant for rules, and a triangle drawn in it is
+   invisible, which is the whole affordance gone. */
+.after-this > summary {
+	cursor: pointer;
+	list-style-position: inside;
+}
+
+.after-this > summary::marker {
+	color: var(--accent);
+	font-size: 0.85em;
+}
+
+.after-this > summary::-webkit-details-marker {
+	color: var(--accent);
+}
+
+/* Folded, the card is one line, so it should be the height of one line: the
+   summary's own bottom margin and the card's bottom padding are both there to
+   separate it from a list that is not being shown. */
+.after-this:not([open]) > summary {
+	margin-bottom: 0.2rem;
+}
+
+.after-this:not([open]) {
+	padding-bottom: 0.3rem;
+}
+
+/* A card heading is chrome, not prose: it labels the box rather than
+   continuing the argument, so it takes the chrome face and the accent. Not the
+   uppercase label idiom, because "What you'll be able to do after this" is a
+   sentence and letterspaced capitals would wrap it into three lines. */
+.after-this > summary,
+.after-this h3,
+.recap h3 {
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	color: var(--accent);
+	margin: 0.9rem 0 0.5rem;
+}
+
+.after-this li,
+.recap li {
+	font-size: 0.95rem;
+	margin-bottom: 0.3rem;
+}
+
+.go-deeper {
+	font-size: 0.9rem;
+	color: var(--muted);
+}
+
+.eq {
+	margin: 1.2rem auto;
+}
+
+/* The scroll sits on the equation alone, never on the block: when .eq itself
+   scrolled, reading the right-hand end of a wide equation carried its
+   plain-language gloss off the screen with it. */
+.eq-scroll {
+	overflow-x: auto;
+}
+
+/* Shared affordance for anything that scrolls sideways. Two signals, because
+   neither covers every platform: a persistent thin scrollbar (desktop,
+   Firefox, Android) and edge shadows that appear only when there is more
+   content that way (the only one iOS shows, where overlay scrollbars are
+   invisible until touched). */
+/* var(--fig-ground) is read here, on the scrolling element, rather than
+   resolved into a token of its own at :root. A custom property that references
+   another is substituted where it is declared, so `--scroll-surface:
+   var(--fig-ground)` on :root computes to the page's ground once and inherits
+   that value down: the card in Module 4's stepper still got #fdfdfb painted
+   over its #f9faf9. Read on the element, it picks up the nearest ancestor that
+   set one. */
+.scroll-x {
+	overflow-x: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--rule-strong) transparent;
+	background-image:
+		linear-gradient(to right, var(--fig-ground) 0 15px, transparent 30px), linear-gradient(to left, var(--fig-ground) 0 15px, transparent 30px),
+		linear-gradient(to right, transparent 0, color-mix(in srgb, var(--ink) 13%, transparent) 4px, transparent 15px),
+		linear-gradient(to left, transparent 0, color-mix(in srgb, var(--ink) 13%, transparent) 4px, transparent 15px);
+	background-position:
+		0 0,
+		100% 0,
+		0 0,
+		100% 0;
+	background-repeat: no-repeat;
+	background-size:
+		30px 100%,
+		30px 100%,
+		15px 100%,
+		15px 100%;
+	/* The first two are painted with the content, so they slide away from an edge
+     once it is scrolled past and stop covering the shadow behind. Two details
+     keep them from leaving a stray border on a container that has nothing to
+     scroll. They hold their surface colour flat across the shadow's whole
+     15px before they begin to fade, because fading from the first pixel left
+     about five percent of it showing. And the shadow starts transparent and
+     reaches full strength 4px in, rather than at the edge: the cover is
+     painted with the content while the shadow is painted with the box, so on a
+     2x screen, wherever the box lands on a half pixel, the two round to
+     different device columns and one column of shadow is left uncovered at the
+     very edge. Measured by rendering each equation twice, once with the shadow
+     layers made transparent, and differencing: at full strength that column
+     came out 29 levels darker than the page, and starting the shadow 4px in
+     puts it at 2, which is under the threshold where a single column of a
+     warm-white ground reads as a line. */
+	background-attachment: local, local, scroll, scroll;
+}
+
+.scroll-x::-webkit-scrollbar {
+	height: 8px;
+}
+
+.scroll-x::-webkit-scrollbar-thumb {
+	background: var(--rule-strong);
+	border-radius: var(--radius-pill);
+}
+
+.scroll-x::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+/* Everything that paints a ground of its own, so a cover or a halo drawn on it
+   matches. One declaration serves both the scroll covers and the SVG label
+   halos, and a card nested inside a panel wins over the panel. */
+.interactive,
+.concert-plot,
+.curve-figure,
+.metrics-chart,
+.digit-thumb,
+.quiz-option,
+.mistake-canvas {
+	--fig-ground: #fff;
+}
+
+.bp-eqcard {
+	--fig-ground: #f9faf9;
+}
+
+.quiz-wrong {
+	--fig-ground: #faeeed;
+}
+
+/* The same, for the cards and notes whose ground is one of the surface tokens.
+   A figure or a table inside one of these is drawn on the card, not on the
+   page: Module 4's currency diagram sits in an aside and the notation lookup
+   on the start page is a card, and both were painting the page's ground over
+   their own. */
+.module-aside {
+	--fig-ground: var(--surface-note);
+}
+
+.notation,
+.after-this,
+.recap,
+.hint {
+	--fig-ground: var(--surface-card);
+}
+
+.eq-gloss {
+	font-size: 0.9rem;
+	color: var(--muted);
+	font-style: italic;
+	margin: 0.3rem auto 0;
+	max-width: 85%;
+	text-align: center;
+}
+
+.module-figure {
+	margin: 1.5rem 0;
+}
+
+/* A caption is read in sentences, so it takes the text's measure and axis even
+   though the figure above it may be twice as wide. Left at the figure's width
+   it ran wider than every paragraph on the page, which put the one piece of
+   prose that explains a diagram outside the column the reader is reading in. */
+.module-figure figcaption {
+	max-width: var(--measure);
+	margin: 0.5rem auto 0;
+	font-size: 0.85rem;
+	color: var(--muted);
+}
+
+/* The scroll lives on the wrapper, not the table: display:block on a <table>
+   drops its table semantics from the accessibility tree, so the header cells
+   stop being announced as headers. */
+.table-scroll {
+	margin: 0.8rem 0;
+}
+
+.truth-table {
+	border-collapse: collapse;
+	margin: 0 auto;
+	font-size: 0.9rem;
+	font-family: var(--font-ui);
+}
+
+.truth-table th,
+.truth-table td {
+	border: 1px solid var(--rule);
+	padding: 0.3rem 0.9rem;
+	text-align: center;
+}
+
+.truth-table th,
+.bp-table th {
+	background: var(--surface-sunken);
+	font-weight: 600;
+}
+
+.dataset-rule {
+	font-size: 0.85rem;
+	font-family: var(--font-ui);
+	color: var(--muted);
+	margin: 0 0 0.2rem;
+}
+
+.line-equation {
+	font-size: 0.85rem;
+	font-family: var(--font-ui);
+	color: var(--muted);
+	margin: 0 0 0.4rem;
+	min-height: 1.5em; /* numbers change while dragging; keep the chart still */
+}
+
+.line-equation code {
+	color: var(--ink);
+}
+
+/* Swatches tying each slider group to its line in the XOR playground */
+.line-swatch {
+	display: inline-block;
+	width: 22px;
+	height: 0;
+	margin-right: 0.45em;
+	vertical-align: middle;
+}
+
+.line-swatch-h1 {
+	border-top: 2.5px solid var(--data-purple);
+}
+
+.line-swatch-h2 {
+	border-top: 2.5px dashed var(--data-teal);
+}
+
+.line-swatch-out {
+	height: 12px;
+	background: linear-gradient(90deg, #e8dbbf, var(--data-green));
+	border-radius: var(--radius-sm);
+}
+
+/* Sigmoid vs hard threshold (Module 1) */
+.slider-row-wide {
+	flex: 1;
+	min-width: 260px;
+}
+
+.step-curve {
+	stroke: var(--data-gold);
+	stroke-width: 2.5;
+}
+
+.step-jump {
+	stroke-dasharray: 4 3;
+	stroke-width: 1.6;
+}
+
+.sigmoid-curve {
+	fill: none;
+	stroke: var(--acc);
+	stroke-width: 2.5;
+}
+
+.z-marker {
+	stroke: var(--muted);
+	stroke-width: 1;
+	stroke-dasharray: 3 3;
+}
+
+.dot-step {
+	fill: var(--data-gold);
+	stroke: #fff;
+	stroke-width: 1.5;
+}
+
+.dot-sigmoid {
+	fill: var(--acc);
+	stroke: #fff;
+	stroke-width: 1.5;
+}
+
+.swatch-step {
+	fill: var(--data-gold);
+}
+
+.swatch-sigmoid {
+	fill: var(--acc);
+}
+
+/* Static concert-neuron plot in Module 1 */
+.concert-plot {
+	display: block;
+	margin: 0 auto;
+	background: #fff;
+	border: 1px solid var(--rule);
+	border-radius: var(--radius-lg);
+}
+
+.concert-go-zone {
+	fill: var(--data-green);
+	opacity: 0.13;
+}
+
+.concert-label {
+	font-family: var(--font-ui);
+	font-size: 12.5px;
+	fill: var(--muted);
+}
+
+/* Static 2-2-1 wiring diagram in Module 1, and Module 6's re-draw of it */
+.tiny-net {
+	display: block;
+	margin: 0 auto;
+}
+
+.tiny-net-edge {
+	stroke: var(--muted);
+	stroke-width: 1.4;
+}
+
+.tiny-net-arrowhead {
+	fill: var(--muted);
+}
+
+.tiny-net-input {
+	fill: var(--node-idle);
+	stroke: var(--muted);
+	stroke-width: 1.2;
+}
+
+.tiny-net-neuron {
+	fill: #fff;
+	stroke: var(--accent);
+	stroke-width: 1.8;
+}
+
+/* The italic label that names a quantity inside a diagram. */
+.tiny-net-label,
+.shape-name {
+	font-family: var(--font-prose);
+	font-style: italic;
+	font-size: 17px;
+	fill: var(--ink);
+}
+
+.tiny-net-caption {
+	font-family: var(--font-ui);
+	font-size: 12px;
+	fill: var(--muted);
+}
+
+/* ---------- interactives ---------- */
+
+.interactive {
+	border: 1px solid var(--rule);
+	border-radius: var(--radius-lg);
+	padding: 0.8rem;
+	background: #fff;
+}
+
+.interactive-svg {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+
+/* touch-action: none tells the browser to hand every gesture to the page, so
+   it belongs only on the handful of pixels that are actually dragged. On the
+   whole SVG it also swallowed the page scroll and, on the stepper diagram, the
+   sideways pan that is the only way to see the right-hand side on a phone. */
+.drag-handle,
+.sculpt-surface {
+	touch-action: none;
+}
+
+.interactive-status {
+	font-size: 0.88rem;
+	color: var(--muted);
+	font-family: var(--font-ui);
+	margin: 0.4rem 0 0;
+}
+
+/* Inside a controls row, a status always occupies its own full-width line,
+   so its text changing length never re-wraps the buttons or the content
+   below them mid-interaction. */
+.interactive-controls .interactive-status,
+.interactive-controls .demo-status {
+	flex-basis: 100%;
+	min-height: 1.6em;
+	margin: 0;
+}
+
+.status-good {
+	color: var(--acc);
+	font-weight: 600;
+}
+
+/* For status text that changes while the user interacts: reserve two lines
+   so growing or shrinking messages never push other elements around. */
+.status-fixed {
+	min-height: 2.9em;
+}
+
+/* A chip at rest is an outline pill: the base button rule fills every button
+   with the accent, so a chip that does not reset the fill is pixel-identical
+   to .chip-active, and all of a group's options read as selected at once.
+   That hid which lambda, start and view were chosen on every panel. Same
+   idiom as .button-secondary: transparent ground, accent ink, its own hover
+   at its own specificity, which never matches the active chip. */
+.chip {
+	padding: 0.2rem 0.7rem;
+	font-size: 0.85rem;
+	border-radius: var(--radius-pill);
+	background: transparent;
+	color: var(--accent);
+}
+
+.chip:hover:not(:disabled):not(.chip-active) {
+	background: var(--accent-wash);
+}
+
+.chip-active {
+	background: var(--accent);
+	color: var(--on-accent);
+}
+
+.axis-guides line {
+	stroke: var(--rule);
+	stroke-dasharray: 3 3;
+}
+
+/* The small muted sans label every figure uses: ticks, axis names, node
+   names. It was declared three times, one of them an exact duplicate. */
+.axis-guides text,
+.chart-tick,
+.chart-axis-label,
+.netdiag-label {
+	font-family: var(--font-ui);
+	font-size: 11px;
+	fill: var(--muted);
+}
+
+.axis-line {
+	stroke: var(--rule);
+}
+
+.sep-line {
+	stroke: var(--ink);
+	stroke-width: 2;
+}
+
+.sep-handle {
+	fill: #fff;
+	stroke: var(--ink);
+	stroke-width: 2;
+	pointer-events: none;
+}
+
+/* Invisible, and the thing that actually receives the drag. */
+.sep-grab {
+	fill: transparent;
+	cursor: grab;
+}
+
+.sep-grab:active {
+	cursor: grabbing;
+}
+
+.pt-class0 {
+	fill: var(--data-gold);
+}
+
+.pt-class1 {
+	fill: var(--acc);
+}
+
+.pt-wrong {
+	fill: none;
+	stroke: var(--loss);
+	stroke-width: 2;
+	stroke-dasharray: 3 2;
+}
+
+/* XOR network */
+
+/* Three stacked phase sections; each holds its chart beside the sliders
+   that own it. Fixed chart basis: wrap depends only on window width, never
+   on content, so nothing jumps while a slider is being dragged. */
+.xor-phase + .xor-phase {
+	border-top: 1px dashed var(--rule);
+	margin-top: 1.1rem;
+	padding-top: 0.9rem;
+}
+
+.xor-phase-title {
+	font-size: 1rem;
+	margin: 0 0 0.3rem;
+}
+
+/* A chart beside its readout, stacking when the column gets narrow. */
+.xor-phase-body,
+.pixels-row {
+	display: flex;
+	gap: 1.2rem;
+	flex-wrap: wrap;
+	align-items: flex-start;
+}
+
+.xor-chart {
+	/* Fixed basis (wrap depends on window width, never content); max-width
+     lets the chart scale down instead of clipping when the column is
+     narrower than the basis. */
+	flex: 0 0 300px;
+	max-width: 100%;
+}
+
+.xor-phase-controls {
+	flex: 1 1 320px;
+	min-width: 280px;
+}
+
+.xor-plane-stack {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 1 / 1;
+}
+
+.xor-plane-stack canvas {
+	image-rendering: pixelated;
+	border: 1px solid var(--rule);
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+.xor-plane-stack svg {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.hidden-line-1 {
+	stroke: var(--data-purple);
+	stroke-width: 0.8;
+}
+
+.hidden-line-2 {
+	stroke: var(--data-teal);
+	stroke-width: 0.8;
+	stroke-dasharray: 2 1.2;
+}
+
+.output-line {
+	stroke: var(--ink);
+	stroke-width: 1;
+}
+
+.hidden-grid {
+	stroke: rgba(0, 0, 0, 0.16);
+	stroke-width: 0.35;
+	stroke-dasharray: 1.5 1.5;
+}
+
+.xor-space-label {
+	font-size: 0.82rem;
+	font-family: var(--font-ui);
+	color: var(--muted);
+	margin: 0.6rem 0 0.25rem;
+}
+
+.h1-color {
+	color: var(--data-purple);
+}
+
+.h2-color {
+	color: var(--data-teal);
+}
+
+.h1-axis-strip {
+	stroke: var(--data-purple);
+	stroke-width: 1.6;
+	opacity: 0.75;
+}
+
+.h2-axis-strip {
+	stroke: var(--data-teal);
+	stroke-width: 1.6;
+	stroke-dasharray: 2 1.2;
+	opacity: 0.75;
+}
+
+.axis-id {
+	font-family: var(--font-ui);
+	font-size: 4.2px; /* viewBox units; the panel is square so this scales cleanly */
+	font-weight: 600;
+}
+
+.h1-fill {
+	fill: var(--data-purple);
+}
+
+.h2-fill {
+	fill: var(--data-teal);
+}
+
+.xor-phase-controls fieldset {
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	margin: 0 0 0.6rem;
+	padding: 0.3rem 0.8rem 0.55rem;
+	/* Fieldsets default to min-inline-size: min-content, which blocks the
+     slider rows inside from shrinking on narrow screens. */
+	min-width: 0;
+}
+
+.xor-phase-controls legend {
+	font-size: 0.85rem;
+	color: var(--muted);
+	font-family: var(--font-ui);
+	padding: 0 0.3rem;
+}
+
+.slider-row {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.82rem;
+	font-family: var(--font-ui);
+	color: var(--muted);
+	margin: 0.15rem 0;
+	/* As a flex item (e.g. inside .interactive-controls), allow the whole row
+     to shrink below the range input's intrinsic width on narrow screens. */
+	min-width: 0;
+}
+
+.slider-row span {
+	width: 7.5em;
+}
+
+.slider-row input {
+	flex: 1;
+	min-width: 0; /* let range inputs shrink instead of overflowing the box */
+	accent-color: var(--accent);
+}
+
+.slider-row code {
+	width: 3.5em;
+	flex-shrink: 0;
+	text-align: right;
+}
+
+.xor-readout {
+	font-family: var(--font-ui);
+	font-size: 0.8rem;
+	color: var(--muted);
+}
+
+.xor-corner {
+	margin-right: 0.9rem;
+}
+
+/* descent playgrounds */
+
+.curve {
+	fill: none;
+	stroke: var(--ink);
+	stroke-width: 1.5;
+}
+
+.ball {
+	fill: var(--accent);
+}
+
+.ball-sgd {
+	fill: var(--data-orange);
+}
+
+.ball-trail {
+	fill: var(--accent);
+	opacity: 0.35;
+}
+
+.contour {
+	fill: none;
+	stroke: var(--rule);
+}
+
+.minimum-dot {
+	fill: var(--muted);
+}
+
+.traj {
+	fill: none;
+	stroke-width: 1.6;
+}
+
+.traj-batch {
+	stroke: var(--acc);
+}
+
+.traj-sgd {
+	stroke: var(--data-orange);
+}
+
+/* The measured-slope segment in the cost-vs-knob chart. */
+.tangent {
+	stroke: var(--data-orange);
+	stroke-width: 2.2;
+	stroke-linecap: round;
+}
+
+/* Knob picker in the cost-vs-knob chart: one row per neuron, with a
+   fixed-basis group label so the chips align across rows. */
+.knob-picker {
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0.4rem;
+}
+
+.knob-group {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.knob-group-label {
+	flex: 0 0 9.5em;
+	font-family: var(--font-ui);
+	font-size: 0.85rem;
+	color: var(--muted);
+}
+
+.swatch-batch {
+	fill: var(--acc);
+}
+
+.swatch-sgd {
+	fill: var(--data-orange);
+}
+
+.sparkline {
+	max-width: 440px;
+}
+
+/* shapes diagram (Module 2) */
+.shapes-diagram {
+	display: block;
+	margin: 0 auto;
+}
+
+.shape-m {
+	fill: var(--data-purple);
+	fill-opacity: 0.1;
+	stroke: var(--data-purple);
+	stroke-width: 1.4;
+}
+
+.shape-n {
+	fill: var(--data-teal);
+	fill-opacity: 0.1;
+	stroke: var(--data-teal);
+	stroke-width: 1.4;
+}
+
+.shape-w {
+	fill: var(--data-purple);
+	fill-opacity: 0.04;
+	stroke: var(--ink);
+	stroke-width: 1.4;
+}
+
+.shape-row {
+	fill: var(--data-purple);
+	fill-opacity: 0.22;
+	stroke: none;
+}
+
+.shapes-grid {
+	stroke: var(--rule);
+	stroke-width: 0.8;
+}
+
+.shape-op {
+	font-family: var(--font-prose);
+	font-size: 20px;
+	fill: var(--ink);
+}
+
+.shape-dim {
+	font-family: var(--font-ui);
+	font-size: 12.5px;
+}
+
+.dim-m {
+	fill: var(--data-purple);
+}
+
+.dim-n {
+	fill: var(--data-teal);
+}
+
+/* pixels-are-numbers (Module 2) */
+.pixels-stack {
+	position: relative;
+	flex: 0 0 280px;
+	width: 280px;
+	height: 280px;
+	cursor: crosshair;
+}
+
+.pixels-stack canvas {
+	image-rendering: pixelated;
+	border: 1px solid var(--rule);
+	display: block;
+}
+
+.pixels-stack svg {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+
+.pixel-highlight {
+	fill: none;
+	stroke: var(--accent);
+	stroke-width: 0.18;
+}
+
+.pixels-info {
+	flex: 1 1 280px;
+}
+
+.pixels-info .status-fixed {
+	min-height: 4.4em;
+}
+
+.pixels-note {
+	font-size: 0.9rem;
+	color: var(--muted);
+}
+
+/* network diagram */
+
+.netdiag {
+	display: flex;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+
+.netdiag-svg {
+	flex: 1.4;
+	min-width: 300px;
+	height: auto;
+}
+
+.netdiag-side {
+	flex: 1;
+	min-width: 200px;
+}
+
+.netdiag-input {
+	fill: var(--node-idle);
+	stroke: var(--muted);
+}
+
+.netdiag-edge {
+	stroke: var(--rule);
+	stroke-width: 0.7;
+}
+
+.netdiag-neuron {
+	stroke: var(--muted);
+	stroke-width: 1;
+	cursor: pointer;
+}
+
+.neuron-hover {
+	stroke: var(--accent);
+	stroke-width: 2.5;
+}
+
+.neuron-pred {
+	stroke: var(--accent);
+	stroke-width: 3;
+}
+
+.patch-panel p,
+.patch-hint {
+	font-size: 0.85rem;
+	color: var(--muted);
+}
+
+.patch-canvas {
+	width: 140px;
+	height: 140px;
+	image-rendering: pixelated;
+	border: 1px solid var(--rule);
+}
+
+.payoff {
+	margin-top: 1rem;
+	border-top: 1px dashed var(--rule);
+	padding-top: 0.8rem;
+}
+
+.payoff-locked {
+	font-size: 0.9rem;
+	color: var(--muted);
+	font-style: italic;
+}
+
+.digit-strip {
+	display: flex;
+	gap: 0.4rem;
+	flex-wrap: wrap;
+	margin: 0.6rem 0;
+}
+
+.digit-thumb {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.15rem;
+	padding: 0.3rem;
+	background: #fff;
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	color: var(--ink);
+}
+
+.digit-thumb canvas {
+	width: 42px;
+	height: 42px;
+	image-rendering: pixelated;
+}
+
+.digit-selected {
+	border-color: var(--accent);
+	box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+/* The hidden neurons' hit area: invisible, finger-sized, focusable. */
+.netdiag-hit {
+	fill: transparent;
+	cursor: pointer;
+}
+
+.netdiag-hit:focus-visible {
+	outline: none;
+	fill: color-mix(in srgb, var(--accent) 12%, transparent);
+	stroke: var(--accent);
+	stroke-width: 2;
+}
+
+.pred-ok {
+	color: var(--acc);
+	font-weight: 700;
+	font-family: var(--font-ui);
+	font-size: 0.85rem;
+}
+
+.pred-bad {
+	color: var(--loss);
+	font-weight: 700;
+	font-family: var(--font-ui);
+	font-size: 0.85rem;
+}
+
+.digit-detail {
+	display: flex;
+	gap: 0.9rem;
+	align-items: flex-start;
+	min-height: 100px; /* text changes between runs; keep the block stable */
+}
+
+.digit-detail p {
+	font-size: 0.92rem;
+	margin: 0;
+}
+
+.digit-big {
+	width: 84px;
+	height: 84px;
+	image-rendering: pixelated;
+	border: 1px solid var(--rule);
+	flex-shrink: 0;
+}
+
+.demo-controls {
+	display: flex;
+	align-items: center;
+	gap: 0.9rem;
+	flex-wrap: wrap;
+	margin: 1rem 0 0.5rem;
+}
+
+.demo-params {
+	color: var(--muted);
+	font-size: 0.9rem;
+}
+
+.demo-status {
+	font-size: 0.95rem;
+	color: var(--muted);
+	min-height: 1.4em;
+}
+
+.demo-status-error {
+	color: var(--loss);
+}
+
+.demo-result {
+	font-size: 1.05rem;
+}
+
+.metrics-chart {
+	width: 100%;
+	height: auto;
+	border: 1px solid var(--rule);
+	border-radius: var(--radius-lg);
+	background: #fff;
+}
+
+.chart-grid {
+	stroke: var(--rule);
+	stroke-width: 1;
+}
+
+.chart-tick-loss {
+	fill: var(--loss);
+}
+
+.chart-tick-acc {
+	fill: var(--acc);
+}
+
+.chart-line {
+	fill: none;
+	stroke-width: 2;
+}
+
+.chart-line-loss {
+	stroke: var(--loss);
+}
+
+.chart-line-acc {
+	stroke: var(--acc);
+}
+
+.chart-swatch-loss {
+	fill: var(--loss);
+}
+
+.chart-swatch-acc {
+	fill: var(--acc);
+}
+
+.chart-dot-acc {
+	fill: var(--acc);
+}
+
+.demo-log {
+	margin-top: 1rem;
+	font-size: 0.85rem;
+}
+
+.demo-log pre {
+	background: var(--surface-sunken);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	padding: 0.75rem;
+	overflow-x: auto;
+	font-size: 0.8rem;
+}
+
+.next-module {
+	margin-top: 2rem;
+	padding-top: 1.2rem;
+	border-top: 1px solid var(--rule);
+	display: flex;
+	justify-content: flex-end;
+}
+
+/* ---------- Module 4: backpropagation ---------- */
+
+/* The chain-ripple diagram (static, in module4.tsx). */
+.chain-ripple {
+	font-family: var(--font-ui);
+}
+
+.ripple-box {
+	fill: var(--accent-wash);
+	stroke: var(--accent);
+	stroke-width: 1.2;
+}
+
+.ripple-title {
+	font-size: 14px;
+	font-weight: 600;
+	fill: var(--ink);
+}
+
+/* 11 rather than 11.5: at 11.5 the longest of these labels ("0.09639 →
+   0.09589", "layer 2's confidences") measured 2 to 3 units wider than the box
+   drawn around it, so it sat with a letter hanging over each edge. */
+.ripple-value {
+	font-size: 11px;
+	fill: var(--muted);
+}
+
+.ripple-change {
+	font-size: 12px;
+	font-weight: 600;
+	fill: var(--ink);
+}
+
+.ripple-arrow {
+	stroke: var(--ink);
+	stroke-width: 1.4;
+}
+
+.ripple-head {
+	fill: var(--ink);
+}
+
+/* The emphasised red number: a ripple factor, and the stepper's cost. */
+.ripple-factor,
+.bp-cost {
+	font-size: 14px;
+	font-weight: 600;
+	fill: var(--loss);
+}
+
+.ripple-why {
+	font-size: 12px;
+	fill: var(--muted);
+}
+
+.ripple-product {
+	font-size: 15px;
+	font-weight: 600;
+	fill: var(--ink);
+}
+
+/* The step-through visualization. */
+.bp-step-count {
+	font-family: var(--font-ui);
+	font-size: 0.85rem;
+	color: var(--muted);
+}
+
+/* Fixed-height card so the equation and gloss changing per step never
+   shifts the diagram below (interactives must not jump). */
+.bp-eqcard {
+	min-height: 13.3em;
+	border: 1px solid var(--rule);
+	border-radius: var(--radius-lg);
+	padding: 0.4rem 0.9rem 0.5rem;
+	background: #f9faf9;
+	margin-bottom: 0.6rem;
+}
+
+.bp-eqcard .eq {
+	margin: 0.2rem 0 0;
+}
+
+.bp-eqcard .eq-gloss {
+	margin-bottom: 0;
+}
+
+.bp-step-title {
+	margin: 0.2rem 0 0;
+	font-family: var(--font-ui);
+	font-size: 0.9rem;
+	font-weight: 700;
+	color: var(--accent);
+}
+
+.bp-stepper svg {
+	font-family: var(--font-ui);
+}
+
+.bp-name {
+	font-size: 14px;
+	fill: var(--muted);
+}
+
+.bp-input {
+	fill: #f0f0ee;
+	stroke: #9a9a9a;
+	stroke-width: 1.5;
+}
+
+.bp-neuron {
+	stroke: var(--accent);
+	stroke-width: 2;
+	cursor: pointer;
+}
+
+.bp-neuron-group {
+	cursor: pointer;
+}
+
+.bp-node-selected {
+	stroke-width: 4;
+	stroke: var(--ink);
+}
+
+.bp-avalue {
+	font-size: 15px;
+	fill: var(--ink);
+	pointer-events: none;
+}
+
+.bp-bias {
+	font-size: 12.5px;
+	fill: var(--muted);
+	pointer-events: none;
+}
+
+.bp-delta {
+	font-size: 13px;
+	font-weight: 600;
+	fill: var(--loss);
+	pointer-events: none;
+}
+
+.bp-edge-hit {
+	stroke: transparent;
+	stroke-width: 16;
+	cursor: pointer;
+}
+
+.bp-edge-halo {
+	stroke: var(--ink);
+	stroke-width: 7;
+	opacity: 0.35;
+	stroke-linecap: round;
+}
+
+.bp-wlabel {
+	font-size: 12.5px;
+	fill: var(--ink);
+	paint-order: stroke;
+	/* The ground it is drawn on, not the page's: on the stepper's white panel a
+     --bg halo was a grey ring around every digit. 4.5 rather than 3, so the
+     halo clears the thickest wire (4.8 units, half of it either side) where a
+     crossing wire runs under a label; with six wires and two crossings there
+     is no label position that avoids all of them. */
+	stroke: var(--fig-ground);
+	stroke-width: 4.5;
+	pointer-events: none;
+}
+
+.bp-lower {
+	display: flex;
+	gap: 1.2rem;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	margin-top: 0.4rem;
+}
+
+/* The value table is wider than a phone screen (four columns with fixed
+   minimum widths); scroll it sideways instead of clipping. */
+.bp-table-scroll {
+	flex: 0 0 auto;
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+.bp-table {
+	border-collapse: collapse;
+	font-family: var(--font-ui);
+	font-size: 0.85rem;
+}
+
+.bp-table th,
+.bp-table td {
+	border: 1px solid var(--rule);
+	padding: 0.25rem 0.7rem;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	min-width: 5.5em;
+}
+
+.bp-table th:first-child,
+.bp-table td:first-child {
+	text-align: left;
+	min-width: 3em;
+}
+
+.bp-delta-cell {
+	color: var(--loss);
+	font-weight: 600;
+}
+
+.bp-table td.bp-cost-row {
+	text-align: left;
+	color: var(--muted);
+}
+
+.bp-param {
+	flex: 1 1 260px;
+	min-width: 0;
+	min-height: 7em;
+	border: 1px dashed var(--rule);
+	border-radius: var(--radius-lg);
+	padding: 0.5rem 0.8rem;
+	font-family: var(--font-ui);
+	font-size: 0.88rem;
+}
+
+.bp-param-hint {
+	margin: 0.3rem 0;
+	color: var(--muted);
+}
+
+.bp-param-name {
+	margin: 0.1rem 0 0.4rem;
+	font-weight: 600;
+}
+
+.bp-param-slope {
+	margin: 0.4rem 0 0.1rem;
+	color: var(--loss);
+	min-height: 1.5em;
+}
+
+/* The delta-prediction quiz. */
+.quiz-question {
+	border-top: 1px solid var(--rule);
+	padding: 0.7rem 0.2rem 0.5rem;
+}
+
+.quiz-setup,
+.quiz-prompt {
+	font-size: 0.98rem;
+	margin: 0.3rem 0;
+}
+
+.quiz-prompt {
+	font-weight: 600;
+}
+
+.quiz-options {
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	margin: 0.5rem 0;
+}
+
+.quiz-option {
+	font: inherit;
+	font-size: 0.92rem;
+	text-align: left;
+	padding: 0.4rem 0.7rem;
+	border: 1px solid var(--rule-strong);
+	border-radius: var(--radius);
+	/* the global button rule is accent-on-white-text; undo both halves */
+	background: #fff;
+	color: var(--ink);
+	cursor: pointer;
+}
+
+/* Answered options keep aria-disabled rather than the disabled attribute, so
+   they stay focusable and keep their full-strength correct/wrong colours. That
+   means this rule must not set any of those colours: the correct/wrong/dimmed
+   rules below own them. */
+.quiz-option[aria-disabled="true"] {
+	cursor: default;
+}
+
+.quiz-option:not([aria-disabled="true"]):hover {
+	border-color: var(--accent);
+}
+
+.quiz-correct {
+	border-color: var(--acc);
+	background: var(--accent-wash);
+	color: var(--ink);
+}
+
+.quiz-wrong {
+	border-color: var(--loss);
+	background: #faeeed;
+	color: var(--ink);
+}
+
+/* Only the options the reader did not pick recede, and by less than the old
+   blanket 0.55: at that strength the correct answer was the faintest thing on
+   the page, because the disabled attribute faded it too. */
+.quiz-dimmed {
+	color: var(--muted);
+	border-color: var(--rule);
+}
+
+/* Right and wrong were carried by border colour alone. */
+.quiz-tag {
+	display: inline-block;
+	margin-right: 0.5em;
+	padding: 0.05rem 0.4rem;
+	border-radius: var(--radius-sm);
+	background: var(--acc);
+	color: var(--on-accent);
+	font-family: var(--font-ui);
+	font-size: 0.68rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	vertical-align: 0.1em;
+}
+
+.quiz-tag-wrong {
+	background: var(--loss);
+}
+
+.quiz-explain {
+	font-size: 0.92rem;
+	font-family: var(--font-ui);
+	color: var(--ink);
+	background: var(--surface-note);
+	border-radius: var(--radius);
+	padding: 0.5rem 0.7rem;
+	margin: 0.3rem 0 0.2rem;
+}
+
+/* The plot family: natural scale, one unit to one pixel, capped at its own
+   width so it never enlarges past the size it was drawn for. Both families
+   read --fig-units here, on the element, and not through a token of their own
+   at :root: a var() inside a :root declaration is substituted at :root, where
+   --fig-units does not exist, so the whole declaration is dropped and width
+   falls back to auto, which for an SVG with a viewBox means 100 percent. That
+   silently scaled every one of these to twice its drawn size.
+
+   Neither family repeats a viewBox width in the stylesheet any more: eight of
+   these used to be written out as min(490px, 100%) beside a viewBox that said
+   490, so tightening a viewBox left the two disagreeing. */
+.concert-plot,
+.tiny-net,
+.shapes-diagram,
+.curve-figure,
+.m8-conv,
+.m8-net,
+.m8-spaces {
+	width: min(calc(var(--fig-units) * 1px), 100%);
+}
+
+/* Every diagram in the box-and-arrow family, at the family's one scale.
+   Width comes from the diagram's own viewBox width rather than from 100% of
+   whatever box it sits in: a diagram with five boxes in it is drawn at the
+   same scale as one with nine and is simply narrower, and it stops shrinking
+   when the column passes its own width rather than when it passes the widest
+   diagram's. Before this the narrow ones carried up to 300 units of empty
+   viewBox, which is 37 percent of the width they claimed in the column and
+   37 percent of the distance a phone had to pan. */
+.chain-ripple,
+.chain-net,
+.bp-diagram,
+.ripple-slice {
+	display: block;
+	width: min(calc(var(--fig-units) * var(--fig-scale)), 100%);
+	height: auto;
+	margin-inline: auto;
+}
+
+/* The ripple diagram's factor kinds (module 4): purple = a multiplication
+   passing changes through, green = sigmoid steepness, red = the gap. */
+.ripple-kind-mult {
+	fill: var(--data-purple);
+}
+
+.ripple-kind-sig {
+	fill: var(--accent);
+}
+
+.ripple-kind-gap {
+	fill: var(--loss);
+}
+
+/* Recall strips: small re-renders of the ripple log's relevant segments,
+   placed above the paragraph that discusses them (module 4). */
+/* A recall strip is a crop of the log above it, so it takes the same family
+   scale rather than a natural-scale width of its own: at one unit to one pixel
+   it drew 7 percent smaller than the segment it was recalling. */
+.ripple-slice {
+	margin: 1.4rem auto 0.4rem;
+	font-family: var(--font-ui);
+}
+
+/* Asides: quick departures from the lesson (analogies, scope notes),
+   visually set off so the main thread reads as pausing and resuming. */
+.module-aside {
+	border: 1px solid var(--rule);
+	border-radius: var(--radius-lg);
+	background: var(--surface-note);
+	padding: 0.1rem 1.1rem 0.9rem;
+	margin: 1.4rem auto;
+}
+
+.module-aside-label {
+	font-family: var(--font-ui);
+	font-size: 0.72rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--muted);
+	margin: 0.8rem 0 0.2rem;
+}
+
+.module-aside p {
+	font-size: 0.95rem;
+}
+
+.module-aside .module-figure {
+	margin: 0.9rem 0 0.4rem;
+}
+
+/* Section headers inside modules, and the floating on-this-page nav. */
+.module-section-title {
+	font-size: 1.15rem;
+	margin: 3.2rem auto 0.7rem;
+	scroll-margin-top: 24px;
+}
+
+/* Wherever the section bar is sticky it covers the top 53px of the viewport,
+   so a jump has to clear it: at 24px the heading landed behind the bar it was
+   chosen from, and the reader arrived mid-paragraph with no sign of the section
+   they had asked for. */
+@media (max-width: 1399px) {
+	.module-section-title {
+		scroll-margin-top: calc(var(--bar-h) + 14px);
+	}
+}
+
+/* The same three rules again, on the one predicate the shell computes, which
+   is what the media queries above were approximating. They asked the window
+   how wide it is; what decides whether the gutter nav fits is how much room
+   is left beside the column, and the workbench takes some of it. Keyed
+   together so the bar and the offset that clears it can never disagree,
+   which is how a heading ends up behind the bar it was chosen from. */
+.shell[data-toc="bar"] .module-toc {
+	display: none;
+}
+
+.shell[data-toc="bar"] .module-jump {
+	display: block;
+}
+
+.shell[data-toc="bar"] .module-section-title {
+	scroll-margin-top: calc(var(--bar-h) + 14px);
+}
+
+/* A short accent rule above each section title. The page is a long single
+   scroll of prose and figures, and before this the only thing marking a new
+   section was a slightly larger line of the same serif. The mark is in the
+   course's own hue, so it is the one piece of structural furniture that a
+   sibling course inherits already recoloured. */
+.module-section-title::before {
+	content: "";
+	display: block;
+	width: 26px;
+	height: 2px;
+	margin-bottom: 0.85rem;
+	border-radius: 1px;
+	background: var(--accent);
+}
+
+/* The first section follows the opener card, which already separates it. */
+.after-this + .module-section-title {
+	margin-top: 2.4rem;
+}
+
+/* The start page's sections are plain h3s rather than SectionHeaders, because
+   nothing scrollspies them, but a reader should not be able to tell that from
+   how they look. */
+.start-page > h3 {
+	font-size: 1.15rem;
+	margin: 3.2rem auto 0.7rem;
+}
+
+.start-page > h3::before {
+	content: "";
+	display: block;
+	width: 26px;
+	height: 2px;
+	margin-bottom: 0.85rem;
+	border-radius: 1px;
+	background: var(--accent);
+}
+
+/* Tracks the text column rather than the window's right edge. The min() is the
+   guard rail: the toc can never be pushed off the right of the viewport. */
+.module-toc {
+	position: fixed;
+	top: 50%;
+	transform: translateY(-50%);
+	/* Sits one gutter to the right of the text column. Derived, not magic:
+     the column's left edge is (100% - 920) / 2 - 100 (see .app above), its
+     right edge is 920 further on, and the toc starts a 28px gap after that.
+     The min() is the guard rail: 190 wide plus a 14px margin is 204, so it can
+     never be pushed off the right edge. */
+	left: min(calc((100% - var(--dock-w, 0px) - var(--col-width)) / 2 + var(--col-width) + var(--toc-gap)), calc(100% - var(--dock-w, 0px) - var(--toc-width) - 14px));
+	width: var(--toc-width);
+	max-height: 80vh;
+	overflow-y: auto;
+	font-family: var(--font-ui);
+}
+
+/* Below this a centred column leaves no room beside it, so the gutter toc gives
+   way to the sticky bar at the top of the module. 1400 rather than 1200: the
+   toc needs 190px plus a 28px gap plus air at the window edge, and the column
+   no longer shifts left to lend it 100px. What the shift bought in coverage it
+   charged for on every page that has no toc at all. */
+@media (max-width: 1399px) {
+	.module-toc {
+		display: none;
+	}
+}
+
+/* Narrow screens: the modules run to tens of thousands of pixels and the
+   header scrolls away, so without this there is no way to move around one
+   except dragging. A one-line bar names the section you are in and opens the
+   list of the rest. */
+.module-jump {
+	position: sticky;
+	top: 0;
+	z-index: 20;
+	display: none;
+	min-height: var(--bar-h);
+	margin: 0 -1.25rem 1rem;
+	background: var(--bg);
+	border-bottom: 1px solid var(--rule);
+	font-family: var(--font-ui);
+}
+
+@media (max-width: 1399px) {
+	.module-jump {
+		display: block;
+	}
+}
+
+.module-jump-toggle {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	width: 100%;
+	min-height: 44px;
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	color: var(--ink);
+	font-size: 0.85rem;
+	text-align: left;
+	padding: 0.7rem 1.25rem;
+}
+
+.module-jump-toggle .module-jump-where {
+	color: var(--muted);
+	font-size: 0.7rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	flex: 0 0 auto;
+}
+
+.module-jump-toggle .module-jump-title {
+	flex: 1 1 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-weight: 600;
+}
+
+.module-jump-caret {
+	flex: 0 0 auto;
+	color: var(--muted);
+	font-size: 0.7rem;
+}
+
+.module-jump-list {
+	list-style: none;
+	margin: 0;
+	padding: 0 1.25rem 0.6rem;
+	max-height: 55vh;
+	overflow-y: auto;
+	border-top: 1px solid var(--rule);
+}
+
+.module-jump-list .module-toc-item {
+	min-height: 44px;
+	/* The left value is not decoration: the active item marks itself with a 2px
+     inset rule, and the base .module-toc-item reserves 0.7rem for it. A
+     padding shorthand here that names only two values resets that to zero and
+     puts the rule flush against the label, which is what the gutter nav does
+     not do and so reads as a mistake in the picker alone. */
+	padding: 0.5rem 0 0.5rem 0.7rem;
+	font-size: 0.85rem;
+}
+
+.module-toc-label {
+	font-size: 0.7rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--muted);
+	margin: 0 0 0.4rem;
+}
+
+.module-toc ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	border-left: 2px solid var(--rule);
+}
+
+.module-toc-item {
+	display: block;
+	width: 100%;
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	color: var(--muted);
+	font-size: 0.8rem;
+	line-height: 1.35;
+	padding: 0.22rem 0 0.22rem 0.7rem;
+	text-align: left;
+	cursor: pointer;
+}
+
+.module-toc-item:hover {
+	color: var(--ink);
+}
+
+.module-toc-active {
+	color: var(--accent);
+	font-weight: 600;
+	box-shadow: inset 2px 0 0 var(--accent);
+}
+
+/* The road diagram's delta brackets (module 4). */
+.road-delta {
+	stroke: var(--loss);
+	stroke-width: 1.4;
+	fill: none;
+}
+
+/* Neuron-ownership bands on the ripple log: which boxes live inside which
+   neuron, tying the unrolled log back to the wiring diagram. */
+.ripple-neuron-band {
+	fill: color-mix(in srgb, var(--accent) 5.5%, transparent);
+	stroke: color-mix(in srgb, var(--accent) 28%, transparent);
+	stroke-width: 1;
+}
+
+.ripple-band-label {
+	font-size: 11.5px;
+	fill: var(--accent);
+}
+
+/* The fork diagram's backward blame arrows (module 4). */
+.fork-blame {
+	stroke: var(--loss);
+	stroke-width: 1.6;
+	stroke-dasharray: 5 4;
+	fill: none;
+}
+
+.fork-head {
+	fill: var(--loss);
+}
+
+/* Wide diagrams: on narrow screens, keep a readable size and scroll sideways
+   inside the figure instead of shrinking the labels to illegibility. The
+   .scroll-x class on the same element supplies the overflow and the affordance
+   that says it scrolls. */
+
+/* Unconditional, because the column can now narrow without the window
+   narrowing: dragging the workbench wider does to a figure exactly what a
+   phone does. Below the floor the diagram keeps its size and pans inside
+   .figure-scroll rather than shrinking its labels into illegibility. */
+.chain-ripple,
+.chain-net,
+.bp-diagram,
+.ripple-slice {
+	min-width: calc(var(--fig-units) * var(--fig-scale-min));
+}
+
+/* Module 5's pipeline picture: the implementation being superseded. */
+.ripple-box-old {
+	fill: #f6f6f4;
+	stroke: var(--muted);
+	stroke-width: 1.1;
+	stroke-dasharray: 5 4;
+}
+
+/* Module 5's backward-walk panels: a receipt slot read on this pass, and one
+   left alone. */
+.ripple-box-read {
+	fill: var(--accent-panel);
+	stroke: var(--accent);
+	stroke-width: 1.4;
+}
+
+.ripple-box-idle {
+	fill: #fbfbf9;
+	stroke: var(--rule);
+	stroke-width: 1;
+}
+
+/* ---------- Module 6: universality ---------- */
+
+/* The static target-curve figure. Plot family (CLAUDE.md): rendered at
+   natural scale, capped at its viewBox width and centred. */
+.curve-figure {
+	display: block;
+	margin: 0 auto;
+	background: #fff;
+	border: 1px solid var(--rule);
+	border-radius: var(--radius-lg);
+}
+
+.curve-grid {
+	stroke: var(--rule);
+	stroke-dasharray: 3 3;
+}
+
+/* One colour code across both of this module's interactives: dashed ink is
+   the curve being matched, green is what the network answers, and muted
+   dashed is an intermediate the network adds up on the way there. */
+.curve-target {
+	fill: none;
+	stroke: var(--ink);
+	stroke-width: 2;
+	stroke-dasharray: 7 4;
+}
+
+.curve-net {
+	fill: none;
+	stroke: var(--accent);
+	stroke-width: 2.2;
+}
+
+.curve-attempt {
+	fill: none;
+	stroke: var(--accent);
+	stroke-width: 1.6;
+	opacity: 0.5;
+}
+
+.bump-part {
+	fill: none;
+	stroke: var(--muted);
+	stroke-width: 1.4;
+	stroke-dasharray: 5 3;
+}
+
+.bump-zero {
+	stroke: var(--rule-strong);
+}
+
+/* The score as a picture: the band between the two curves, whose area is the
+   number under the chart. */
+.curve-gap {
+	fill: var(--loss);
+	opacity: 0.16;
+	stroke: none;
+}
+
+.bump-readout {
+	list-style: none;
+	margin: 0.5rem 0 0;
+	padding: 0;
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	color: var(--muted);
+}
+
+.bump-readout li {
+	margin: 0.15rem 0;
+}
+
+/* One bar is the contribution of one pair of hidden neurons. */
+.sculpt-bar {
+	fill: var(--accent);
+	opacity: 0.12;
+}
+
+/* The bar's top edge: dragged with a pointer, and a keyboard slider in its
+   own right, so the heights are reachable without a mouse. */
+.sculpt-cap {
+	fill: var(--accent);
+	opacity: 0.5;
+	cursor: ns-resize;
+}
+
+.sculpt-cap:hover,
+.sculpt-cap:focus-visible {
+	opacity: 1;
+}
+
+/* The pointer surface over the whole plot: a tap or drag anywhere in it sets
+   the bar (or draws the curve) at that spot. */
+.sculpt-surface {
+	fill: transparent;
+	cursor: ns-resize;
+}
+
+.sculpt-legend {
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	color: var(--muted);
+	margin: 0.5rem 0 0;
+}
+
+.sculpt-group-label {
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	color: var(--muted);
+}
+
+.sculpt-stats {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.1rem 1.3rem;
+	margin: 0.5rem 0 0.2rem;
+	padding: 0;
+	font-family: var(--font-ui);
+	font-size: 0.85rem;
+	color: var(--muted);
+}
+
+/* Fixed-width values, so a count going from 6 to 144 cannot re-wrap the row
+   while a slider is being dragged. */
+.sculpt-stats li {
+	flex: 0 0 auto;
+}
+
+.sculpt-stats b {
+	color: var(--ink);
+	display: inline-block;
+	min-width: 3ch;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+.sculpt-score b {
+	color: var(--accent);
+}
+
+/* The two-input tower diagram: the plane of two dials, one panel per stage. */
+.tower-plane {
+	fill: #fff;
+	stroke: var(--rule-strong);
+	stroke-width: 1.2;
+}
+
+.tower-band {
+	fill: var(--accent);
+	opacity: 0.16;
+}
+
+.tower-cross {
+	fill: var(--accent);
+	opacity: 0.16;
+}
+
+.tower-tower {
+	fill: var(--accent);
+	opacity: 0.42;
+}
+
+.tower-num {
+	font-size: 13px;
+	font-weight: 600;
+	fill: var(--ink);
+}
+
+/* Both of this module's charts carry wide viewBoxes (620 and 640 units), so a
+   phone renders them at about half scale and their labels would land near
+   6px. Bump the labels there, to the ~8px the narrower interactives reach. */
+@media (max-width: 560px) {
+	.m6-chart .chart-tick {
+		font-size: 15px;
+	}
+}
+
+/* Placeholders for the two things that now arrive in their own chunk. The
+   editor's reserves its real height so the page does not jump when it lands. */
+.code-editor-loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: var(--font-ui);
+	font-size: 0.9rem;
+	color: var(--muted);
+	background: var(--surface-card);
+}
+
+.module-loading {
+	color: var(--muted);
+	font-family: var(--font-ui);
+	font-size: 0.9rem;
+	padding: 2rem 0;
+}
+
+/* ---------- Module 7: making it actually work ---------- */
+
+/* Two identities across this module's charts and figures: line A is the
+   setting being improved on (the quadratic cost, Module 5's start, no
+   regularization) and line B is the change being measured. Where a chart
+   shows the same run scored two ways, solid is the images trained on and
+   dashed the ones held out. */
+.m7-line-a,
+.slow-line-quad {
+	stroke: var(--data-orange);
+}
+
+.m7-line-b,
+.slow-line-cross {
+	stroke: var(--accent);
+}
+
+.m7-line-dashed {
+	stroke-dasharray: 6 4;
+}
+
+.m7-line-dotted {
+	stroke-dasharray: 2 5;
+}
+
+.m7-swatch {
+	display: inline-block;
+	width: 18px;
+	height: 0;
+	margin-right: 0.45rem;
+	vertical-align: 0.28em;
+	border-top: 3px solid;
+	/* The swatches inherit their identity from the same classes the SVG paths
+     use, which set stroke; a border needs the colour in currentColor terms,
+     so each identity restates it here. */
+}
+
+.m7-swatch.m7-line-a,
+.m7-swatch.slow-line-quad {
+	border-top-color: var(--data-orange);
+}
+
+.m7-swatch.m7-line-b,
+.m7-swatch.slow-line-cross {
+	border-top-color: var(--accent);
+}
+
+/* The overfitting figure scores one run four ways rather than comparing two
+   runs, so it keeps the course's chart vocabulary from Module 5 instead of
+   this module's A-and-B pair: green is accuracy, red is cost. */
+.m7-swatch.chart-line-acc {
+	border-top-color: var(--acc);
+}
+
+.m7-swatch.chart-line-loss {
+	border-top-color: var(--loss);
+}
+
+.m7-swatch.m7-line-dashed {
+	border-top-style: dashed;
+}
+
+.m7-swatch.m7-line-dotted {
+	border-top-style: dotted;
+}
+
+.m7-legend {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.15rem 1.1rem;
+	margin: 0.45rem 0 0;
+	padding: 0;
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	color: var(--muted);
+}
+
+.m7-result-list {
+	margin: 0.3rem 0 0.6rem;
+	padding-left: 1.2rem;
+}
+
+/* Grouped choices inside a panel's control row. Fixed-basis columns so the
+   wrap depends on the window width and never on the labels (CLAUDE.md:
+   interactives must not jump). */
+.m7-choice {
+	flex: 0 1 auto;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.35rem;
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	padding: 0.3rem 0.55rem 0.45rem;
+	margin: 0;
+	min-width: 0;
+}
+
+.m7-choice legend {
+	font-family: var(--font-ui);
+	font-size: 0.75rem;
+	color: var(--muted);
+	padding: 0 0.3rem;
+}
+
+/* Plot family (CLAUDE.md): natural scale, capped at the viewBox width,
+   centred. The two static figures carry their own widths. */
+/* The confidently wrong end of the blame plot, and the peak past which more
+   wrong means less blame. */
+.blame-zone {
+	fill: var(--loss);
+	opacity: 0.06;
+}
+
+.blame-peak {
+	stroke: var(--data-orange);
+	stroke-width: 1;
+	stroke-dasharray: 3 3;
+}
+
+.blame-dot-quad {
+	fill: var(--data-orange);
+}
+
+.blame-dot-cross {
+	fill: var(--accent);
+}
+
+.blame-label-quad {
+	fill: var(--data-orange);
+}
+
+.blame-label-cross {
+	fill: var(--accent);
+}
+
+/* Both of this module's wide charts (640 units) render at about half scale on
+   a phone, the same problem Module 6's charts had. */
+@media (max-width: 560px) {
+	.overfit-figure .chart-tick,
+	.blame-figure .chart-tick {
+		font-size: 15px;
+	}
+}
+
+/* ---------- Module 8: why deep is hard ---------- */
+
+/* The layer-speed bars. Hidden layers carry this module's subject colour;
+   the output layer is what every other bar is measured against, so it takes
+   the identity Module 7's charts give to the thing being compared with. */
+.m8-bars .m8-bar-hidden {
+	fill: var(--accent);
+}
+
+.m8-bars .m8-bar-out {
+	fill: var(--data-orange);
+}
+
+.m8-bar-sub {
+	opacity: 0.75;
+}
+
+.m8-hop-arrow {
+	fill: none;
+	stroke: var(--muted);
+	stroke-width: 1.2;
+}
+
+.m8-arrow-head {
+	fill: var(--muted);
+}
+
+.m8-hop-label {
+	fill: var(--ink);
+}
+
+/* The chart's own how-to-read key, above it rather than in the prose
+   (CLAUDE.md: interactives carry their own keys). */
+.m8-key {
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	line-height: 1.45;
+	color: var(--muted);
+	margin: 0.5rem 0 0.55rem;
+}
+
+.m8-readout {
+	font-family: var(--font-ui);
+	font-size: 0.88rem;
+	color: var(--muted);
+	margin: 0.45rem 0 0;
+}
+
+/* Its own full-width line inside the controls row, the same rule statuses
+   follow: the step size changes with the squash, and a note that shares a line
+   with the chips would re-wrap them (CLAUDE.md: interactives must not jump). */
+.m8-eta-note {
+	flex-basis: 100%;
+	min-width: 0;
+	font-family: var(--font-ui);
+	font-size: 0.8rem;
+	color: var(--muted);
+	margin: 0.1rem 0 0;
+}
+
+/* Fixed basis so the wrap depends on the window width and never on the
+   depth label (CLAUDE.md: interactives must not jump). */
+.m8-depth {
+	flex: 0 1 300px;
+}
+
+.m8-depth span {
+	width: 7em;
+}
+
+/* Plot family (CLAUDE.md): natural scale, capped at the viewBox width,
+   centred. Each of this module's two static figures carries its own width. */
+.m8-conv,
+.m8-net,
+.m8-spaces {
+	display: block;
+	margin: 0 auto;
+}
+
+/* The thin top bracket that groups the network figure's columns. */
+.m8-net-brace {
+	fill: none;
+	stroke: var(--rule-strong);
+	stroke-width: 1;
+}
+
+.m8-conv-image {
+	fill: #fff;
+	stroke: var(--rule-strong);
+	stroke-width: 1;
+}
+
+.m8-conv-grid {
+	stroke: var(--rule);
+	stroke-width: 0.7;
+}
+
+.m8-conv-window {
+	fill: var(--accent);
+	fill-opacity: 0.14;
+	stroke: var(--accent);
+	stroke-width: 1.4;
+}
+
+.m8-conv-cell {
+	fill: var(--accent);
+	stroke: var(--accent);
+	stroke-width: 0.8;
+}
+
+.m8-conv-wire {
+	fill: none;
+	stroke: var(--muted);
+	stroke-width: 0.9;
+	stroke-opacity: 0.55;
+}
+
+.m8-conv-box {
+	fill: var(--surface-sunken);
+	stroke: var(--accent);
+	stroke-width: 1.4;
+}
+
+.m8-conv-boxtext {
+	font-family: var(--font-ui);
+	font-size: 12px;
+	fill: var(--ink);
+}
+
+.m8-space-frame {
+	fill: #fff;
+	stroke: var(--rule-strong);
+	stroke-width: 1;
+}
+
+/* The output neuron's single cut in hidden space. */
+.m8-space-cut {
+	stroke: var(--ink);
+	stroke-width: 1.5;
+	stroke-dasharray: 5 3;
+}
+
+.m9-built-list,
+.m9-next-list {
+	margin: 0.4rem 0 0.9rem;
+	padding-left: 1.2rem;
+}
+
+.m9-built-list li,
+.m9-next-list li {
+	margin-bottom: 0.5rem;
+}
+
+/* This module's figures are wider than a phone, so they render at about two
+   thirds scale there and their labels would land near 7px. Bump them to the
+   ~9px the narrower interactives reach, the same fix Module 6's charts use. */
+@media (max-width: 560px) {
+	/* The bar labels are numbers to be read against the tables in the prose, so
+     they get a bigger bump than an axis tick would. */
+	.m8-bars .chart-tick {
+		font-size: 17px;
+	}
+
+	.m8-conv .tiny-net-caption,
+	.m8-conv .m8-conv-boxtext,
+	.m8-net .tiny-net-caption {
+		font-size: 15px;
+	}
+
+	.m8-spaces .chart-tick,
+	.m8-spaces .tiny-net-caption {
+		font-size: 14px;
+	}
+}
+
+/* ---------- start page ---------- */
+
+/* The course's front door. It reuses the module column and the module type
+   scale, so arriving here and then arriving at Module 1 feel like one
+   document; what it adds is the outline, the stored-progress list, and the
+   controls for moving that storage around. */
+
+.start-cta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.9rem;
+	/* In the reading-measure set: a row of buttons is left-ragged ink, and at
+	   full column the Begin button sat 113px left of every paragraph. */
+	margin: 1.4rem auto 2rem;
+}
+
+.start-cta-note {
+	font-size: 0.9rem;
+	color: var(--muted);
+}
+
+.start-facts {
+	padding-left: 1.1rem;
+}
+
+.start-facts li {
+	margin-bottom: 0.6rem;
+}
+
+.start-outline {
+	list-style: none;
+	padding: 0;
+	margin: 1rem 0 2rem;
+	counter-reset: none;
+}
+
+.start-outline > li {
+	border-top: 1px solid var(--rule);
+	padding: 0.75rem 0;
+}
+
+.start-outline > li:last-child {
+	border-bottom: 1px solid var(--rule);
+}
+
+.start-outline p {
+	margin: 0.25rem 0 0;
+	font-size: 0.95rem;
+}
+
+/* A title that navigates: a button so it is reachable and announced as the
+   control it is, styled as the heading it reads as. */
+.start-outline-title {
+	background: none;
+	border: 0;
+	padding: 0;
+	color: var(--accent);
+	font: inherit;
+	font-weight: 600;
+	text-align: left;
+	cursor: pointer;
+}
+
+.start-outline-title:hover,
+.start-progress-link:hover {
+	text-decoration: underline;
+}
+
+.start-outline-writes {
+	color: var(--muted);
+}
+
+.start-outline-writes code {
+	color: var(--ink);
+}
+
+.start-tick {
+	color: var(--accent);
+	font-size: 0.8rem;
+	font-variant: small-caps;
+	letter-spacing: 0.03em;
+}
+
+.start-progress {
+	list-style: none;
+	padding: 0;
+	margin: 1rem 0;
+}
+
+.start-progress li {
+	display: flex;
+	/* Not baseline: a title that wraps to two lines puts its baseline on the
+     second one, which drops the tick to the middle of the row. */
+	align-items: flex-start;
+	gap: 0.7rem;
+	padding: 0.55rem 0;
+	border-top: 1px solid var(--rule);
+}
+
+.start-progress li:last-child {
+	border-bottom: 1px solid var(--rule);
+}
+
+.start-progress-mark {
+	color: var(--rule-strong);
+	width: 1rem;
+	flex: none;
+	text-align: center;
+}
+
+.start-done .start-progress-mark {
+	color: var(--accent);
+}
+
+.start-progress-name {
+	flex: 1;
+	min-width: 0;
+}
+
+.start-progress-link {
+	background: none;
+	border: 0;
+	padding: 0;
+	color: var(--accent);
+	font: inherit;
+	/* A button centres its text by default, which is invisible until a title
+     wraps on a narrow screen and then reads as a stray centred heading. */
+	text-align: left;
+	cursor: pointer;
+}
+
+.start-progress-where {
+	color: var(--muted);
+	font-size: 0.85rem;
+	margin-left: 0.4rem;
+}
+
+.start-progress-builds {
+	display: block;
+	color: var(--muted);
+	font-size: 0.85rem;
+}
+
+.start-storage {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.6rem;
+	/* In the reading-measure set, same as .start-cta: buttons are left-ragged
+	   ink and belong on the prose axis. */
+	margin: 1.2rem auto 0.4rem;
+}
+
+.start-storage-note {
+	font-size: 0.9rem;
+	color: var(--muted);
+}
+
+/* The demo arrives inside the start page rather than on a tab of its own, so
+   it gets the separation a section break would have given it. */
+.start-page .demo {
+	margin-top: 2.4rem;
+	padding-top: 0.6rem;
+	border-top: 1px solid var(--rule);
+}
+
+.start-progress-warn {
+	display: block;
+	color: var(--loss);
+	font-size: 0.85rem;
+}
+
+/* Module 10's PyTorch listing and Module 9's two program logs: code blocks
+   for reading rather than running, so they are set like the test viewer's
+   code rather than like an editor. The box hugs its content (max-content, so
+   the border always encloses the last character, even where the .scroll-x
+   wrapper is what scrolls) and never shrinks below the card width, which is
+   what lands a short listing's first character on the prose axis; a listing
+   with longer lines grows past it symmetrically. */
+.torch-listing {
+	background: var(--surface-sunken);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	padding: 0.8rem 1rem;
+	margin: 0 auto;
+	font-size: 0.82rem;
+	line-height: 1.55;
+	width: max-content;
+	/* The 100% arm keeps the floor from exceeding the wrapper on a phone,
+	   where it would add empty width to the scroll. */
+	min-width: min(calc(var(--measure) + 2rem + 2px), 100%);
+}
+
+.m10-credit {
+	font-size: 0.9rem;
+	color: var(--muted);
+	border-top: 1px solid var(--rule);
+	padding-top: 0.9rem;
+	margin-top: 2rem;
+}
+
+/* The notation reference on the start page: a lookup, folded away so the
+   page still reads as a page. Its rows are symbols, so the first column is
+   set in the code face and given room. */
+.notation {
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	background: var(--surface-card);
+	padding: 0.7rem 1rem;
+	/* A card, so it takes the card width (set with the reading measure) rather
+	   than the column: folded, which is its resting state, it is one line of
+	   text, and it was the one card in the course 227px wider than its family.
+	   The table inside is wider than the measure and scrolls in the .scroll-x
+	   wrapper it already has. */
+	margin: 1.2rem auto 2rem;
+}
+
+.notation summary {
+	cursor: pointer;
+	font-size: 0.95rem;
+}
+
+.notation-note {
+	font-size: 0.9rem;
+	color: var(--muted);
+	margin: 0.7rem 0 0.3rem;
+}
+
+.notation-symbol {
+	white-space: nowrap;
+}
+
+/* A floor, not a width: the meaning column wraps to what the card leaves it
+   (the widest symbol is 303px of nowrap code), and 12rem is where wrapped
+   meanings stay readable. It was 22rem when the card was full column; inside
+   the card that forced a permanent scroll that cut the meaning column itself
+   to half, and a lookup whose meanings hide behind a pan is not a lookup. */
+.notation .truth-table td:nth-child(2) {
+	min-width: 12rem;
+}
+
+/* Module 5's error analysis: the digits the network was most confident about
+   while being wrong. The canvases are 28 by 28 and drawn up with no
+   smoothing, so the reader sees the same ink the network did. */
+.mistakes {
+	margin-top: 1.4rem;
+	border-top: 1px solid var(--rule);
+	padding-top: 0.8rem;
+}
+
+.mistakes h5 {
+	margin: 0 0 0.6rem;
+	font-size: 0.95rem;
+}
+
+.mistake-strip {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.9rem;
+	margin-top: 0.8rem;
+}
+
+.mistake {
+	margin: 0;
+	text-align: center;
+	font-size: 0.8rem;
+	color: var(--muted);
+}
+
+.mistake-canvas {
+	width: 64px;
+	height: 64px;
+	image-rendering: pixelated;
+	border: 1px solid var(--rule-strong);
+	border-radius: var(--radius-sm);
+	background: #fff;
+	display: block;
+}
+
+.mistake figcaption {
+	margin-top: 0.3rem;
+	line-height: 1.35;
+}
+
+.mistake-confidence {
+	display: block;
+	font-size: 0.75rem;
+}
+
+/* The switchover band in Module 6's three-weight figure: the picture of
+   6 / w, so the widths are read off a shape instead of a table. */
+.step-band {
+	fill: var(--accent);
+	opacity: 0.1;
+}
+
+.step-mark {
+	stroke: var(--rule-strong);
+	stroke-dasharray: 3 3;
+}
+
+/* ---------- phones ---------- */
+
+/* Everything below is about a 390x844 screen, where the course is read one
+   short line at a time and every pixel of chrome is a pixel of prose. The
+   header itself compresses in the brand layer (.masthead-compact) and the tab
+   strip is replaced there by the module picker; what is left is the page
+   around them. Measured on Module 2 at 390px: the first line of prose sat at
+   892px, off the bottom of the first screenful, and these rules with the
+   header change bring it to inside it. */
+@media (max-width: 560px) {
+	/* 16px rather than 20: it buys 9px of line, which is half a word, and more
+     usefully it buys the figures 16px before they start to pan. */
+	.app {
+		padding-left: 1rem;
+		padding-right: 1rem;
+		padding-top: 1.6rem;
+	}
+
+	/* The full-bleed bars are pulled out by the app's own padding, so they track
+     it. */
+	.module-jump {
+		margin-left: -1rem;
+		margin-right: -1rem;
+	}
+
+	.module-jump-toggle,
+	.module-jump-list {
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+
+	/* The opener and the recap are 3 short items in a card, and at the page's
+     19px they run to three lines each and 357px, two fifths of the screen
+     before the lesson starts. A size down and a tighter leading is the whole
+     fix; folding them away would hide the one thing a module promises. */
+	.after-this li,
+	.recap li {
+		font-size: 0.88rem;
+		line-height: 1.45;
+		margin-bottom: 0.25rem;
+	}
+
+	.after-this > summary,
+	.after-this h3,
+	.recap h3 {
+		font-size: 0.78rem;
+		line-height: 1.3;
+		margin: 0.75rem 0 0.4rem;
+	}
+
+	/* A primary action at the end of a module, thumb-width rather than tucked
+     against the right edge: the flex row that right-aligns it on a wide screen
+     has nothing else in it, so on a phone the button takes the line. */
+	.next-module button,
+	.start-cta button {
+		width: 100%;
+	}
+
+	/* Run goes directly under the editor. The tip explaining the two buttons is
+     twelve lines on a phone, so between the editor and the controls it put
+     330px of reading in the middle of the course's tightest loop: edit, run,
+     read the output. After them it explains buttons the reader can already
+     see. The output panel and everything below keep their place. */
+	.workbench {
+		display: flex;
+		flex-direction: column;
+	}
+
+	/* Negative orders on the three that move, so everything else keeps the
+     default 0 and follows in source order: the statuses, the output panel, and
+     anything added later. A catch-all :not() rule was tried and lost to its own
+     specificity, which put the editor last. */
+	.workbench > .code-editor,
+	.workbench > .code-editor-loading {
+		order: -3;
+	}
+
+	.workbench > .exercise-controls {
+		order: -2;
+	}
+
+	.workbench > .exercise-tip {
+		order: -1;
+		margin-top: 0.9rem;
+	}
+}
+
+/* Touch: the same band the module picker takes over in, because that is where
+   the reading happens with a thumb. 44px is the smaller of the two platform
+   minimums (iOS 44, Android 48) and the one the picker rows already use.
+   Sliders were the worst of it: an unstyled range input is 16px tall, and
+   twenty-two of them drive the interactives. Height on the input grows its box
+   and the browser keeps the track centred in it, so the affordance looks the
+   same while the target reaches the platform floor. */
+@media (max-width: 880px) {
+	input[type="range"] {
+		min-height: 44px;
+	}
+
+	.button-secondary,
+	.start-outline-title,
+	.start-progress-link,
+	.exercise-launcher-open,
+	.wb-section-item,
+	.wb-head button,
+	.wb-head summary,
+	.wb-scratch-controls button,
+	.chip {
+		min-height: 44px;
+	}
+
+	/* Padding rather than flex centring: a summary is display: list-item, and
+     display: flex on it removes the disclosure marker, which is the one thing
+     that says the block folds. That cost the module opener its triangle and
+     left a green heading nobody would think to tap. */
+	summary {
+		min-height: 44px;
+		padding-block: 0.5rem;
+	}
+}
+
+/* ---------- the workbench ---------- */
+
+/* One panel, one editor, one file, for the whole course. Docked beside the
+   reading column on a wide screen and a full-screen sheet below 1360px.
+   Everything here lives in this stylesheet rather than in src/brand/, which
+   the sibling courses share: the panel is this course's, and the brand layer
+   loads first so anything below can override it.
+
+   #root, rather than .shell, holds the reading column away from the panel, so
+   the pre-mount placeholder in index.html is offset by the same rule as the
+   app that replaces it: a returning reader with the panel open does not watch
+   the column jump when React mounts. Padding rather than a grid track, for two
+   reasons: a 1fr track takes a min-content floor from the widest table in the
+   course, so minmax(0, 1fr) would be mandatory, and a grid item stretches by
+   default, which silently defeats position: sticky on the section bar inside
+   it. */
+#root {
+	padding-right: var(--dock-w, 0px);
+}
+
+/* The tab strip folds to the picker when the COLUMN is narrow, which is not
+   the same question as whether the window is. brand.css asks the window,
+   because a sibling course has no panel; this asks the column, and wins by
+   loading after it. */
+.shell[data-narrow="1"] .tabs {
+	display: none;
+}
+
+.shell[data-narrow="1"] .module-picker {
+	display: block;
+}
+
+/* The drag handle between the column and the panel. Wider than it looks: the
+   line is 1px and the grab area is 11, because a 1px target is not one. */
+.wb-grip {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	right: calc(var(--dock-w, 0px) - 5px);
+	width: 11px;
+	z-index: 31;
+	cursor: col-resize;
+	background: transparent;
+	touch-action: none;
+}
+
+.wb-grip::after {
+	content: "";
+	position: absolute;
+	inset: 0 5px;
+	background: var(--rule);
+}
+
+.wb-grip:hover::after,
+.wb-grip-dragging::after,
+.wb-grip:focus-visible::after {
+	background: var(--accent);
+}
+
+.wb-grip:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: -2px;
+}
+
+/* The tab that opens the panel when it is shut. Only where the panel can
+   dock: below that width it would open a full-screen sheet out of nowhere,
+   and the exercise cards are the way in. */
+.wb-handle {
+	position: fixed;
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	/* vertical-rl and nothing else. A rotate(180deg) on top of it was both
+     wrong ways round: it set the text bottom to top, which is the less
+     familiar of the two vertical settings for Latin type, and it turned the
+     whole box over, so the rounded corners authored for the left edge came
+     out on the right and the border left open against the screen edge came
+     out facing the page. */
+	writing-mode: vertical-rl;
+	z-index: 29;
+	padding: 1rem 0.35rem;
+	border: 1px solid var(--rule);
+	border-right: none;
+	border-radius: var(--radius) 0 0 var(--radius);
+	background: var(--surface-card);
+	color: var(--muted);
+	font-family: var(--font-ui);
+	font-size: 0.78rem;
+	letter-spacing: 0.04em;
+	cursor: pointer;
+}
+
+.wb-handle:hover {
+	color: var(--accent);
+	border-color: var(--accent);
+}
+
+.wb {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: var(--dock-w, 0px);
+	z-index: 30;
+	display: flex;
+	flex-direction: column;
+	background: var(--bg);
+	border-left: 1px solid var(--rule);
+	/* The head asks the panel how wide it is, not the window: the reader sets
+     this width by dragging, so a window query would answer the wrong question. */
+	container-type: inline-size;
+	/* Anything inside painting the shared scroll affordance covers its own
+     ground, and the panel's ground is the page's here. Declared rather than
+     inherited: a custom property that references another is substituted where
+     it is declared, so reading it from :root would freeze the page's value. */
+	--fig-ground: var(--bg);
+}
+
+.wb[hidden] {
+	display: none;
+}
+
+/* The one chrome row: the file's name, the button the loop uses, what that
+   button is pointed at, and the things reached for once a session. Two rows
+   were the name-and-buttons row over a controls row, 101px of chrome above a
+   panel that is mostly meant to be code. */
+.wb-head {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-height: var(--bar-h);
+	padding: 0 0.9rem;
+	border-bottom: 1px solid var(--rule);
+	/* The picker's menu hangs off this, and CodeMirror's own positioned boxes
+     come later in the DOM, so the head needs a layer of its own. */
+	position: relative;
+	z-index: 4;
+}
+
+/* Below 600px of panel the picker takes a row of its own, asked of the panel
+   and not of the window, because the reader sets the panel's width by dragging
+   it. Everything else in the head is fixed width: the file's name, Run tests,
+   Stop, More and Close come to 418px with the gaps and the padding, so under
+   600 there is nothing left to name a section in. Measured at 465px the picker
+   was a 39px box, and on a 390px phone a 20px one showing one letter, which is
+   the one thing in that row a reader needs to read. The threshold counts Stop,
+   which is only there during a run, so the head cannot change height under a
+   reader mid-run. */
+@container (max-width: 600px) {
+	.wb-head {
+		flex-wrap: wrap;
+		min-height: 0;
+		padding-top: 0.4rem;
+		padding-bottom: 0.4rem;
+	}
+
+	.wb-sections {
+		order: 1;
+		flex: 1 0 100%;
+	}
+
+	.wb-sections > summary {
+		max-width: none;
+	}
+}
+
+.wb-head button {
+	font-size: 0.82rem;
+	padding: 0.28rem 0.7rem;
+	white-space: nowrap;
+}
+
+.wb-title {
+	flex: 0 0 auto;
+	font-size: 0.85rem;
+	margin: 0;
+	white-space: nowrap;
+}
+
+.wb-title code {
+	font-family: var(--font-mono);
+	color: var(--muted);
+}
+
+.wb-title:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+}
+
+/* The rail: every section of the file, including the ones not written yet, so
+   the shape of the course is visible from Module 1. */
+.wb-repair {
+	flex: 0 0 auto;
+	padding: 0.6rem 0.9rem;
+	border-bottom: 1px solid var(--rule);
+	background: var(--accent-wash);
+	font-family: var(--font-ui);
+	font-size: 0.8rem;
+}
+
+.wb-repair p {
+	margin: 0 0 0.4rem;
+}
+
+/* One scroll for the whole panel: the chrome above it is fixed, and the code,
+   the output and the verdict flow down a single column. It was two scroll
+   boxes with two scrollbars, which meant two keyholes and neither half able to
+   use the other's space. The editor therefore has no height of its own and no
+   scroller of its own; it grows to its content and this is what scrolls. */
+.wb-flow {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+
+.wb-flow .code-editor.wb-editor {
+	height: auto;
+	min-height: 0;
+	margin: 0;
+	border: none;
+	border-radius: 0;
+	resize: none;
+}
+
+.wb-flow .wb-editor .cm-editor {
+	height: auto;
+}
+
+/* The editor stops being the scroll container, so CodeMirror scrolls the panel
+   instead. Its own scroller must not clip, or the tail of the document is
+   unreachable. */
+.wb-flow .wb-editor .cm-scroller {
+	overflow: visible;
+}
+
+.wb-results {
+	padding: 0.4rem 0.9rem 2rem;
+}
+
+/* What the run is saying, on a line of its own under the head. In the head it
+   was the sixth thing in the row and about 50px wide, so "Running the
+   tests..." rendered as "R...". Nothing renders here at rest, so the chrome is
+   still one row until a run starts. */
+.wb-status {
+	flex: 0 0 auto;
+	margin: 0;
+	/* Kept shallow on purpose. The strip is there only during a run, so the code
+     under it moves by exactly this much when one starts, in the course's
+     tightest loop. */
+	padding: 0.2rem 0.9rem;
+	border-bottom: 1px solid var(--rule);
+	font-family: var(--font-ui);
+	font-size: 0.75rem;
+	color: var(--muted);
+}
+
+.wb-status-error {
+	color: var(--loss);
+	background: color-mix(in srgb, var(--loss) 7%, transparent);
+}
+
+.wb-more {
+	flex: 0 0 auto;
+	/* The status used to be the spring that held these two at the right edge. */
+	margin-left: auto;
+	position: relative;
+	font-family: var(--font-ui);
+}
+
+.wb-more-menu {
+	position: absolute;
+	right: 0;
+	top: calc(100% + 0.35rem);
+	z-index: 3;
+	width: min(22rem, 80vw);
+	padding: 0.6rem;
+	background: var(--surface-card);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	box-shadow: 0 6px 20px color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+.wb-more-tip {
+	margin: 0.5rem 0 0;
+	font-size: 0.78rem;
+	line-height: 1.45;
+	color: var(--muted);
+}
+
+/* Dressed as the secondary buttons beside it, so the right end of the row
+   reads as two controls rather than a control and a line of text. */
+.wb-more > summary {
+	display: inline-block;
+	padding: 0.28rem 0.7rem;
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	color: var(--muted);
+	white-space: nowrap;
+	cursor: pointer;
+	list-style: none;
+}
+
+.wb-more > summary::-webkit-details-marker {
+	display: none;
+}
+
+.wb-more > summary::after {
+	content: " \25be";
+}
+
+.wb-more > summary:hover,
+.wb-more[open] > summary {
+	border-color: var(--accent);
+	color: var(--accent);
+}
+
+/* An explicit display on a child of a closed <details> is laid out anyway in
+   Chromium, so the menu showed with the disclosure shut. Hide it on the same
+   selector that gives it a display, rather than relying on the UA. */
+.wb-more:not([open]) .wb-more-menu {
+	display: none;
+}
+
+.wb-more[open] .wb-more-menu {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.wb-lent {
+	font-family: var(--font-ui);
+	font-size: 0.8rem;
+	color: var(--muted);
+	border-left: 3px solid var(--rule);
+	padding-left: 0.6rem;
+	margin: 0.6rem 0;
+}
+
+/* The card that says the failure is not in the section being looked at. An
+   AssertionError carries no line number, so this is the only thing that can
+   point at the section that is really wrong. */
+.wb-blame {
+	border: 1px solid var(--rule);
+	border-left: 3px solid var(--loss);
+	border-radius: var(--radius);
+	padding: 0.6rem 0.75rem;
+	margin: 0.6rem 0;
+	font-size: 0.88rem;
+}
+
+.wb-blame p {
+	margin: 0.3rem 0;
+}
+
+.wb-blame-message {
+	font-family: var(--font-mono);
+	font-size: 0.78rem;
+	color: var(--muted);
+}
+
+.wb-goto {
+	margin-top: 0.4rem;
+	font-size: 0.78rem;
+}
+
+.wb-scratch {
+	margin: 0.7rem 0;
+	font-family: var(--font-ui);
+	font-size: 0.8rem;
+	color: var(--muted);
+}
+
+.wb-scratch > summary {
+	cursor: pointer;
+}
+
+.wb-scratch-note {
+	margin: 0.4rem 0;
+}
+
+.wb-scratch-editor {
+	height: 180px;
+	margin: 0.4rem 0 0;
+}
+
+/* Below the dock threshold the panel is a sheet: the one place in the course
+   where reading and coding cannot happen at once, because there is no width
+   in which both fit. Said plainly rather than dressed up. */
+.wb[data-dock="sheet"] {
+	inset: 0;
+	width: auto;
+	border-left: none;
+	z-index: 50;
+}
+
+/* The exercise's launcher: what is left in the module page where the editor
+   used to be. Rendered as a <p> so it is a direct child of .exercise and
+   inherits the prose measure through the rule that is already there, rather
+   than needing a selector of its own in the measure list. */
+.exercise-launcher {
+	display: flex;
+	align-items: baseline;
+	gap: 0.7rem;
+	flex-wrap: wrap;
+	margin: 1rem auto 0.8rem;
+}
+
+.exercise-launcher-open {
+	flex: 0 0 auto;
+}
+
+.exercise-launcher-state {
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	color: var(--muted);
+}
+
+/* The folded receipts. A passing check is not a finding, so it reads as one
+   line with a count, and the list is one press away for anyone who wants it. */
+.test-passed {
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	color: var(--muted);
+	margin: 0.5rem auto;
+}
+
+.test-passed > summary {
+	cursor: pointer;
+	color: var(--accent);
+}
+
+.test-passed .test-mark {
+	margin-right: 0.35rem;
+}
+
+.test-passed ul {
+	margin: 0.4rem 0 0;
+	padding-left: 1.6rem;
+}
+
+.test-passed li {
+	margin: 0.15rem 0;
+}
+
+/* The run marker beside each section line, and the gutter that holds it. */
+.wb-editor .cm-run-gutter {
+	padding: 0 0.15rem 0 0.25rem;
+}
+
+.wb-editor .cm-run-section {
+	display: block;
+	padding: 0 0.15rem;
+	border: none;
+	background: transparent;
+	color: color-mix(in srgb, var(--accent) 45%, transparent);
+	font-size: 0.7rem;
+	line-height: inherit;
+	cursor: pointer;
+}
+
+.wb-editor .cm-run-section:hover,
+.wb-editor .cm-run-section:focus-visible {
+	color: var(--accent);
+}
+
+/* CodeMirror's own spacer element, the one that reserves the column's width,
+   already carries visibility: hidden, so nothing is needed here for it. Noted
+   because the obvious rule to add is dead code. */
+
+/* The scratch pad's own Run. A cell owns its run button, which is the one
+   notebook habit worth copying here: "Run my code" sat in the chrome row
+   beside "Run tests" as if the two were a choice to make every time, when one
+   is the loop and the other is an aside about the block of code just below
+   this button. */
+.wb-scratch-controls {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	margin-top: 0.5rem;
+}
+
+.wb-scratch-hint {
+	font-size: 0.76rem;
+	color: var(--muted);
+}
+
+/* The section picker. Eleven rows, each with its state, opened from the head.
+   It replaces a rail of chips that panned: at the dock's own width that rail
+   showed four of the eleven, which is a keyhole onto the course rather than a
+   picture of it, and it cost 50px of every screen to do that. */
+.wb-sections {
+	flex: 0 1 auto;
+	min-width: 0;
+	font-family: var(--font-ui);
+}
+
+.wb-sections > summary {
+	display: block;
+	max-width: 30ch;
+	padding: 0.28rem 0.6rem;
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	font-size: 0.82rem;
+	color: var(--ink);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: pointer;
+	list-style: none;
+}
+
+.wb-sections > summary::-webkit-details-marker {
+	display: none;
+}
+
+.wb-sections > summary::after {
+	content: " \25be";
+	color: var(--muted);
+}
+
+.wb-sections > summary:hover,
+.wb-sections[open] > summary {
+	border-color: var(--accent);
+	color: var(--accent);
+}
+
+.wb-sections:not([open]) .wb-sections-menu {
+	display: none;
+}
+
+.wb-sections-menu {
+	/* Anchored to the head, not to the summary: the summary sits after the
+     file's name and the Run button, so a menu hung off its left edge ran past
+     the panel's right edge at the narrow dock and the states were cut off.
+     The head rather than the panel, because on the sheet the head is two rows
+     and the menu has to clear whichever it is. */
+	position: absolute;
+	left: 0.9rem;
+	right: 0.9rem;
+	top: calc(100% + 0.35rem);
+	z-index: 3;
+	display: flex;
+	flex-direction: column;
+	max-height: 60vh;
+	overflow-y: auto;
+	padding: 0.3rem;
+	background: var(--surface-card);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	box-shadow: 0 6px 20px color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+.wb-section-item {
+	display: flex;
+	align-items: baseline;
+	gap: 0.45rem;
+	width: 100%;
+	padding: 0.35rem 0.5rem;
+	border: none;
+	border-radius: var(--radius);
+	background: transparent;
+	color: var(--ink);
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	text-align: left;
+	cursor: pointer;
+}
+
+.wb-section-item:hover {
+	background: var(--accent-wash);
+}
+
+.wb-section-current {
+	box-shadow: inset 2px 0 0 var(--accent);
+	color: var(--accent);
+}
+
+.wb-section-mark {
+	flex: 0 0 1em;
+	color: var(--muted);
+}
+
+.wb-section-passing .wb-section-mark {
+	color: var(--accent);
+}
+
+.wb-section-stale .wb-section-mark {
+	color: var(--loss);
+}
+
+.wb-section-name {
+	/* min-width: 0 is what keeps the state visible. A flex item cannot shrink
+     below its content without it, so the longest label (38 characters) pushed
+     "written, not passing yet" off the menu's right edge. */
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.wb-section-state {
+	flex: 0 0 auto;
+	font-size: 0.74rem;
+	color: var(--muted);
+}
+
+/* Back to the code, in the output's own heading. One scroll means the code is
+   above whatever a run just produced, sometimes thousands of pixels above. */
+.wb-back {
+	float: right;
+	padding: 0;
+	border: none;
+	background: transparent;
+	color: var(--accent);
+	font-family: var(--font-ui);
+	font-size: 0.75rem;
+	text-transform: none;
+	letter-spacing: 0;
+	cursor: pointer;
+}
+
+.wb-back:hover {
+	text-decoration: underline;
+}
+
+/* The hints and the test code, which used to sit in the module page. They are
+   reference for while you are coding, so they belong beside the code. */
+.wb-help {
+	margin: 1rem 0;
+}
+
+.wb-tests {
+	font-family: var(--font-ui);
+	font-size: 0.8rem;
+	color: var(--muted);
+}
+
+.wb-tests > summary {
+	cursor: pointer;
+}
+
+.wb-tests pre {
+	margin: 0.5rem 0 0;
+	padding: 0.7rem;
+	background: var(--surface-sunken);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius);
+	font-size: 0.78rem;
+}
+
+.wb-hints {
+	margin-top: 0.8rem;
+}
+
+.wb-hints .hint {
+	margin: 0 0 0.7rem;
+}
+
+.wb-hints .hint h5 {
+	margin: 0 0 0.3rem;
+}
+
+.wb-hints .hint-pre {
+	font-size: 0.78rem;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Transformers course additions. Everything above is course one's stylesheet,
+   lifted whole (it is the accumulated UX of the shared components); the rules
+   below are this course's own classes. Prune unused course-one rules as the
+   chapters land, never speculatively. */
+
+.start-lede {
+	font-size: 1.06rem;
+}
+
+.start-steps li {
+	margin: 0.35rem 0;
+}
+
+.module-kicker {
+	margin: 0 0 0.2rem;
+	font-family: var(--font-ui);
+	font-size: var(--label-size);
+	font-weight: var(--label-weight);
+	letter-spacing: var(--label-tracking);
+	text-transform: uppercase;
+	color: var(--accent);
+}
+
+/* .module-kicker is a direct child of article.module, so it picks up the
+   reading measure from the .module > p rules above. */
+
+/* The field's name for a coined term, under its meaning in the notation
+   lookup rather than in a fourth column: two columns of prose pan the whole
+   table at the prose measure. */
+.notation-also {
+	display: block;
+	margin-top: 0.15rem;
+	color: var(--muted);
+	font-size: 0.85em;
+}
+
+/* ---- chapter 1 -------------------------------------------------------- */
+
+/* The line being counted, above the tally grid. Monospace so the space
+   glyph and the letters share a column width, and the pair under the cursor
+   is marked on the characters themselves rather than in a caption. */
+.tally-line {
+	margin: 0.6rem 0 0.2rem;
+	font-family: var(--font-mono);
+	font-size: 1.05rem;
+	line-height: 1.9;
+	text-align: center;
+}
+
+.tally-line-char {
+	padding: 0.1rem 0.02rem;
+	color: var(--muted);
+	border-bottom: 2px solid transparent;
+}
+
+.tally-line-read {
+	color: var(--ink);
+}
+
+.tally-line-before,
+.tally-line-after {
+	background: var(--accent-panel);
+	border-bottom-color: var(--accent);
+	color: var(--ink);
+}
+
+.tally-line-after {
+	background: var(--accent-wash);
+}
+
+/* Reserved height, on top of .interactive-status: these lines change on every
+   step, and a line that appears and disappears moves the grid under the
+   reader's cursor. */
+.tally-status,
+.wheel-status {
+	min-height: 1.5rem;
+	margin: 0.1rem 0 0.5rem;
+	text-align: center;
+}
+
+/* The grid family: fixed cell size, the count in the cell, the fill a share
+   of the accent. Pans inside .table-scroll on a narrow screen rather than
+   shrinking its labels. */
+.tally-grid {
+	border-collapse: collapse;
+	margin: 0 auto;
+	font-family: var(--font-mono);
+	font-size: 0.82rem;
+}
+
+.tally-grid th,
+.tally-grid td {
+	width: 2.1rem;
+	height: 2.1rem;
+	padding: 0;
+	text-align: center;
+	border: 1px solid var(--rule);
+}
+
+.tally-grid th {
+	font-family: var(--font-mono);
+	font-weight: 600;
+	color: var(--muted);
+	background: var(--accent-wash);
+}
+
+.tally-corner,
+.tally-total-head {
+	font-family: var(--font-ui);
+	font-size: 0.62rem;
+	font-weight: var(--label-weight);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.tally-cell-next {
+	outline: 2px solid var(--accent);
+	outline-offset: -2px;
+}
+
+.tally-zero {
+	color: var(--rule-strong);
+}
+
+.tally-total {
+	font-weight: 600;
+	background: var(--accent-wash);
+}
+
+/* The sampler's row of bars: natural scale, longest bar full width, so the
+   shape of one row reads at a glance. */
+.wheel-row {
+	margin: 0.5rem auto 0.7rem;
+	max-width: 30rem;
+}
+
+.wheel-bar-line {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 0.16rem 0;
+}
+
+.wheel-bar-char {
+	flex: none;
+	width: 1.4rem;
+	font-family: var(--font-mono);
+	font-size: 0.9rem;
+	text-align: right;
+	color: var(--ink);
+}
+
+.wheel-bar-track {
+	flex: 1 1 auto;
+	height: 0.75rem;
+	background: var(--accent-wash);
+	border-radius: 2px;
+	overflow: hidden;
+}
+
+.wheel-bar-fill {
+	display: block;
+	height: 100%;
+	background: var(--accent);
+}
+
+.wheel-bar-value {
+	flex: none;
+	width: 8.5rem;
+	font-family: var(--font-ui);
+	font-size: 0.76rem;
+	color: var(--muted);
+}
+
+.wheel-empty {
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	color: var(--muted);
+	text-align: center;
+}
+
+/* Generated text, in both the panel and the prose. Wraps rather than
+   scrolling sideways, because it is prose-shaped output and a reader reads
+   it rather than inspecting a line of it. */
+.wheel-output,
+.sample-block {
+	margin: 0.4rem 0 0;
+	padding: 0.7rem 0.8rem;
+	min-height: 6.5rem;
+	background: var(--accent-wash);
+	border: 1px solid var(--rule);
+	border-radius: 4px;
+	font-family: var(--font-mono);
+	font-size: 0.82rem;
+	line-height: 1.5;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.sample-block {
+	max-width: var(--measure);
+	margin-left: auto;
+	margin-right: auto;
+	min-height: 0;
+}
+
+/* An interactive's own title and reading key. They live on the panel rather
+   than in the prose above it, so the prose keeps only what a panel cannot
+   say: the connection to earlier material and the carrying idea. */
+.interactive-title {
+	margin: 0 0 0.25rem;
+	font-family: var(--font-ui);
+	font-size: 0.86rem;
+	font-weight: 600;
+	color: var(--ink);
+}
+
+.interactive-legend {
+	margin: 0 0 0.6rem;
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	line-height: 1.5;
+	color: var(--muted);
+}
+
+.interactive-error {
+	font-family: var(--font-ui);
+	font-size: 0.84rem;
+	color: var(--loss, #b3423a);
+	text-align: center;
+}
+
+/* A checkbox and its label as one flex item inside .interactive-controls, so
+   it sits on the row with the buttons and wraps with them. */
+.checkbox-row {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	color: var(--muted);
+	min-height: 44px;
+}
+
+.checkbox-row input {
+	accent-color: var(--accent);
+	width: 1.05rem;
+	height: 1.05rem;
+}
+
+/* The box-and-arrow family: one shared viewBox width at full column width. */
+.fig-box-fill {
+	fill: var(--accent-wash);
+	stroke: var(--accent-rule);
+	stroke-width: 1;
+}
+
+.fig-arrow {
+	fill: none;
+	stroke: var(--rule-strong);
+	stroke-width: 1.5;
+}
+
+.fig-arrow-head {
+	fill: var(--rule-strong);
+}
+
+.fig-label {
+	font-family: var(--font-ui);
+	font-size: 12px;
+	fill: var(--ink);
+}
+
+.fig-note {
+	font-family: var(--font-ui);
+	font-size: 10.5px;
+	fill: var(--muted);
+}

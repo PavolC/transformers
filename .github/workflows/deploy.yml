@@ -1,0 +1,111 @@
+# Publish the static build to GitHub Pages.
+#
+# Every push to main republishes, once somebody has set Settings > Pages >
+# Source to "GitHub Actions". That toggle is a one-time manual step and there
+# is no way around it: creating the Pages site takes repository admin rights,
+# and GITHUB_TOKEN does not have them at any permission level. Granting
+# pages: write below buys the right to deploy to a site that already exists,
+# not the right to create one. (configure-pages takes an enablement input
+# that sounds like the fix; course one tried it, and it turns "Get Pages site
+# failed ... Not Found" into "Create Pages site failed ... Resource not
+# accessible by integration", one step later and no further along.)
+#
+# vite.config.ts sets base to "./", so the build works from a project subpath
+# (user.github.io/repo/) with no configuration here.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time, and let a newer push win rather than queueing behind
+# a build whose output is already stale.
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # The checkers, in front of the build rather than beside it, so nothing
+  # reaches Pages that a contributor could not have caught locally with
+  # `npm run check`. The one that matters most is the mutation check in
+  # check_exercises.py: no amount of running the test suites detects a section
+  # shadowing an earlier one, because everything stays green.
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: npm ci
+      - run: pip install numpy
+      - run: python3 tools/spike/native_check.py
+      - run: python3 tools/check_exercises.py
+      - run: python3 tools/check_panels.py --fast
+      - run: python3 tools/check_brand.py
+      - run: python3 tools/brand_palette.py --check
+
+  # The benches run the reader's own runtime (pinned Pyodide in Node), so a
+  # bench that no longer reproduces its committed JSON is a prose defect
+  # waiting to ship. Numbers are compared, not just regenerated: git diff is
+  # the assertion.
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run bench
+      # The bench output carries no timestamp, so this compares numbers only.
+      - name: The committed bench output still reproduces
+        run: |
+          if ! git diff --quiet -- src/bench; then
+            echo "A bench no longer reproduces its committed numbers:"
+            git --no-pager diff -- src/bench
+            exit 1
+          fi
+
+  build:
+    needs: [check, bench]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/configure-pages@v5
+        if: github.event_name != 'pull_request'
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: dist
+
+  deploy:
+    # A pull request builds and runs every check, and publishes nothing.
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -8,9 +8,10 @@ that produced them are in `CASEBOOK.md`, the process that generates new ones is 
 `METHOD.md`, and the visual system is in `BRAND.md`. Read this one every time; read the
 others once.
 
-Every `FILL:` below is a hole this project has to close before the first chapter is
-written. A hole left open is not a style question, it is a bug that will be paid for
-later at ten to twenty times the cost (`CASEBOOK.md` prices six of them).
+Every `FILL:` the kit shipped with was closed on 2026-08-31, before the first chapter,
+from the design doc and the M0 spike. A hole left open is not a style question, it is a
+bug that will be paid for later at ten to twenty times the cost (`CASEBOOK.md` prices six
+of them), so anything reopened gets closed in the same commit that reopens it.
 
 ---
 
@@ -23,26 +24,34 @@ provoking quote included. This is the single practice that produced everything b
 
 ## What this project is
 
-FILL: two sentences. What the learner will be able to do at the end, and what they build
-to get there.
+At the end the learner can write a working character-level GPT from a blank file, train
+it, and explain every matrix in it. They get there by building the scribe: a decoder-only
+transformer in float64 NumPy, grown one exercise section at a time and trained live in the
+browser tab on Tiny Shakespeare until it writes.
 
 Goals, in priority order:
 
-1. FILL: the primary learner understands X deeply by implementing Y themselves.
+1. The primary learner (Pavol) understands transformers deeply by implementing a
+   character-level GPT, every table and every gradient, in NumPy.
 2. The artifact is self-sufficient: a colleague opens a link and finishes with no book,
    no setup, no author involvement.
 3. Demoable in under two minutes: open link, show a live figure, show the thing running.
 
-Non-goals: FILL: what this deliberately is not (a production tool, a full port of the
-source text, anything with accounts or a backend).
+Non-goals: not a PyTorch or GPU course (NumPy only, no autograd framework); BPE is named
+and pointed at, never built; no fine-tuning, RLHF, quantization or KV-cache serving; not a
+port of nanoGPT (it is the offline parity reference, not a text being followed); decoder
+only, never encoder-decoder; no backend, no accounts, no telemetry.
 
 ## The learner floor
 
-FILL: one short line for what the learner can already do, then the list of what they have
-never seen. "Knows Python and high-school algebra; has never seen a grammar, a stack
-machine, or asymptotic notation." The absences are the load-bearing half, because a
-paragraph can be checked against them; "intermediate programmer" cannot be checked against
-anything.
+Finished Moving Parts: Neural Networks, weeks ago, so course one is faded: what survives
+is the shape (weights and biases, a loss, gradients point downhill, backprop as a chain of
+slopes, a training loop), and the derivations are gone, so this course restates whatever
+it leans on. Can read Python and NumPy-flavoured code. Has never seen: next-token
+prediction, tokenization, embeddings, attention, queries/keys/values, softmax over a
+vocabulary, LayerNorm, residual connections, or Adam. The absences are the load-bearing
+half, because a paragraph can be checked against them. Confirmed by the floor test on
+2026-08-31 ("floor is right").
 
 The floor is binding on every chapter, including the last one. Everything above the floor
 is built here, in the order the story needs it and never before.
@@ -51,9 +60,15 @@ is built here, in the order the story needs it and never before.
 
 - **Never write solution logic into a skeleton file.** Solutions live only in
   `solution.py` (or its equivalent). Skeletons hold stubs, docstrings and contracts.
-- FILL: the attribution and licence obligations, naming every surface that carries them
-  (app footer, README, LICENSE). If the sequence is adapted from a book, a paper series or
-  a curriculum, its terms are an unremovable hard rule.
+- This course's obligations, and every surface that carries them: code is MIT and prose
+  plus figures are CC BY 4.0 (stated in LICENSE and the README); the offline parity
+  fixture generator derives from nanoGPT (MIT, © Andrej Karpathy), so its header and
+  THIRD_PARTY_NOTICES.md carry that notice, and if any adapted code ever ships in the
+  build, the notice is emitted into the build output and linked from the footer; Tiny
+  Shakespeare is public-domain text via Karpathy's char-rnn repo, credited in the README
+  and the app footer, with tools/fetch_shakespeare.py holding the URL and sha256. No
+  NonCommercial term touches this repo. The prose is original, so no source licence
+  reaches the content.
   **Scope the restriction to the material it actually covers, and write that scope down
   before the first chapter.** A course adapted from a NonCommercial source contains two
   kinds of material: the content, which carries the source's terms, and the engine, the
@@ -77,25 +92,55 @@ is built here, in the order the story needs it and never before.
 
 ## The canonical representation
 
-FILL: the one data representation the whole project obeys, stated exactly, with the shape
-or type rules that follow from it. A compiler course fixes its IR; a music course fixes
-its pitch encoding; a modelling course fixes its state vector and time unit.
+- Text is a Python `str`; the corpus is `public/data/tinyshakespeare.txt`, read as UTF-8.
+- The vocabulary is `sorted(set(corpus))`; a token is one character; its id is its index
+  in that list. `encode`/`decode` are the only crossing between `str` and arrays.
+- Token sequences are NumPy `int64`. A batch of windows is `(B, T)`; targets are the same
+  windows shifted one character left, also `(B, T)`.
+- Axis law: batch axis 0, time axis 1, channels last. Time reads left to right; the past
+  of position `t` is `0..t`, self included.
+- Floats are `float64` (NumPy's default) everywhere, so naive learner code matches the
+  reference bit for bit instead of silently promoting.
+- Activations are `(B, T, C)`; per-head attention weights are `(B, H, T, T)`, lower
+  triangular after masking.
+- Randomness is one `np.random.default_rng(seed)` created by the caller and passed
+  explicitly, never global. Parameter draw order is `init_params`'s insertion order and is
+  part of the contract.
+- Parameters live in one flat `dict[str, np.ndarray]` with dotted names
+  (`"blocks.0.attn.w_qkv"`); gradients mirror it key for key. A module is a pair of pure
+  functions, `forward(...) -> (out, cache)` and `backward(d_out, cache) -> grads`.
+- The loss is mean cross-entropy over every position, **in bits** (base-2 log). Bits are
+  the unit everywhere; the one bits-to-nats sentence lives in chapter 4.
+`src/python/reference_scribe.py` is the executable statement of all of this.
 
 Drift between chapters is a bug, not a preference. This is the cheapest rule to settle on
 day one and the most expensive to retrofit.
 
 ## The running world
 
-FILL: one story, with named recurring artifacts, that can carry the LAST chapter as well
-as the first. New material connects explicitly to prior artifacts instead of opening
-fresh abstractions.
+One story: teaching a small machine to write by reading Shakespeare. The recurring
+artifacts, by name: **the line** ("to be, or not to be" and its tally, chapter 1's first
+figure), **the corpus** (Tiny Shakespeare), **the tally** (the counts table that becomes,
+in turn, probabilities, a learned table, and logits), **the ladder** (the one figure of
+bits-per-character every chapter adds a rung to), and **the scribe** (the growing model).
+Chapter 12 is the same workbench and the same ladder pointed at pasted text, so the world
+carries to the last chapter without re-anchoring. New material connects explicitly to
+these artifacts instead of opening fresh abstractions.
 
 Check the last chapter against it before writing the first. A chapter that opens a new
 world has to be re-anchored, which is a rewrite, not an edit. [casebook: 7]
 
 ## The exercise and test contract
 
-FILL the language and runtime; the rest is fixed:
+Python on the pinned Pyodide (314.0.5), NumPy only, in a web worker. The exercises are
+**one file the learner grows** (a section per exercise, in course order), with the three
+invariants from the first commit: the untouched file implements nothing, no section
+rebinds a name an earlier section owns, and an unwritten section still lets its chapter
+run (the harness lends the course's copy and names what it borrowed). The seam: the shared
+drivers (`train_driver`, `sample_driver`, `eval_driver`) take the model as arguments
+(`forward_fn`, `params`, `generate_fn`), so chapter 4's bigram and chapter 10's scribe
+train through the same loop and later exercises are one-line diffs on the call. The rest
+is fixed:
 
 - Tests import the learner's code under one fixed name. Work from earlier chapters
   arrives as an importable library, so a skeleton never contains a previous answer.
@@ -115,9 +160,13 @@ FILL the language and runtime; the rest is fixed:
   Anything essential to the contract must also live in the prompt, which always re-renders.
   This applies to every artifact seeded into a learner's workspace.
 - Name the course's **one flagship automated proof** that the learner's implementation is
-  right, and celebrate it in the UI when it passes. FILL: here it is X (a numerical
-  gradient check; differential testing against a reference implementation; a closed-form
-  solution the solver is checked against).
+  right, and celebrate it in the UI when it passes. Here it is **the parity check**
+  (chapter 11): the learner's assembled model, loaded with fixed weights and run on a
+  fixed batch, must match the committed nanoGPT-derived fixture on its logits, its loss,
+  and every gradient in the tree to 1e-6 relative. The workbench banner says it in plain
+  words: their NumPy and the field's PyTorch computed the same numbers. The numerical
+  gradient check (course one's flagship, rebuilt by the learner as `grad_check` in
+  chapter 4) feeds the chapter-level tests along the way.
 
 Day one, not day four: a script that runs every exercise's tests against its reference
 solution (all must pass) and against its untouched skeleton (all must fail, for the
@@ -150,8 +199,10 @@ change. [casebook: 11]
 
 Each chapter opens with "What you'll be able to do after this" (2 to 3 items), then 5 to
 8 titled sections of short prose beats (150 to 400 words, one idea each) interleaved with
-interactives, and closes with a recap and a "go deeper" link to FILL: the canonical
-source for this topic. Every equation is followed by a one-sentence plain-language gloss.
+interactives, and closes with a recap and a "go deeper" link to that chapter's canonical
+source, fixed per chapter in the design doc's section 2 table (Shannon 1951 for chapter 1
+through nanoGPT itself for chapter 11 and Karpathy's char-rnn essay for chapter 12; the
+where-to-go-next reading list lives on chapter 12, the last page). Every equation is followed by a one-sentence plain-language gloss.
 Each chapter mounts exactly one on-this-page nav that discovers its own section headers
 and scrollspies them. Section ids are unique across chapters and prefixed with the
 chapter (`c4-`).
@@ -198,7 +249,10 @@ Write every chapter to the floor above. These are ordered roughly as they bite.
   one-sentence payoff it earns, and close by cashing it out. Checks without stated stakes
   read as arithmetic for its own sake.
 - **Tally explicitly.** Count the cost in the text: it is why the next chapter exists.
-  FILL: the countable quantity each chapter's technique reduces.
+  The countable quantity every chapter reduces: **average surprise per character, in
+  bits, on held-out Shakespeare**, tracked on the ladder. Where a chapter's cost is not
+  bits, it is parameter count (chapter 5's window) or seconds of training, and the text
+  says which.
 - **A score gets a breakdown.** Any aggregate number reported to the learner gets its
   decomposition beside it (per-class counts, the specific confident mistakes, the
   residuals by stratum), never the single number alone.
@@ -223,15 +277,45 @@ its reason, plus the sentence that the small case is a sub-case and not a detour
   reader cannot pronounce becomes an unrelated word the moment it appears in an
   identifier. [casebook: 5]
 - **Every new symbol and coined term goes in the notation reference in the same change.**
-  One folded lookup on the front page: symbol, one line of meaning, the chapter that
-  introduced it, in the order a reader meets them. Weeks pass between chapters, and a
-  symbol defined once four thousand words ago is not defined for that reader.
-  [casebook: 8]
+  One folded lookup on the front page: symbol, one line of meaning, the field's name for
+  it, and the chapter that introduced it, in the order a reader meets them. Weeks pass
+  between chapters, and a symbol defined once four thousand words ago is not defined for
+  that reader. The field's name goes in as a muted "also called" line under the meaning
+  rather than as a fourth column, because two columns of prose pan the whole lookup at the
+  prose measure. [casebook: 8, 17]
 - **One word, one meaning.** Reserve the topic's load-bearing words and never reuse them.
   Before coining a noun, check what earlier chapters already call the thing. No word may
   appear before the section that defines it.
-- **One anatomy, stated everywhere ownership comes up.** FILL: the topic's ownership
-  ontology (what lives on what). Any prose that files a thing with the wrong owner gets
+- **A coined word hands over to the field's word in the chapter that earned the idea**,
+  not at the end of the course. One short paragraph at the first use of the thing, saying
+  what everyone else calls it, after which both words are in play. Leave it unlabelled and
+  keep it out of the `<Aside>` box. An opener like "this chapter's naming note is" is
+  meta-narration, and a formula a reader skips after the second one; a shaded box says the
+  lesson pauses here, which is the wrong signal for the one paragraph whose job is to put a
+  word into the reader's working vocabulary. A course built this way is already bilingual
+  and silent about it anyway: the equation glosses use the field's words while the prose
+  beside them uses the coined ones. So the handover costs almost nothing, and it declares
+  an equivalence the reader is already being shown.
+  **Do not collect the translations into a glossary on the last page.**
+  Three tiers, and the tier decides how much prose changes downstream. **Switch:** the
+  coined word stood in for a name that is on page one of everything outside this course,
+  so the field's word becomes primary in the formal registers (equation glosses, recap
+  items, the "what you'll be able to do" block, exercise prompts) while the prose keeps
+  the plain word wherever it is carrying the intuition. **Run both:** the plain word is
+  why the idea is comprehensible, so it stays primary and the field's word rides along in
+  equations and code. **Local only:** scaffolding for one beat with no counterpart
+  anywhere, never handed over, and worth listing at the end as the inverted table: these
+  words are ours, and there is nothing in the field to go looking for.
+  **Never mass-replace a coined word everywhere downstream of its handover.** The
+  handover declares an equivalence; it does not retire the plain word. Course one's
+  plainest coined word appears 183 times in its chapter prose, and a sweep that made
+  every one of them technical would undo the reason it was coined. [casebook: 17]
+- **One anatomy, stated everywhere ownership comes up.** This course's ownership
+  ontology: ids live in the stream; parameters live on modules; the embedding table owns
+  its rows (a character indexes a row, it does not own one); activations live at
+  positions (a position owns its channel vector); attention weights live on ordered pairs
+  of positions (the query position owns its row); gradients mirror parameters; the loss
+  lives on the batch. Any prose that files a thing with the wrong owner gets
   reconciled in place, including counts, tables and figure captions, which is where the
   violation hides. [casebook: 6]
 
@@ -293,11 +377,14 @@ its reason, plus the sentence that the small case is a sub-case and not a detour
   chapters taught the reader to read, with its parts named the way those chapters name
   them. Any chapter that places values by hand rather than deriving them owes this.
   [casebook: 6]
-- **Figure geometry is a small closed set.** FILL: pick two or three families before
-  drawing many figures (a fixed-width box-and-arrow family at full column width; a plot
-  family at natural scale), and decide once what each does on a phone (pan inside a scroll
-  wrapper rather than shrink labels). New diagrams join an existing family. Deciding this
-  at diagram 30 costs a course-wide retrofit. [casebook: 13]
+- **Figure geometry is a small closed set.** Three families, decided day one. **Grids**
+  (the tally, attention maps, embedding tables): fixed cell size, value in the cell where
+  legible, colour from the accent scale. **Box-and-arrow** (model anatomy): one shared
+  viewBox width rendered at full column width. **Plots** (the ladder, loss curves):
+  natural scale, capped and centred. On phones, grids and box-and-arrow keep a minimum
+  width and pan inside a scroll wrapper rather than shrinking labels; plots shrink. New
+  diagrams join an existing family. Deciding this at diagram 30 costs a course-wide
+  retrofit. [casebook: 13]
 
 ### Exercises
 
@@ -324,11 +411,24 @@ Design for both from the start; course one discovered them in a review at the en
 
 1. **Assembly.** The learner writes the loop that runs their own parts. Every earlier run
    was started by scaffolding, so this is the only assessment of assembly the course has.
-   It carries a translation table from the course's invented vocabulary into the field's,
-   and an explicit list of what the course did not teach.
+   It carries an explicit list of what the course did not teach, and the inverted
+   vocabulary list: the words that were only ever this course's own. The translations
+   themselves are not here. Each one is handed over in the chapter that earned the idea
+   (see "Notation and vocabulary"), because a table of twenty of them on the closing page
+   asks for the course's highest-effort operation at its lowest-energy moment.
+   [casebook: 17]
 2. **Their own input.** The artifact meets data the course did not curate: words, holes,
    unequal classes, wrong scales. Every dataset before it arrived clean, so a learner who
    stops earlier finishes able to explain the technique and unable to use it. [casebook: 14]
+
+**The reading list belongs to the last page in the course, whichever that is.** Add a
+chapter after the one that closes with "where to go next" and the list moves, in the same
+change. Course one's assembly chapter sat one chapter from the end and closed with five
+places to read next, so it had to open that list by saying that another chapter was still
+ahead of the reader, which is a page admitting it is in the wrong place; the learner
+skimmed both of the last two chapters and kept nothing from either. A reader who reaches an
+exit door takes it. Name the section id and its CSS class for the course rather than for a
+chapter, so the next move costs nothing. [casebook: 18]
 
 ## Register: plotted, narrator muted
 
@@ -358,7 +458,10 @@ enforced mechanically, and retrofitting it is the most expensive pass in the pro
 
 ## Before you commit
 
-FILL the commands; the list is fixed.
+The commands: `npm run check` runs all of it (typecheck and build via `npm run build`,
+then `python3 tools/check_exercises.py`, `python3 tools/check_panels.py`,
+`python3 tools/check_brand.py`, `python3 tools/brand_palette.py --check`); benches run
+with `npm run bench`. The list is fixed.
 
 - [ ] Typecheck and production build pass.
 - [ ] The exercise checker passes (solutions green, skeletons red for their own reason,
@@ -366,19 +469,27 @@ FILL the commands; the list is fixed.
 - [ ] Every panel that runs the learner's code has been run outside the browser.
 - [ ] Every bench whose numbers you touched has been re-run, and the prose matches it.
 - [ ] You looked at every string you added **in the real artifact**, not just in the diff.
-- [ ] Nothing scrolls sideways at FILL: the narrowest supported viewport (375px).
-- [ ] Every new symbol or coined term has a row in the notation reference.
+- [ ] Nothing scrolls sideways at 375px, the narrowest supported viewport (deliberate
+      pan-in-wrapper figures excepted).
+- [ ] Every new symbol or coined term has a row in the notation reference, and every word
+      this chapter coins hands over to the field's word at its first use.
 - [ ] Every backward claim in the new prose was checked against the chapter it cites.
 - [ ] If this commit fixes a confusion: this file has the new rule and `CASEBOOK.md` has
       the incident.
 
 ## Pinned versions
 
-FILL: the one runtime whose performance the whole design depends on, pinned exactly, with
-where the version string lives, and the measurement that justifies the pin. It may not be
-bumped without re-running the feasibility spike.
+**Pyodide 314.0.5** (Python 3.14.2, NumPy 2.4.6), the runtime the whole design depends
+on. The version string lives in one constant in `src/runtime/pyodideWorker.ts` (and the
+bench harness reads the same pin). The measurement that justifies it, from the M0 spike
+(tools/spike/README.md, 2026-08-31, headless Chromium): the T=32 C=48 H=4 L=2 B=16 scribe
+(64,481 params) trains at 6.2 steps/s and beats the counted-bigram rung (3.5806 bits) at
+24.5 s against the 60-second budget. It may not be bumped without re-running the spike.
 
-FILL: every content-critical library, pinned exactly.
+Content-critical libraries, pinned exactly in package.json (no carets on these): the
+NumPy that ships inside Pyodide 314.0.5 (2.4.6, pinned by the runtime pin), codemirror
+6.0.2 with @codemirror/lang-python 6.2.1, react 19.2.8, vite 8.2.2, katex 0.18.4. The
+lockfile is committed; `npm ci`, never `npm install`, in CI.
 
 ## Repo layout
 
@@ -388,7 +499,8 @@ FILL: every content-critical library, pinned exactly.
 /CASEBOOK.md         the incidents behind the rules
 /METHOD.md           the process
 /BRAND.md            the visual system
-/<topic>-design-doc.md
+/transformers-design-doc.md
+/THIRD_PARTY_NOTICES.md  adapted-code notices (nanoGPT)
 /src/brand/          the series brand layer (shared, see BRAND.md)
 /src/chapters/       one folder or file per chapter, plus interactives/
 /src/exercises/      per exercise: skeleton, tests, solution, prompt metadata
@@ -397,13 +509,32 @@ FILL: every content-critical library, pinned exactly.
 /src/components/     shared UI: editor, workbench, exercise card, chapter blocks
 /src/state/          the document format, and progress persistence
 /public/data/        committed datasets
-/tools/              build-time scripts, benches, and the exercise checker
+/src/bench/          committed bench output, imported by the chapters
+/tools/              build-time scripts, benches, checkers, spike/, fixtures/
+/.github/workflows/  checks, then deploy to Pages
 ```
 
 ## Commands
 
-FILL. Every generated artifact names the committed script that regenerates it, and every
-entry says what it needs. This section is how a stranger reproduces the numbers.
+Every generated artifact names the committed script that regenerates it, and every entry
+says what it needs. This section is how a stranger reproduces the numbers.
+
+- `npm run dev` serves the course at http://localhost:5175 (pinned, strictPort).
+- `npm run build` typechecks and builds the static site into `dist/`.
+- `npm run check` runs the full pre-commit list: build, exercise checker, panel checker,
+  brand checker, palette checker. Needs Node 22, Python 3 with NumPy.
+- `python3 tools/check_exercises.py` alone: solutions pass, skeletons fail for their own
+  reason, the untouched document implements nothing, sabotaged providers get noticed.
+- `npm run bench` regenerates `src/bench/*.json` under the pinned Pyodide in
+  Node, printing each prose sentence it backs. CI re-runs it and fails if a
+  committed number moved. Needs Node 22 and network for the first
+  Pyodide download (cached after).
+- `public/data/tinyshakespeare.txt` is regenerated by `python3
+  tools/fetch_shakespeare.py` (needs network; verifies sha256).
+- The spike re-runs per `tools/spike/README.md` (needs playwright-core and a Chromium).
+- `src/exercises/fixtures/parity.json` is regenerated by
+  `python3 tools/fixtures/gen_parity_fixture.py` (offline, needs PyTorch; arrives with
+  the chapter 9 to 11 work).
 
 ## Decisions
 
@@ -412,7 +543,68 @@ rejected. Never relitigate an entry; add a superseding one. Include decisions th
 only to keep two subsystems consistent, since those are the ones a later session breaks
 without knowing.
 
+- **2026-08-31, one growing exercise file** rather than per-chapter isolated files, with
+  the three invariants and the mutation check from the first commit. Rejected: isolated
+  files (course one shipped them and converted at the end, casebook 16).
+- **2026-08-31, the loss unit is bits**, everywhere, from chapter 3 on; the bits-to-nats
+  sentence lives in chapter 4 where cross-entropy is named. Rejected: nats (the field's
+  default) because log2 of the vocabulary reads as "how many yes/no questions", and the
+  course is self-contained by goal 2.
+- **2026-08-31, float64 everywhere** (NumPy's default). Rejected: float32 (the field's
+  default) because naive learner arrays would silently promote and stop matching the
+  reference bit for bit. Speed was measured anyway: the spike passes its budget in f64.
+- **2026-08-31, benches run under the pinned Pyodide in Node**, so every number the
+  prose quotes comes from the tab's own engine. Native CPython appears only in the
+  offline parity-fixture generator, whose outputs are committed with a stated tolerance.
+  Chapters import committed bench JSON for any table or figure whose numbers the
+  prose quotes; free-play interactives compute live and their numbers are never
+  quoted. Integer counts are exempt from the two-engines rule, because addition
+  agrees across engines; anything a generator or a float touches is not. Rejected: native-Python
+  benches (course one's two-engines traps, casebook 9).
+- **2026-08-31, accent hue indigo** (`--hue-indigo`, #4b5894); green is course one's.
+  Course glyph: the causal mask triangle (the lower-triangular grid drawn in chapter 6),
+  in the favicon, the og card, and the series index card.
+- **2026-08-31, component vocabulary** (course one's names, kept so cribbed code stays
+  readable): Masthead, SeriesFooter, Aside, section headings with the accent rule, Recap,
+  the on-this-page nav, ExerciseCard, Workbench in DockShell, TestResults, CodeEditor,
+  the notation reference on the front page. Figure families: Grid, BoxArrow, Plot (see
+  the playbook).
+- **2026-08-31, the front door**: masthead with tagline, a two-sentence what-this-is, the
+  series' four-step how-a-course-works, the chapter list rendered from the chapter
+  registry (never a second copy), the folded notation reference, the footer with licence
+  and credits. No live demo on the front page: the two-minute demo path is front page to
+  chapter 10's training panel. First-time visitors see reading, not a spike artifact.
+- **2026-08-31, untied output head** (`head.w` separate from `wte`). Rejected: weight
+  tying (GPT-2's and nanoGPT's default) because untied keeps "the embedding table" and
+  "the scorer" two nameable objects for teaching, at a cost of 65 x C parameters. The
+  parity fixture mirrors the untied choice; chapter 11's not-taught list names tying.
+- **2026-08-31, GELU is the tanh approximation** (GPT-2's), because NumPy has no erf and
+  PyTorch matches it exactly with approximate="tanh".
+- **2026-08-31, the bits loss carries its factor into every gradient.** The gradient of
+  the fused softmax-plus-cross-entropy is `(probs - onehot) / (B * T * ln 2)`, not
+  `probs - onehot`: the mean divides by the position count and the base change divides by
+  ln 2. Prose that states the shape states the whole factor with it, because dropping the
+  ln 2 leaves a gradient 1.4427 times too large and every gradient check red. The same
+  decision fixes the fixture boundary: nanoGPT computes in nats, so
+  `tools/fixtures/gen_parity_fixture.py` divides its loss and gradients by ln 2 before
+  writing, and asserts that conversion on a fixed batch. Found by a review bot on the
+  design doc, which read "probabilities minus one-hot" and asked what happened to the
+  base change.
+- **2026-08-31, AdamW decays only parameters with ndim >= 2** (nanoGPT's rule), so
+  gains, biases and LayerNorm parameters are never pulled toward zero.
+- **2026-08-31, Pyodide loads from the pinned jsDelivr CDN URL** (course one's pattern).
+  Rejected for now: self-hosting the ~15 MB runtime subset in the repo; revisit only if
+  CDN reliability bites a real reader.
+- **2026-08-31, dev server port 5175, strictPort** (course one pinned 5174; different
+  port so both courses can run side by side). localStorage keys are prefixed `tf:`.
+
 ## Known non-bugs, do not chase
 
-FILL. Rendering artifacts and stack quirks that look like bugs and are not, so a future
-session does not spend a day on one.
+- The Pyodide boot prints loader noise to stdout; the worker tags everything before boot
+  as runtime output, so it never shows as the learner's own print(). Inherited from
+  course one, deliberate.
+- In-tab training runs about 3.5x slower than native CPython on the same machine (wasm,
+  single thread, no SIMD BLAS). Measured at the spike; not a regression to fix.
+- The spike page logs a favicon 404 in the console; tools/spike ships no favicon on
+  purpose (it is an instrument, not a page anyone lands on).
+- pip's "running as root" warning in CI logs is noise from the runner image.
