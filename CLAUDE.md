@@ -265,6 +265,14 @@ Write every chapter to the floor above. These are ordered roughly as they bite.
   check in the multiplying direction (factor times change gives the next change), never
   the dividing direction. Claims-first prose floats past a reader; prediction-against-a-log
   lands. [casebook: 1]
+- **A comparison is a table, not a run of paragraphs.** When a page prices two options
+  against each other on more than two counts, put every count in one table and let the
+  prose read the rows. Chapter 2 shipped four paragraphs comparing characters against
+  words, each opening with the cost it was about to prove, and got back "this is still not
+  very good... is there a succinct picture that can be drawn instead of all the words?"
+  One six-row table replaced all four, and the numbers that had appeared from nowhere
+  ("where the heck did 39 come from? and 8?") became rows with the derivation in the
+  caption. [casebook: 26]
 - **Draw every conceptual jump.** Never ask the reader to imagine a picture; put the
   figure in the page. Before any interactive the reader gets a how-to-read key. Captions
   state counts and label which parts of the figure are the object of study and which are
@@ -531,6 +539,16 @@ narrator: the voice that sells, promises, and points at its own storytelling.
 
 - Motivate with numbers, not verdicts. Let the tally be the drama. A judgment is allowed
   once, in plain words, never as a punchline and never twice for rhythm.
+  **The tell is a paragraph that opens by naming its own conclusion and supplies the
+  evidence afterwards**, which reads as "the annoying writing style which sells you
+  something before it proves it's use": "The distinct count is what the second row costs",
+  then the counts; "Two more costs come with words", then the costs. Open on the number
+  and let the reader arrive at the verdict. This one is not countable, and a session that
+  tries will waste the attempt: the obvious proxy, a paragraph whose first sentence
+  carries no number while a later one does, flags 50 percent of chapter 1, which the
+  learner read without complaint, against 47 percent of the chapter he stopped on. What
+  separates them is whether the opener is a label for evidence about to arrive or a fact
+  that moves the story, and only a reader can tell. [casebook: 26]
 - No promises about the reader's future experience ("it will be short", "you will beat
   this later").
 - No stage directions that command attention or feelings ("watch the clock, and count",

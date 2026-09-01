@@ -8,6 +8,7 @@
     "distinct_words": 25670,
     "words_once": 14919,
     "words_once_share": 0.5811842617841839,
+    "chars_once": 1,
     "chars_per_word": 5.504014290578383,
     "lines": 40000,
     "blank_lines": 7223,

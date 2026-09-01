@@ -38,37 +38,55 @@ const real = bench.real;
 
 const n = (x: number) => x.toLocaleString();
 
-/** The same corpus counted in two units. The whole of the chapter's first
- * argument is in this table, so it comes before any prose about it. */
-function UnitsTable() {
+/** The unit choice, priced. One table rather than the four paragraphs this
+ * replaced: the comparison is two options over six dimensions, which is a
+ * table, and prose that announces each row before showing it sells the
+ * conclusion before the numbers arrive (CLAUDE.md, "Motivate with numbers,
+ * not verdicts"). The reader met three such openers in a row here and said
+ * so. */
+function CostTable() {
+  const rows: [string, ReactNode, ReactNode][] = [
+    ["tokens in the corpus", n(units.chars), n(units.words)],
+    ["distinct tokens", n(units.vocab_size), n(units.distinct_words)],
+    ["cells in the tally", n(units.char_cells), n(units.word_cells)],
+    [
+      "seen exactly once",
+      n(units.chars_once),
+      `${n(units.words_once)} (${(units.words_once_share * 100).toFixed(0)}%)`,
+    ],
+    [
+      "guesses per spoken line",
+      Math.round(units.chars_per_spoken_line),
+      Math.round(units.words_per_spoken_line),
+    ],
+    ["can write one it never saw", "yes", "no"],
+  ];
   return (
     <div className="table-scroll scroll-x" tabIndex={0}>
       <table className="truth-table">
         <caption>
-          One corpus, counted twice. A word here is whatever sits between two runs of
+          The same corpus, read two ways. A word here is whatever sits between two runs of
           whitespace, punctuation included, which is the crudest possible word and enough
-          to price the choice. "Tokens" counts every one in the file; "distinct" counts
-          how many different ones there are, which is also how many answers a guess
-          chooses among.
+          to price the choice. The last two rows are per spoken line, averaged over the
+          corpus's {n(units.spoken_lines)} of them:{" "}
+          {units.chars_per_spoken_line.toFixed(1)} characters and{" "}
+          {units.words_per_spoken_line.toFixed(1)} words long.
         </caption>
         <thead>
           <tr>
-            <th scope="col">read as</th>
-            <th scope="col">tokens</th>
-            <th scope="col">distinct</th>
+            <th scope="col"></th>
+            <th scope="col">a token is a character</th>
+            <th scope="col">a token is a word</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>characters</td>
-            <td>{n(units.chars)}</td>
-            <td>{n(units.vocab_size)}</td>
-          </tr>
-          <tr>
-            <td>words</td>
-            <td>{n(units.words)}</td>
-            <td>{n(units.distinct_words)}</td>
-          </tr>
+          {rows.map(([label, chars, words]) => (
+            <tr key={label}>
+              <th scope="row">{label}</th>
+              <td>{chars}</td>
+              <td>{words}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
@@ -281,38 +299,28 @@ export function Chapter2() {
         is one character, and the cost of that is worth seeing before the code assumes it.
       </p>
       <p>
-        Count the same corpus both ways. Read it character by character and it is{" "}
-        {n(units.chars)} tokens drawn from {units.vocab_size} distinct ones. Split it on
-        whitespace instead and it is {n(units.words)} tokens drawn from{" "}
-        {n(units.distinct_words)} distinct ones.
+        So count the same corpus both ways, and price the difference.
       </p>
-      <UnitsTable />
+      <CostTable />
       <p>
-        The distinct count is what the second row costs. Chapter 1's tally
-        had one row and one column per token, {units.vocab_size} by {units.vocab_size},
-        which is {n(units.char_cells)} cells. The same table over words would be{" "}
-        {n(units.distinct_words)} by {n(units.distinct_words)}, which is{" "}
-        {n(units.word_cells)} cells, and the corpus has {n(units.words)} words in it to fill
-        them with.
+        Rows three and four are one cost twice. Chapter 1's tally holds one row and one
+        column per token. Over characters that is {n(units.char_cells)} cells; over words it is{" "}
+        {n(units.word_cells)}, and the corpus holds {n(units.words)} words to fill them
+        with. Most of that table would never see a single example, and{" "}
+        {n(units.words_once)} of its rows would be built from exactly one.
       </p>
       <p>
-        Two more costs come with words, and both of them are about rarity.{" "}
-        {n(units.words_once)} of the {n(units.distinct_words)} distinct words occur
-        exactly once, which is {(units.words_once_share * 100).toFixed(0)} percent of the
-        vocabulary learned from a single example each. And a model whose unit is a word
-        can only ever write words it has already seen: it has no way to spell one. A model
-        whose unit is a character can write any word at all, correct or not, because it
-        assembles them letter by letter.
+        Row five is what characters cost in return. Each token is one turn of chapter 1's
+        game, so a spoken line takes{" "}
+        {Math.round(units.chars_per_spoken_line)} guesses to write instead of{" "}
+        {Math.round(units.words_per_spoken_line)}.
       </p>
       <p>
-        Characters have their own cost, and the tokens column already holds it. Read as
-        characters, the same play is {units.chars_per_word.toFixed(1)} times as many
-        tokens as it is read as words, because a word is{" "}
-        {units.chars_per_word.toFixed(2)} characters long counting the space after it.
-        Every one of those tokens is one turn of chapter 1's game, so writing a spoken
-        line of the corpus takes {Math.round(units.chars_per_spoken_line)} guesses where a
-        word model would take {Math.round(units.words_per_spoken_line)}. The choice buys a
-        small guess list and pays for it in the number of guesses.
+        The last row is not about size at all. A word a word model has never seen is not
+        in its vocabulary, so it has no way to write that word down, ever. A character
+        model assembles any word at all, right or wrong, letter by letter out of the{" "}
+        {units.vocab_size} it already has. That row is why this course reads characters,
+        and chapter 12 is where it matters.
       </p>
       <Aside>
         <p>

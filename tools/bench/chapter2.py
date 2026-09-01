@@ -92,6 +92,9 @@ def main():
         "distinct_words": len(distinct_words),
         "words_once": once,
         "words_once_share": once / len(distinct_words),
+        # The character column's answer to the same question. Exactly one, the
+        # '$' of the corpus's own typo, against 14,919 words.
+        "chars_once": sum(1 for ch in chars if text.count(ch) == 1),
         # One number, two readings the chapter uses in different places: a word
         # is this many characters long, and the same text is this many times
         # more tokens when a token is a character rather than a word.
@@ -113,6 +116,8 @@ def main():
     print(f"Read as characters the corpus is {len(text)} tokens over {len(chars)} "
           f"distinct ones; read as whitespace-separated words it is {len(words)} "
           f"tokens over {len(distinct_words)} distinct ones.")
+    print(f"  Exactly one character occurs once, against "
+          f"{once} words.")
     print(f"  {once} of those {len(distinct_words)} words occur exactly once "
           f"({once / len(distinct_words) * 100:.0f} percent of the vocabulary), and the "
           f"word vocabulary is {len(distinct_words) / len(chars):.0f} times the "
