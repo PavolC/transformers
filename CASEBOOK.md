@@ -1,7 +1,7 @@
 # Casebook
 
-Twenty-five incidents, the first eighteen from course one (neural networks) and the last
-seven from course two (transformers), each a place where the work failed a real
+Twenty-six incidents, the first eighteen from course one (neural networks) and the last
+eight from course two (transformers), each a place where the work failed a real
 reader, and each the reason a rule exists in `CLAUDE.md`. Read this once. The rules
 are what you follow; these are what makes them credible, and what tells you whether a rule
 you are tempted to bend is load-bearing.
@@ -799,6 +799,60 @@ chapter that had shipped four hours earlier. Cheap, and the loop is why: the pas
 learner pointed at was a symptom, and the change that mattered is in a different section
 of the chapter. The old loop would have rewritten the paragraph he quoted, and the leap
 would still be unexplained.
+
+## 26. "the annoying writing style which sells you somehting before it proves it's use"
+
+**Chapter:** two (transformers), chapter 2, section 1, on the reader's second pass at the
+section that incident 25 had already rewritten once.
+
+**What was wrong.** The section priced characters against words across four costs, one
+paragraph each, and every paragraph opened by naming the cost before showing it: "The
+distinct count is what the second row costs", "Two more costs come with words, and both of
+them are about rarity", "Characters have their own cost, and the tokens column already
+holds it". The learner read it and said it "is littered with the annoying writing style
+which sells you somehting before it proves it's use", then asked the question that was the
+fix: "is there a succinct picture that can be drawn instead of all the words?"
+
+`CLAUDE.md` already said "Motivate with numbers, not verdicts. Let the tally be the drama."
+The rule was not missing. It was broken three paragraphs in a row by the author who wrote
+it, in a section that had just been rewritten under close attention, which is the useful
+part of this incident: a register rule survives one careful pass and dies on the next,
+because nothing in the pre-commit list can see it.
+
+Two number defects came in the same message and were both real. "A word is 5.50 characters
+long counting the space after it" states of every word what is true of the mean: "you mean
+the average word?" And a spoken line's 39 characters and 8 words appeared in prose with no
+provenance anywhere on the page, neither in the table above nor derived beside them: "where
+the heck did 39 come from? and 8?" That is the same defect incident 25 had already cost a
+round on, one section over.
+
+**The fix.** Four paragraphs and the two-column table above them became one six-row table:
+tokens, distinct tokens, cells in the tally, seen exactly once, guesses per spoken line,
+and whether the model can write a token it has never seen. The comparison is two options
+over six counts, which is a table and was never prose. Every number the prose had asserted
+is now a row, the averages are stated as averages in the caption, and 39 and 8 arrive with
+their derivation beside them. The three paragraphs that remain read rows rather than
+announce them, and the section lost about a hundred words.
+
+**No countable came out of this one, and that is worth recording so the next session does
+not spend the attempt.** The obvious proxy for selling-before-proving is a paragraph whose
+first sentence carries no number while a later one does. Measured: 13 of 26 paragraphs in
+chapter 1, which the learner read and called good, against 16 of 34 in the chapter he
+stopped on. Fifty percent against forty-seven. The proxy cannot see the difference, because
+what separates "The distinct count is what the second row costs" from "One line makes a
+poor guesser, so give it more text" is whether the opener labels evidence about to arrive
+or states a fact that moves the story, and only a reader can tell. The rule stays in
+`CLAUDE.md` with the tell described and the failed measurement attached.
+
+**Rules:** "A comparison is a table, not a run of paragraphs", under Reaching the reader,
+and the tell added to "Motivate with numbers, not verdicts" under Register.
+
+**Cost:** one section rebuilt for the second time in a day, plus a bench field. The
+section had already been through the `/stuck` loop once, for incident 25, and came out of
+it with the leap fixed and the register untouched, because the loop diagnoses what the
+reader could not follow and this reader could follow it perfectly well. **A confusion loop
+does not catch prose that works and grates.** That needs the reader to say so, which is a
+second kind of report and arrives only if the course is being read rather than reviewed.
 
 ## The pattern behind course one's eighteen
 
