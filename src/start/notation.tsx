@@ -106,6 +106,14 @@ export const NOTATION: NotationRow[] = [
     from: "Chapter 2",
   },
   {
+    id: "scribe",
+    symbol: <b>the scribe</b>,
+    means:
+      "the model this course builds, one piece per chapter: a character-level transformer in NumPy that reads Shakespeare and writes more of it",
+    alsoCalled: "a decoder-only transformer, or a small GPT",
+    from: "Chapter 2",
+  },
+  {
     id: "stoi",
     symbol: <code>stoi, itos</code>,
     means:

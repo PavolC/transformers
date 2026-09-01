@@ -28,6 +28,10 @@ navigation. Fix those directly and skip to step 5. Everything else runs the loop
    tired reader answers yes to. Ask me to predict a number, to apply it to a case you did
    not use, or to say what would break if a piece changed. That is this course's own
    prediction-against-a-log rule, pointed at the feedback loop.
+   **The check may only use what I have already read.** A question that leans on a later
+   chapter, or on one that is not written yet, is the same defect as the passage you are
+   trying to diagnose, and you are asking it of someone who is already lost: "why are you
+   asking me about chapter 4?? it's not even built and i only just started to read c2".
    - I used it correctly: go to 4.
    - I did not: back to 1, with what my answer just told you.
    - Twice failed: stop looping. Two dead re-explanations mean the chapter has a

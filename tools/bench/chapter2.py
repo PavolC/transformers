@@ -61,6 +61,7 @@ def main():
     for w in words:
         seen[w] = seen.get(w, 0) + 1
     once = sum(1 for n in seen.values() if n == 1)
+    lines = text.count("\n") + 1
     out["units"] = {
         "chars": len(text),
         "vocab_size": len(chars),
@@ -68,7 +69,14 @@ def main():
         "distinct_words": len(distinct_words),
         "words_once": once,
         "words_once_share": once / len(distinct_words),
+        # One number, two readings the chapter uses in different places: a word
+        # is this many characters long, and the same text is this many times
+        # more tokens when a token is a character rather than a word.
         "chars_per_word": len(text) / len(words),
+        # A line of dialogue, so a window can be quoted in something the reader
+        # can see on the page rather than in a bare count of characters.
+        "lines": lines,
+        "chars_per_line": len(text) / lines,
         "vocab_ratio": len(distinct_words) / len(chars),
         # What chapter 1's tally would cost under each unit: one row and one
         # column per distinct token.
@@ -87,6 +95,10 @@ def main():
     print(f"  A word is {len(text) / len(words):.2f} characters including the space "
           f"after it, so a window of {BLOCK_SIZE} characters covers about "
           f"{BLOCK_SIZE / (len(text) / len(words)):.1f} words.")
+    print(f"  A line of dialogue is {len(text) / lines:.1f} characters, so a window of "
+          f"{BLOCK_SIZE} characters is {BLOCK_SIZE / (len(text) / lines):.1f} lines "
+          f"where {BLOCK_SIZE} words would be "
+          f"{BLOCK_SIZE * (len(text) / len(words)) / (len(text) / lines):.1f}.")
 
     # -------------------------------------------------------- the vocabulary
     counts = {ch: text.count(ch) for ch in chars}
@@ -224,6 +236,10 @@ def main():
         "chars_touched": chars_touched,
         "batches_per_pass": len(train_ids) / chars_touched,
         "window_words": BLOCK_SIZE / (len(text) / len(words)),
+        # What one window is worth in lines of dialogue, under each unit: the
+        # same T, six times less text when the token is a character.
+        "window_lines": BLOCK_SIZE / (len(text) / lines),
+        "word_window_lines": BLOCK_SIZE * (len(text) / len(words)) / (len(text) / lines),
     }
     print(f"\nAt the scribe's real shape, {BATCH_SIZE} windows of {BLOCK_SIZE}, one "
           f"batch is {per_batch} predictions from {chars_touched} characters, drawn "

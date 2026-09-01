@@ -305,14 +305,14 @@ export function Chapter2() {
         assembles them letter by letter.
       </p>
       <p>
-        Characters have their own bill, and it comes due in chapter 5. A model reads a
-        fixed number of tokens at a time, so the shorter the token the less text that
-        fixed number covers. A word in this corpus is{" "}
-        {units.chars_per_word.toFixed(2)} characters long counting the space after it, so
-        the scribe's window of {real.block_size} characters holds about{" "}
-        {real.window_words.toFixed(1)} words. That is this chapter's tally, and it is not
-        measured in bits like every other chapter's: a vocabulary of{" "}
-        {units.vocab_size} rows, against a window that reaches back under six words.
+        Characters have their own cost, and the tokens column already holds it. Read as
+        characters, the same play is {units.chars_per_word.toFixed(1)} times as many
+        tokens as it is read as words, because a word is{" "}
+        {units.chars_per_word.toFixed(2)} characters long counting the space after it.
+        Every one of those tokens is one turn of chapter 1's game, so writing a line of
+        dialogue takes {Math.round(units.chars_per_line)} guesses where a word model
+        would take {Math.round(units.chars_per_line / units.chars_per_word)}. The choice
+        buys a small guess list and pays for it in the number of guesses.
       </p>
       <Aside>
         <p>
@@ -320,8 +320,9 @@ export function Chapter2() {
           algorithm called byte-pair encoding, starts from characters and repeatedly
           merges the most common neighbouring pair into a new token, so that common words
           end up as one token and rare ones stay in pieces. GPT-2 was trained with 50,257
-          of them. The reach is a word model's, the spelling is a character model's, and
-          the cost is a build step this course does not need: with{" "}
+          of them. A common word costs one token, a rare one is spelled out of pieces so
+          nothing is unspellable, and the vocabulary still stops at a fixed size. The cost
+          is a build step this course does not need: with{" "}
           {units.vocab_size} tokens every table in it stays small enough to print.
           Chapter 12 walks up to the door byte-pair encoding opens, and does not go
           through it.
@@ -404,12 +405,18 @@ export function Chapter2() {
 
       <SectionHeader id="c2-windows" title="One window, and the examples inside it" />
       <p>
-        The scribe cannot read {n(units.chars)} characters at once. It reads a fixed
-        number, and every model this course trains has that number written into its
-        shape. Call it <code>T</code>, for the number of positions in time it
-        can see. A stretch of <code>T</code> characters cut out of the corpus is a{" "}
+        Chapter 1's model had a memory of one character. The character just written picked
+        a row of the tally, that row was the whole of the guess, and everything before it
+        was gone. That changes here, and it changes in the data before it changes in the
+        model.
+      </p>
+      <p>
+        The model this course builds is the <b>scribe</b>, and it cannot read{" "}
+        {n(units.chars)} characters at once, so it is handed a fixed number of them. Call that number <code>T</code>, for the positions in time
+        it covers. A stretch of <code>T</code> characters cut out of the corpus is a{" "}
         <b>window</b>, which the field calls a context window, and its length is the
-        setting called <code>block_size</code> in the code.
+        setting called <code>block_size</code> in the code. Every model in this course
+        from chapter 4 on is fed windows.
       </p>
       <p>
         Cutting a window is a slice. What makes it a piece of training data is the second
@@ -437,10 +444,29 @@ export function Chapter2() {
         later than <code>x</code>, not built out of <code>x</code> afterwards.
       </p>
       <p>
+        A window offers each position everything to its left. What a model does with the
+        offer is the model's own business, and the course spends six chapters growing
+        into it. Chapter 4's model reads only the last character of each prefix, which makes it
+        chapter 1's guesser with the counting replaced by training. Chapter 5 is the first
+        one to look further back, and it pays for every character it looks at. By chapter
+        9 the scribe uses the whole window. So a window is not a capability the model has
+        yet; it is the shape the data arrives in, built once, here, because every one of
+        those chapters is fed from it.
+      </p>
+      <p>
         The scribe's real window is {real.block_size} characters, so each one it reads is{" "}
-        {real.block_size} examples. Chapter 1's tally was the same idea with the window
-        set to one: one character in, one character out, and no room to remember anything
-        before it.
+        {real.block_size} examples. Chapter 1's tally was this with <code>T</code> set to
+        one: one character in, one character out, and nowhere to keep anything else.
+      </p>
+      <p>
+        Characters cost one more thing, and a window is where it shows. <code>T</code>{" "}
+        counts tokens rather than text, so what one window is worth depends on the unit. A
+        line of this corpus averages {units.chars_per_line.toFixed(0)} characters, so the
+        scribe's {real.block_size} of them is about {real.window_lines.toFixed(1)} lines
+        of dialogue. A model whose token was a word would see {real.block_size} words
+        through the same window, about {real.word_window_lines.toFixed(1)} lines. The same{" "}
+        <code>T</code> buys {units.chars_per_word.toFixed(1)} times as much text when the
+        token is a word, and chapter 5 is where this course starts buying that text back.
       </p>
 
       <SectionHeader id="c2-batch" title="Sixteen windows at a time" />
@@ -532,6 +558,7 @@ export function Chapter2() {
           `The vocabulary is measured, not chosen: the sorted distinct characters of this file, ${vocab.kinds.letters} letters, ${vocab.kinds.punctuation} punctuation marks, ${vocab.kinds.whitespace} kinds of whitespace and a digit, typo included.`,
           "encode and decode are the only crossing between text and arrays, and an id means nothing without the vocabulary it was numbered by. Together they are what the field calls a tokenizer.",
           `A window of T characters is T training examples, not one, because every position in it is a question whose answer is the next character. The targets are a second slice, one character further along.`,
+          "A window offers each position everything to its left, and that is a change from chapter 1's one-character memory. It is a change in the data first: chapter 4's model still reads only the last character, chapter 5 is the first to look further back, and chapter 9's scribe uses the whole window.",
           `A batch is (B, T): batch on axis 0, time on axis 1. The scribe's ${real.batch_size} by ${real.block_size} batch is ${real.predictions} examples read off ${real.chars_touched} characters of Shakespeare.`,
         ]}
         deeper="Karpathy's lecture on tokenization, which builds a byte-pair encoder from scratch"
