@@ -25,7 +25,9 @@ provoking quote included. This is the single practice that produced everything b
 **And a fix that was never checked against the confused reader is a guess.** A confusion
 report is a symptom, so before any passage changes: re-explain the idea in chat a
 structurally different way, and confirm it landed by making the learner use it rather than
-by asking whether it made sense. Then port what the working explanation *did*, which is
+by asking whether it made sense, using only what they have already read: a check that
+leans on a later chapter is the same defect as the passage it is meant to diagnose, and it
+lands on someone already lost. Then port what the working explanation *did*, which is
 usually an order, a concrete instance, a named misconception or a missing prerequisite,
 rather than what it said. "No change to this passage" is a real outcome of that loop, and
 one the old version could not reach. Defects skip it: a crash or a wrong number has a
@@ -368,6 +370,15 @@ its reason, plus the sentence that the small case is a sub-case and not a detour
   machinery and asks why the ground moved. Watch for silent axis swaps the same way: two
   identical-looking figures that mean different things need saying. [casebook: 2]
 - **Say the implicit connections** where the reader will wonder about them, not later.
+- **When a chapter takes back a limit an earlier chapter taught, say so at the point it
+  happens.** Chapter 1 closed by teaching that the model's memory is one character and
+  everything earlier is thrown away. Chapter 2 then assumed a model reads several tokens
+  at once, in a subordinate clause, in a paragraph about something else: "seems we made an
+  unexplained leap here". A limit the course spent a section teaching is not a detail the
+  next chapter may quietly drop. Name the change where it happens, say what it changes in
+  (here the data changed several chapters before the model did), and say which later
+  chapter actually uses the new freedom, so it does not read as a capability the model
+  already has. [casebook: 25]
 
 ### Sentences
 

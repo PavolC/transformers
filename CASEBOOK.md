@@ -1,7 +1,7 @@
 # Casebook
 
-Twenty-four incidents, the first eighteen from course one (neural networks) and the last
-six from course two (transformers), each a place where the work failed a real
+Twenty-five incidents, the first eighteen from course one (neural networks) and the last
+seven from course two (transformers), each a place where the work failed a real
 reader, and each the reason a rule exists in `CLAUDE.md`. Read this once. The rules
 are what you follow; these are what makes them credible, and what tells you whether a rule
 you are tempted to bend is load-bearing.
@@ -712,6 +712,93 @@ in a rewrite, a retrofit or a reader who stopped; this one was caught by the lea
 watching his own feedback loop and asking for a different one before it produced a bad fix.
 It is the cheapest incident in the file, and the only one whose cost is unknown, because
 nobody can now say which of the twenty-three fixes above would have survived the check.
+
+## 25. "seems we made an unexplained leap here"
+
+**Chapter:** two (transformers), chapter 2, section 1, found by the learner on his first
+read. The first incident diagnosed through the `/stuck` loop rather than by guess.
+
+**What was wrong.** The learner stopped on the closing paragraph of "What counts as one
+move": "i follow most of it but had to reread 2-3 times. last paragraph i don't
+understand." The paragraph was:
+
+> Characters have their own bill, and it comes due in chapter 5. A model reads a fixed
+> number of tokens at a time, so the shorter the token the less text that fixed number
+> covers. A word in this corpus is 5.50 characters long counting the space after it, so
+> the scribe's window of 32 characters holds about 5.8 words. That is this chapter's
+> tally, and it is not measured in bits like every other chapter's: a vocabulary of 65
+> rows, against a window that reaches back under six words.
+
+**What the misunderstanding turned out to be**, and it took two re-explanations to reach,
+neither of which was the author's first diagnosis:
+
+The author's first guess was undefined terms: window, T, the scribe's 32, all of which
+arrive in later sections. True, and not the cause. The second guess was closer, a switch
+of frame from counting the corpus to what one model sees at one moment, made with no
+signpost while the reader still held the corpus counts from the table above. That
+re-explanation landed, and the learner passed the check on it. But his answer carried the
+real finding, which neither guess had touched:
+
+> "ok so last chapter we were talking about generating the next character based on only
+> the previous character... are we now talking about generating the next token based on
+> more than 1 previous token? seems we made an unexplained leap here"
+
+Chapter 1 spends its last section teaching that the model's memory is exactly one
+character and that everything earlier is thrown away. Chapter 2 then assumed a model reads
+several tokens at once, in a subordinate clause, inside a paragraph about the cost of
+characters, and never marked it as new. The single largest conceptual step in the first
+half of the course arrived as a premise.
+
+**Which re-explanation landed.** The one that separated the data's shape from the model's
+capability: a window offers each position everything to its left, chapter 4's model still
+reads only the last character, chapter 5 is the first to look further back, and chapter 9
+uses the whole window. So chapter 2 is not claiming a capability at all. It is building
+the pipeline every later chapter is fed from, and the data changes shape six chapters
+before the model finishes growing into it.
+
+**The fix.** Section 1 loses the paragraph. In its place it states the one cost it can
+state honestly with only chapter 1 in hand, and does it in the frame the section is
+already in: the tokens column of its own table. The same play is 5.5 times as many tokens
+read as characters, every token is one turn of chapter 1's game, so a line of dialogue
+takes 28 guesses where a word model would take 5.
+
+Section 4 gains the mark. It opens on chapter 1's one-character memory, says the change
+happens in the data before the model, and after the slicer spends a paragraph on what a
+model does with the offer, chapter by chapter. The reach cost moves there, where a window
+is on screen to measure it against, and the recap carries the leap as its own item.
+
+Three smaller things fell out of the same read. "That is this chapter's tally" reused the
+name of chapter 1's counts table for the cost being tallied, which is the reserved-word
+rule broken by the author who wrote it. "Six times less text", carried from the author's
+own chat explanation into the draft, was wrong: the ratio is 5.5, the same one the rest of
+the chapter quotes. And the fix's own new number, "a line of this corpus averages 28
+characters", was measured over every newline segment, 7,223 of which are blank and 7,222
+of which are speaker names, with the file's trailing newline inventing a 40,001st line
+that is not there. A review bot caught that one. A spoken line averages 39 characters, so
+the scribe's window does not reach the end of one, which is a sharper statement than the
+wrong number was making. **A unit invented to make a number concrete has to be measured
+as the thing it is named after**; "line of dialogue" and "newline segment" are not the
+same object in a file that is 36 percent blank lines and speaker names.
+
+The sweep the loop ends with turned up one more of the same kind, in the same chapter:
+**the scribe had never been introduced to the reader.** It is the course's central
+recurring artifact, the model built one piece per chapter, and chapter 1 does not use the
+word once while chapter 2 used it four times as though it were established. The only place
+a reader could have met it was the download button's filename. Chapter 2 now names it at
+its first use, and it has a row in the notation reference.
+
+**Rules:** "When a chapter takes back a limit an earlier chapter taught, say so at the
+point it happens", under Backward references. Plus one on the loop itself, in step 3 of
+`/stuck`: the check may only use what the learner has already read. The author's first
+check asked him to reason about chapter 4, which is a stub with no prose in it: "why are
+you asking me about chapter 4?? it's not even built and i only just started to read c2".
+That is the same defect as the passage under diagnosis, asked of someone already lost.
+
+**Cost:** one section rewritten and one restructured, two bench figures added, on a
+chapter that had shipped four hours earlier. Cheap, and the loop is why: the passage the
+learner pointed at was a symptom, and the change that mattered is in a different section
+of the chapter. The old loop would have rewritten the paragraph he quoted, and the leap
+would still be unexplained.
 
 ## The pattern behind course one's eighteen
 

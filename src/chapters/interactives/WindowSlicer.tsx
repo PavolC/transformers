@@ -85,8 +85,9 @@ export function WindowSlicer() {
       <p className="interactive-legend">
         The two rows are the arrays a batch is made of: <code>x</code> is the window, and{" "}
         <code>y</code> is the character that actually followed each position. Read down a
-        column rather than across: column <code>t</code> is one training example, the
-        input at the top and the answer under it. The last cell of <code>y</code> is
+        column rather than across: column <code>t</code> is one training example, and the
+        cell under it is what came next. What a model may look at is that column and
+        everything left of it. The last cell of <code>y</code> is
         marked because it comes from outside the window, one character past its right
         edge.
       </p>
