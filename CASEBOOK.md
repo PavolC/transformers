@@ -767,12 +767,18 @@ happens in the data before the model, and after the slicer spends a paragraph on
 model does with the offer, chapter by chapter. The reach cost moves there, where a window
 is on screen to measure it against, and the recap carries the leap as its own item.
 
-Two smaller things fell out of the same read. "That is this chapter's tally" reused the
+Three smaller things fell out of the same read. "That is this chapter's tally" reused the
 name of chapter 1's counts table for the cost being tallied, which is the reserved-word
-rule broken by the author who wrote it. And "six times less text", carried from the
-author's own chat explanation into the draft, was wrong: the ratio is 5.5, the same one
-the rest of the chapter quotes, caught by re-reading the rendered section rather than by
-any check.
+rule broken by the author who wrote it. "Six times less text", carried from the author's
+own chat explanation into the draft, was wrong: the ratio is 5.5, the same one the rest of
+the chapter quotes. And the fix's own new number, "a line of this corpus averages 28
+characters", was measured over every newline segment, 7,223 of which are blank and 7,222
+of which are speaker names, with the file's trailing newline inventing a 40,001st line
+that is not there. A review bot caught that one. A spoken line averages 39 characters, so
+the scribe's window does not reach the end of one, which is a sharper statement than the
+wrong number was making. **A unit invented to make a number concrete has to be measured
+as the thing it is named after**; "line of dialogue" and "newline segment" are not the
+same object in a file that is 36 percent blank lines and speaker names.
 
 The sweep the loop ends with turned up one more of the same kind, in the same chapter:
 **the scribe had never been introduced to the reader.** It is the course's central

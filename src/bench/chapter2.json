@@ -9,8 +9,12 @@
     "words_once": 14919,
     "words_once_share": 0.5811842617841839,
     "chars_per_word": 5.504014290578383,
-    "lines": 40001,
-    "chars_per_line": 27.884152896177596,
+    "lines": 40000,
+    "blank_lines": 7223,
+    "speaker_lines": 7222,
+    "spoken_lines": 25555,
+    "chars_per_spoken_line": 39.221170025435335,
+    "words_per_spoken_line": 7.545607513206809,
     "vocab_ratio": 394.9230769230769,
     "char_cells": 4225,
     "word_cells": 658948900
@@ -456,8 +460,8 @@
     "chars_touched": 528,
     "batches_per_pass": 1901.2405303030303,
     "window_words": 5.813938393070073,
-    "window_lines": 1.1476052408386632,
-    "word_window_lines": 6.3164356455186494
+    "window_lines": 0.8158859100645817,
+    "word_window_lines": 4.240877880805692
   },
   "receipt": {
     "of": 32,

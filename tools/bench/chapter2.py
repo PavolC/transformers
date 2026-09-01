@@ -61,7 +61,30 @@ def main():
     for w in words:
         seen[w] = seen.get(w, 0) + 1
     once = sum(1 for n in seen.values() if n == 1)
-    lines = text.count("\n") + 1
+    # What a line of dialogue is. Counting newline segments is not it: 7,223 of
+    # them are blank, 7,222 are speaker names, and the file's trailing newline
+    # invents a 40,001st empty line that is not there. A speaker line is one
+    # that ends in a colon AND opens a block, which keeps the ~1,500 spoken
+    # lines that happen to end in a colon on the right side of the count. The
+    # check on the rule is that the blank and speaker counts come out one
+    # apart: every block is opened by a blank line except the very first.
+    segments = text.split("\n")[:-1]
+    blank_lines = speaker_lines = 0
+    spoken = []
+    after_blank = True
+    for seg in segments:
+        if not seg.strip():
+            blank_lines += 1
+            after_blank = True
+            continue
+        if after_blank and seg.endswith(":"):
+            speaker_lines += 1
+        else:
+            spoken.append(seg)
+        after_blank = False
+    assert abs(blank_lines - speaker_lines) == 1, (blank_lines, speaker_lines)
+    chars_per_spoken_line = sum(len(s) for s in spoken) / len(spoken)
+    words_per_spoken_line = sum(len(s.split()) for s in spoken) / len(spoken)
     out["units"] = {
         "chars": len(text),
         "vocab_size": len(chars),
@@ -75,8 +98,12 @@ def main():
         "chars_per_word": len(text) / len(words),
         # A line of dialogue, so a window can be quoted in something the reader
         # can see on the page rather than in a bare count of characters.
-        "lines": lines,
-        "chars_per_line": len(text) / lines,
+        "lines": len(segments),
+        "blank_lines": blank_lines,
+        "speaker_lines": speaker_lines,
+        "spoken_lines": len(spoken),
+        "chars_per_spoken_line": chars_per_spoken_line,
+        "words_per_spoken_line": words_per_spoken_line,
         "vocab_ratio": len(distinct_words) / len(chars),
         # What chapter 1's tally would cost under each unit: one row and one
         # column per distinct token.
@@ -95,10 +122,11 @@ def main():
     print(f"  A word is {len(text) / len(words):.2f} characters including the space "
           f"after it, so a window of {BLOCK_SIZE} characters covers about "
           f"{BLOCK_SIZE / (len(text) / len(words)):.1f} words.")
-    print(f"  A line of dialogue is {len(text) / lines:.1f} characters, so a window of "
-          f"{BLOCK_SIZE} characters is {BLOCK_SIZE / (len(text) / lines):.1f} lines "
-          f"where {BLOCK_SIZE} words would be "
-          f"{BLOCK_SIZE * (len(text) / len(words)) / (len(text) / lines):.1f}.")
+    print(f"  Of {len(segments)} lines, {blank_lines} are blank and {speaker_lines} are "
+          f"speaker names, leaving {len(spoken)} spoken lines averaging "
+          f"{chars_per_spoken_line:.1f} characters and {words_per_spoken_line:.1f} words.")
+    print(f"  So a window of {BLOCK_SIZE} characters is "
+          f"{BLOCK_SIZE / chars_per_spoken_line:.2f} of a spoken line.")
 
     # -------------------------------------------------------- the vocabulary
     counts = {ch: text.count(ch) for ch in chars}
@@ -236,10 +264,12 @@ def main():
         "chars_touched": chars_touched,
         "batches_per_pass": len(train_ids) / chars_touched,
         "window_words": BLOCK_SIZE / (len(text) / len(words)),
-        # What one window is worth in lines of dialogue, under each unit: the
-        # same T, six times less text when the token is a character.
-        "window_lines": BLOCK_SIZE / (len(text) / lines),
-        "word_window_lines": BLOCK_SIZE * (len(text) / len(words)) / (len(text) / lines),
+        # What one window is worth in lines of dialogue, under each unit. These
+        # two divide to 5.17 rather than the corpus-wide 5.50, because spoken
+        # lines run 5.19 characters a word against the whole file's 5.50, so
+        # the paragraph that quotes them states no ratio of its own.
+        "window_lines": BLOCK_SIZE / chars_per_spoken_line,
+        "word_window_lines": BLOCK_SIZE / words_per_spoken_line,
     }
     print(f"\nAt the scribe's real shape, {BATCH_SIZE} windows of {BLOCK_SIZE}, one "
           f"batch is {per_batch} predictions from {chars_touched} characters, drawn "

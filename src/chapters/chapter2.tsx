@@ -309,20 +309,23 @@ export function Chapter2() {
         characters, the same play is {units.chars_per_word.toFixed(1)} times as many
         tokens as it is read as words, because a word is{" "}
         {units.chars_per_word.toFixed(2)} characters long counting the space after it.
-        Every one of those tokens is one turn of chapter 1's game, so writing a line of
-        dialogue takes {Math.round(units.chars_per_line)} guesses where a word model
-        would take {Math.round(units.chars_per_line / units.chars_per_word)}. The choice
-        buys a small guess list and pays for it in the number of guesses.
+        Every one of those tokens is one turn of chapter 1's game, so writing a spoken
+        line of the corpus takes {Math.round(units.chars_per_spoken_line)} guesses where a
+        word model would take {Math.round(units.words_per_spoken_line)}. The choice buys a
+        small guess list and pays for it in the number of guesses.
       </p>
       <Aside>
         <p>
           The field mostly picks neither end. A <b>subword</b> tokenizer, built by an
-          algorithm called byte-pair encoding, starts from characters and repeatedly
-          merges the most common neighbouring pair into a new token, so that common words
-          end up as one token and rare ones stay in pieces. GPT-2 was trained with 50,257
-          of them. A common word costs one token, a rare one is spelled out of pieces so
-          nothing is unspellable, and the vocabulary still stops at a fixed size. The cost
-          is a build step this course does not need: with{" "}
+          algorithm called byte-pair encoding, starts from the 256 possible bytes and
+          repeatedly merges the most common neighbouring pair into a new token, so that
+          common words end up as one token and rare ones stay in pieces. GPT-2 was trained
+          with 50,257 of them. A common word costs one token and a rare one is spelled out
+          of pieces, so the vocabulary stops at a fixed size without the model losing the
+          ability to spell. Starting from bytes is what makes that total: every possible
+          input is built from those 256, so unlike this course's {units.vocab_size}{" "}
+          characters, no text can arrive that it has no way to write down. The cost is a
+          build step this course does not need: with{" "}
           {units.vocab_size} tokens every table in it stays small enough to print.
           Chapter 12 walks up to the door byte-pair encoding opens, and does not go
           through it.
@@ -460,13 +463,15 @@ export function Chapter2() {
       </p>
       <p>
         Characters cost one more thing, and a window is where it shows. <code>T</code>{" "}
-        counts tokens rather than text, so what one window is worth depends on the unit. A
-        line of this corpus averages {units.chars_per_line.toFixed(0)} characters, so the
-        scribe's {real.block_size} of them is about {real.window_lines.toFixed(1)} lines
-        of dialogue. A model whose token was a word would see {real.block_size} words
-        through the same window, about {real.word_window_lines.toFixed(1)} lines. The same{" "}
-        <code>T</code> buys {units.chars_per_word.toFixed(1)} times as much text when the
-        token is a word, and chapter 5 is where this course starts buying that text back.
+        counts tokens rather than text, so what one window is worth depends on the unit.
+        A spoken line in this corpus averages{" "}
+        {units.chars_per_spoken_line.toFixed(0)} characters, so the scribe's{" "}
+        {real.block_size} of them do not reach the end of one:{" "}
+        {real.window_lines.toFixed(2)} of a line, about{" "}
+        {real.window_words.toFixed(1)} words. A model whose token was a word would see{" "}
+        {real.block_size} words through that same window, about{" "}
+        {real.word_window_lines.toFixed(1)} lines. Chapter 5 is where this course starts
+        buying that text back.
       </p>
 
       <SectionHeader id="c2-batch" title="Sixteen windows at a time" />
