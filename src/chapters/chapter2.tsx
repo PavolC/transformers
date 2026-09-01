@@ -67,8 +67,8 @@ function CostTable() {
         <caption>
           The same corpus, read two ways. A word here is whatever sits between two runs of
           whitespace, punctuation included, which is the crudest possible word and enough
-          to price the choice. The last two rows are per spoken line, averaged over the
-          corpus's {n(units.spoken_lines)} of them:{" "}
+          to price the choice. Guesses per spoken line is an average over the corpus's{" "}
+          {n(units.spoken_lines)} spoken lines, which run{" "}
           {units.chars_per_spoken_line.toFixed(1)} characters and{" "}
           {units.words_per_spoken_line.toFixed(1)} words long.
         </caption>

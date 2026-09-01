@@ -216,6 +216,12 @@ change. [casebook: 11]
 - **Backward claims get checked like numbers.** Every "chapter N taught X", every
   cross-reference, and every outside-world fact is verified against the source before
   commit. [casebook: 10]
+- **A pointer into a figure is a claim about that figure.** "The last two rows", "the
+  third column": count them against the artifact rather than from memory, and name the
+  row by its own label wherever the prose is not walking the table in order, because an
+  inserted row moves every position after it. Chapter 2's cost table shipped a caption
+  saying its last two rows were per-spoken-line averages when the last one was a yes-or-no
+  capability.
 - **Generated text is a number.** A sampled passage, a decoded sequence, a stuck loop:
   anything a run produced gets imported from the bench wherever it is quoted, including
   inside an exercise prompt. Prompts read like prose, so a string typed into one from
