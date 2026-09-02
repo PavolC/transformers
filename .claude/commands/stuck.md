@@ -24,6 +24,10 @@ navigation. Fix those directly and skip to step 5. Everything else runs the loop
    different: another order, a concrete instance first, the misconception named out loud,
    a prerequisite the chapter assumed I had. The same explanation slower, or with more
    words, is not a second attempt.
+   When the report is "I don't know X", the re-explanation cannot be written in X. Three
+   NumPy moves offered to "i don't yet know numpy so how am i supposed to understand
+   this?" was a first attempt wasted; the second used the reader's own pasted function
+   and changed two lines of it. Start from what I wrote, not from what I am missing.
 3. **Check that it landed by making me use it.** Never "does that make sense?", which a
    tired reader answers yes to. Ask me to predict a number, to apply it to a case you did
    not use, or to say what would break if a piece changed. That is this course's own

@@ -571,6 +571,19 @@ export function Chapter2() {
         {n(win.start + win.block_size)} is the one <code>y</code> needs and{" "}
         <code>x</code> does not have.
       </p>
+      <p>
+        Those two lines are also the whole of the code. A slice of the stream is one row
+        of <code>x</code> already, an <code>int64</code> array of {win.block_size} ids, and
+        a loop over the starting points leaves <code>B</code> of them in a list. One call
+        glues the list into the block: <code>np.stack(rows)</code> takes rows of equal
+        length and returns them as one array with the rows down axis 0, so the{" "}
+        {bench.batch.shape[0]} rows drawn above become the (
+        {bench.numpy.stacked_shape.join(", ")}) array the figure shows. Build the rows as
+        slices and stack them, rather than collecting the numbers into lists and making a
+        fresh array at the end: in this tab's Python a fresh array built from plain numbers
+        comes out <code>{bench.numpy.fresh_int_dtype}</code>, and the ids have to stay{" "}
+        <code>int64</code>.
+      </p>
       <ReceiptsTable />
       <p>
         The overlap in the fourth row is the thing to carry forward. The two arrays hold

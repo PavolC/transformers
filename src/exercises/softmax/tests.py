@@ -21,6 +21,11 @@ def test_known_row():
     """softmax: one row of scores, checked to ten decimals"""
     got = softmax(np.array([2.0, 0.0, -2.0, 1.0]))
     want = np.array([0.6572330228, 0.0889468173, 0.0120376427, 0.2417825172])
+    assert isinstance(got, np.ndarray), (
+        f"softmax must return a NumPy array, and yours returned a "
+        f"{type(got).__name__}. Do the arithmetic on the array itself, np.exp "
+        "and .sum(axis=-1, keepdims=True), rather than on a list of its numbers."
+    )
     assert got.shape == want.shape, (
         f"softmax must keep the shape of its input: gave it (4,), got back "
         f"{got.shape}. The max and the sum both need keepdims=True."
