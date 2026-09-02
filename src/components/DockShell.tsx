@@ -9,12 +9,13 @@
 //
 // The dock opens at a width that leaves the column exactly as wide as it is
 // with the panel closed, so opening it never moves the prose. Dragging past
-// that narrows the column, down to the widest thing in the measure set, and
-// the figures follow.
+// that narrows the column, down to COLUMN_FLOOR, and the figures follow: past
+// the point where the measure still fits, the prose reflows narrower and the
+// box diagrams pan inside their wrappers, the same way they do on a phone.
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { loadUiNumber, saveUi } from "../state/ui";
-import { COLUMN_FLOOR, DOCK_MIN_VIEWPORT, dockBounds, type DockState } from "./WorkbenchProvider";
+import { DOCK_MIN_VIEWPORT, TABS_FOLD, dockBounds, type DockState } from "./WorkbenchProvider";
 
 const WIDTH_KEY = "dock-w";
 
@@ -127,7 +128,7 @@ export function DockShell({ dockState, children }: { dockState: DockState; child
 			inert={dockState === "sheet" ? true : undefined}
 			data-dock={dockState}
 			data-toc={tocMode}
-			data-narrow={open && columnWidth < COLUMN_FLOOR + 128 ? "1" : undefined}
+			data-narrow={open && columnWidth < TABS_FOLD ? "1" : undefined}
 		>
 			<div className="app" ref={appRef}>
 				{children}
