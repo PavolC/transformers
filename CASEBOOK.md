@@ -854,6 +854,49 @@ reader could not follow and this reader could follow it perfectly well. **A conf
 does not catch prose that works and grates.** That needs the reader to say so, which is a
 second kind of report and arrives only if the course is being read rather than reviewed.
 
+## 27. "is there a point to these 2 paragraphs"
+
+**Chapter:** two (transformers), chapter 2, section 3, the crossing between text and
+numbers, read after the section 1 rebuild of incident 26 had merged.
+
+**What was wrong.** Two paragraphs closed the section, and the learner asked the question
+in the title, in full: "is there a point to these 2 paragraphs besides saying that mapping
+string to int to string gives back the original string? and then just defining tokenizer?"
+The answer was no, for two different reasons, each already covered by a rule.
+
+The first paragraph reported the encode-decode round trip passing on all 1,115,394
+characters and stopped. `CLAUDE.md` said "Checks without stated stakes read as arithmetic
+for its own sake", and this check cannot fail on the chapter's own data, so it read as
+exactly that. Its one stake, that a character the vocabulary does not contain has no id
+and `encode` stops at it, was the sentence the paragraph did not have.
+
+The second was the handover from this course's word (the crossing) to the field's word
+(tokenizer), which the playbook asks for at the first use of the thing. Two of its four
+sentences did that job. The other two announced how the course would use the two words
+from here on ("the crossing when the point is what the functions do, a tokenizer when the
+point is which component they are"), which is the course narrating its own usage policy.
+The sweep found the same clause at chapter 1's handover of tally to bigram counts: "both
+words are in play from here on".
+
+**No loop ran, and none was owed.** The learner understood both paragraphs and asked
+whether they earned their place; that is a craft report with nothing to diagnose, like
+incident 26, and unlike incidents 24 and 25.
+
+**The fix.** The round-trip paragraph states its one failure mode in the same breath as
+the check, and hands the check to the exercise in a clause rather than a sentence. The
+handover names the field's word, scopes it in one sentence, and stops. Chapter 1's clause
+was cut. Net, the section lost about forty words and gained the only sentence that gave the
+check a point.
+
+**Rules:** the check-that-cannot-fail clause under "State what a section buys before
+proving it", and "Name the field's word and stop" under the handover rule.
+
+**Cost:** two paragraphs and one clause, in one commit. The pattern to watch is the
+second one: the handover rule in `CLAUDE.md` describes the state after the handover ("both
+words are in play"), and the author turned that description into a sentence of prose,
+twice. A rule that describes an outcome will get transcribed into the page unless it also
+says not to.
+
 ## The pattern behind course one's eighteen
 
 Four of them (2, 6, 7, 12) are the same chapter, and it is the one chapter authored outside
