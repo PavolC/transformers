@@ -25,10 +25,23 @@ export const DOCK_MIN_VIEWPORT = 1360;
  * first open. Dragging past this narrows the column, down to COLUMN_FLOOR. */
 export const COLUMN_FULL = 935;
 
-/** The narrowest the column may be dragged to: the widest thing in the
- * measure set (a card at 646px plus its padding and its 3px accent rule) plus
- * the article's own gutters. Below this the cards start to clip. */
-export const COLUMN_FLOOR = 752;
+/** The narrowest the column may be dragged to. It used to be 752, the width
+ * that keeps the widest thing in the measure set (a card at 646px plus its
+ * padding and its 3px accent rule, plus the article's own gutters) at its full
+ * size, so no box ever had to reflow. Nothing clips below that: the boxes in
+ * the measure set carry `min-width: min(..., 100%)` and the figures pan inside
+ * their wrappers, which is what the phone layout already relies on. The real
+ * floor is 560px, where the stylesheet's phone rules take over, and those are
+ * keyed to the window rather than to the column, so a column narrower than the
+ * band they cover would go without them. 576 is that band plus room for a
+ * scrollbar, and it buys the panel 176px more travel than 752 did. */
+export const COLUMN_FLOOR = 576;
+
+/** Where the tab strip folds to the picker: the same 880px the stylesheet's
+ * own media query uses, asked of the column rather than of the window (see the
+ * .shell[data-narrow] rules). Independent of COLUMN_FLOOR, which it was once
+ * written as an offset from. */
+export const TABS_FOLD = 880;
 
 export const DOCK_MIN = 380;
 

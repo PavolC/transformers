@@ -779,6 +779,20 @@ without knowing.
   separately, with `#m1` to `#c1` hash aliases so shared links survive.
 - **2026-08-31, dev server port 5175, strictPort** (course one pinned 5174; different
   port so both courses can run side by side). localStorage keys are prefixed `tf:`.
+- **2026-09-02, the dock may be dragged to a 576px column** (`COLUMN_FLOOR`), rather than
+  to the 752px that keeps every box in the measure set at its full width. The learner
+  asked for more travel, and 752 was protecting reflow rather than preventing damage:
+  the measure-set boxes carry `min-width: min(..., 100%)` and the figures pan inside
+  their wrappers, which is the path the 375px phone layout already takes. 576 is the
+  560px phone-media band plus room for a scrollbar, and it is a floor rather than zero
+  because those phone rules are keyed to the window: a column narrower than the band
+  they cover would go without them. Checked at 1920 against both the old maximum and
+  the phone: same overflow findings, no new ones, and no page-level sideways scroll.
+  Rejected: making the 560px rules column-aware, which would buy the last 200px at the
+  cost of auditing every phone rule in the stylesheet. `TABS_FOLD` (880, where the tab
+  strip gives way to the picker) is now its own constant, because it had been written as
+  `COLUMN_FLOOR + 128` and would otherwise have followed the floor down and left the
+  strip crushed between 704 and 880.
 
 ## Known non-bugs, do not chase
 
