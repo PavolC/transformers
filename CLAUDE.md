@@ -341,6 +341,17 @@ its reason, plus the sentence that the small case is a sub-case and not a detour
 - **One word, one meaning.** Reserve the topic's load-bearing words and never reuse them.
   Before coining a noun, check what earlier chapters already call the thing. No word may
   appear before the section that defines it.
+- **And one thing, one name, or "the same number" said aloud each time a second name
+  arrives.** A quantity the prose, the maths and the code each call something different
+  is three concepts to a reader until a sentence says it is one. Chapter 2 introduced T,
+  "positions in time", window, context window and block_size in three sentences: "a fixed
+  number of chars called T, or is the position in time (what's time?) supposed to be T?
+  ... i thought T was the lenght??" The reader's own count was the fix: "there are only 2
+  concepts here, the index of where we are reading and the window size". Give each one
+  letter, t and T, on a concrete window before either letter appears; define time as
+  reading order counted from 0 before using the word; and say the last step is T minus 1,
+  because a reader who has just learned T as a count will read it as the last index.
+  [casebook: 28]
 - **A coined word hands over to the field's word in the chapter that earned the idea**,
   not at the end of the course. One short paragraph at the first use of the thing, saying
   what everyone else calls it, after which both words are in play. **Name the field's word

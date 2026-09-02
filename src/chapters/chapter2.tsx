@@ -423,11 +423,30 @@ export function Chapter2() {
       </p>
       <p>
         The model this course builds is the <b>scribe</b>, and it cannot read{" "}
-        {n(units.chars)} characters at once, so it is handed a fixed number of them. Call that number <code>T</code>, for the positions in time
-        it covers. A stretch of <code>T</code> characters cut out of the corpus is a{" "}
-        <b>window</b>, which the field calls a context window, and its length is the
-        setting called <code>block_size</code> in the code. Every model in this course
-        from chapter 4 on is fed windows.
+        {n(units.chars)} characters at once. It is handed a few at a time, in a row, cut
+        out of the corpus. Here are {win.block_size} of them, starting at character{" "}
+        {n(win.start)} of the corpus: <code>{win.x_text}</code>. That piece of text is a{" "}
+        <b>window</b>, which the field calls a context window. Two numbers go with it: how
+        big it is, and how far into it the reading has got.
+      </p>
+      <p>
+        The size first. This window holds {win.block_size} characters, so its size is{" "}
+        {win.block_size}. The prose and the maths write that number <code>T</code>, and
+        the code writes it <code>block_size</code>: three names, one number, and a window
+        has no length other than it. The scribe's own windows hold {real.block_size}{" "}
+        characters, so for the scribe <code>T</code> is {real.block_size} and{" "}
+        <code>block_size</code> is {real.block_size}.
+      </p>
+      <p>
+        Then the position. The scribe reads a window left to right, one character per
+        step, and the steps are numbered from 0: the first character,{" "}
+        <code>{win.x_text[0]}</code>, is step 0, the second, <code>{win.x_text[1]}</code>,
+        is step 1, and the last, <code>{win.x_text[win.block_size - 1]}</code>, is step{" "}
+        {win.block_size - 1}. That step is written <code>t</code>, and the field calls the
+        axis it runs along <b>time</b>, because the model reaches the positions one after
+        another. So <code>t</code> runs from 0 to <code>T - 1</code>, the last step is one
+        less than the size, and <code>T</code> is the capital because it counts how many
+        steps there are. Every model in this course from chapter 4 on is fed windows.
       </p>
       <p>
         Cutting a window is a slice. What makes it a piece of training data is the second

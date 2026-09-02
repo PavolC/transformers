@@ -897,6 +897,60 @@ words are in play"), and the author turned that description into a sentence of p
 twice. A rule that describes an outcome will get transcribed into the page unless it also
 says not to.
 
+## 28. "i thought T was the lenght??"
+
+**Chapter:** two (transformers), chapter 2, section 4, the paragraph that introduces the
+window, read before the slicer below it.
+
+**What was wrong.** One paragraph introduced five names for two ideas. "A fixed number of
+them", T, "the positions in time it covers", "a stretch of T characters", "its length",
+"block_size": the size of a window under four of those, the position being read under one,
+and nothing telling them apart. The learner's report was the whole diagnosis, read back:
+"a fixed number of chars called T, or is the position in time (what's time?) supposed to
+be T? stretch of T chars is a window..ok and it's length is block_size? i thought T was
+the lenght??" The word "time" had no meaning on the page, and the clause that used it was
+meant as the reason for the letter T and read as a second definition of it.
+
+**The loop ran, and its first step was itself defective.** The first re-explanation used
+the slicer ("the slicer opens on eight characters") and its check said "drag the slicer's
+length control to 12". The slicer sits two paragraphs below the passage, and the reader
+"hasn't made it to the interactive element yet". `/stuck` already said the check may only
+use what has been read; the author read "already read" as the chapter so far rather than
+the sentence stopped on. The second attempt used chapter 1's line, `to be, or not to be`,
+laid out eight characters, named the two numbers once each, and defined time as reading
+order counted from 0.
+
+**The check found a second misconception the passage had planted.** Asked for a window of
+6 cut from the line, the learner gave the six characters, block_size 6, the comma at step
+5, and T = 5. T as the last index rather than the count: exactly what "T, for the positions
+in time it covers" invites once T has been read as a position. One sentence (T counts the
+steps, 0 through 5 is six of them, the last is T minus 1) and the re-check landed: a window
+of 8 has block_size 8 and last step 7. Then the learner's own diagnosis, which the fix is
+built on: "it seems to me we just have way too many things that are the exact same thing.
+there are only 2 concepts here, the index of where we are reading and the window size?"
+
+**What the working explanation did.** A concrete piece of text before any letter. Two
+concepts named once each, T for how many and t for which one. "Same number" said aloud
+every time a second name for T arrived. Time defined as reading order from 0, with the last
+step being T minus 1 said explicitly.
+
+**The fix.** The paragraph became three: the chapter's own window `down too` first, as
+text; then its size, with T and block_size introduced as two names for the one number and
+the scribe's 32 as a second instance; then the position, with t defined on the window's
+own characters, time named as the axis t runs along, and the last step given as T minus 1.
+The notation reference gained rows for T and t, which it had never had (the window row had
+been carrying T's job in its "also called" line), and the window row stopped saying
+"positions in time".
+
+**Rules:** the converse of "One word, one meaning", under Notation and vocabulary; and in
+`/stuck` step 3, "already read" means the sentence stopped on, not the page.
+
+**Cost:** one paragraph rebuilt as three, two notation rows, and one wasted round of the
+loop on a check the reader could not run. The loop earned its keep here twice over: the
+learner's first message named the confusion accurately, and the author's first two moves
+(a re-explanation on an unread panel, a check on the same panel) would both have gone
+straight into the page under the old process.
+
 ## The pattern behind course one's eighteen
 
 Four of them (2, 6, 7, 12) are the same chapter, and it is the one chapter authored outside
