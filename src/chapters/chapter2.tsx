@@ -403,9 +403,12 @@ export function Chapter2() {
       <p>
         One line checks that the crossing is lossless: encode the whole corpus, decode it
         again, and compare. All {n(units.chars)} characters come back unchanged, spaces and
-        newlines included, and the exercise below runs the same check on your two
-        functions. It has one way to fail: a character the vocabulary does not contain has
-        no id, so <code>encode</code> stops at it rather than inventing a number.
+        newlines included. The exercise below runs the same check on your two functions,
+        where it catches what an implementation gets wrong: a character stripped or added
+        on the way back, or two lookups built in different orders. What it cannot catch is
+        a character the vocabulary does not contain, because the vocabulary was measured
+        from the very text being encoded; hand <code>encode</code> one and it stops, with
+        no id to write down, rather than inventing a number.
       </p>
       <p>
         A pair of functions that turns text into tokens and back is what everyone else

@@ -301,8 +301,12 @@ Write every chapter to the floor above. These are ordered roughly as they bite.
   has no stakes until the prose says what would make it fail.** Chapter 2 reported the
   encode-decode round trip passing on all 1,115,394 characters and stopped there, and the
   reader asked whether the paragraph had "a point besides saying that mapping string to int
-  to string gives back the original string". It did not, until it said the one way the
-  crossing fails: a character the vocabulary does not contain has no id. [casebook: 27]
+  to string gives back the original string". It did not, until it said what the check
+  catches (a character stripped or added on the way back) and what it cannot (a character
+  the vocabulary does not contain, because the vocabulary is measured from the text being
+  encoded). **The failure named must be one the check as run can reach.** The first draft
+  gave the round trip a missing character as its one way to fail, which is the one way it
+  cannot fail; a stake the check cannot see is stated as what it cannot test. [casebook: 27]
 - **Tally explicitly.** Count the cost in the text: it is why the next chapter exists.
   The countable quantity every chapter reduces: **average surprise per character, in
   bits, on held-out Shakespeare**, tracked on the ladder. Where a chapter's cost is not

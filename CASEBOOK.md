@@ -882,14 +882,24 @@ words are in play from here on".
 whether they earned their place; that is a craft report with nothing to diagnose, like
 incident 26, and unlike incidents 24 and 25.
 
-**The fix.** The round-trip paragraph states its one failure mode in the same breath as
-the check, and hands the check to the exercise in a clause rather than a sentence. The
+**The fix.** The round-trip paragraph says what the check catches and the one thing it
+cannot see, and hands the check to the exercise in one sentence. The
 handover names the field's word, scopes it in one sentence, and stops. Chapter 1's clause
 was cut. Net, the section lost about forty words and gained the only sentence that gave the
 check a point.
 
+**Corrected once before merge, by a review bot.** The first draft of the round-trip
+paragraph gave the check "one way to fail", a character the vocabulary does not contain.
+As the exercise runs it, that cannot happen: `build_vocab` measures the vocabulary from
+the same text `encode` is then handed. What the check does catch is an implementation
+error, a character stripped or added by `decode` or two lookups built in different orders,
+which is what `test_decode_round_trip` tests for. So the fix for a check with no stakes
+had invented a stake the check could not reach, and the rule now says the failure named
+must be one the check as run can reach.
+
 **Rules:** the check-that-cannot-fail clause under "State what a section buys before
-proving it", and "Name the field's word and stop" under the handover rule.
+proving it", with the reachability clause from the correction, and "Name the field's word
+and stop" under the handover rule.
 
 **Cost:** two paragraphs and one clause, in one commit. The pattern to watch is the
 second one: the handover rule in `CLAUDE.md` describes the state after the handover ("both
