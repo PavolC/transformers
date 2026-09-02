@@ -239,8 +239,8 @@ export function Chapter1() {
         <b>tally</b>, and it is the object chapter 4 turns into something learned, chapter
         6 turns into something contextual, and chapter 9 buries inside a transformer
         block. Everyone else calls it a table of bigram counts, or a bigram model, from{" "}
-        <i>bi</i> for two and <i>gram</i> for written thing; both words are in play from
-        here on, and the code you write in a moment is called <code>count_pairs</code>.
+        <i>bi</i> for two and <i>gram</i> for written thing. The code you write in a
+        moment is called <code>count_pairs</code>.
       </p>
       <p>
         The panel below builds it. Drag the control, or press the button, to count the

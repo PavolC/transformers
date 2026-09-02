@@ -401,17 +401,17 @@ export function Chapter2() {
         by, and the two always travel together.
       </p>
       <p>
-        The check that the crossing is lossless is one line: encode the whole corpus, decode
-        it again, and compare. All {n(units.chars)} characters come back unchanged, spaces
-        and newlines included. The exercise below runs that check on your own two
-        functions.
+        One line checks that the crossing is lossless: encode the whole corpus, decode it
+        again, and compare. All {n(units.chars)} characters come back unchanged, spaces and
+        newlines included, and the exercise below runs the same check on your two
+        functions. It has one way to fail: a character the vocabulary does not contain has
+        no id, so <code>encode</code> stops at it rather than inventing a number.
       </p>
       <p>
         A pair of functions that turns text into tokens and back is what everyone else
         calls a <b>tokenizer</b>. The word usually implies something more elaborate than
         this, with a training step of its own, and this course's is about as small as one
-        can be. Both words are in play from here: the crossing when the point is what the
-        functions do, a tokenizer when the point is which component they are.
+        can be.
       </p>
 
       <SectionHeader id="c2-windows" title="One window, and the examples inside it" />

@@ -297,7 +297,12 @@ Write every chapter to the floor above. These are ordered roughly as they bite.
   the kinds in the figure so the picture carries the grouping. [casebook: 4]
 - **State what a section buys before proving it.** Open a stretch of verification with the
   one-sentence payoff it earns, and close by cashing it out. Checks without stated stakes
-  read as arithmetic for its own sake.
+  read as arithmetic for its own sake. **A check that cannot fail on the chapter's own data
+  has no stakes until the prose says what would make it fail.** Chapter 2 reported the
+  encode-decode round trip passing on all 1,115,394 characters and stopped there, and the
+  reader asked whether the paragraph had "a point besides saying that mapping string to int
+  to string gives back the original string". It did not, until it said the one way the
+  crossing fails: a character the vocabulary does not contain has no id. [casebook: 27]
 - **Tally explicitly.** Count the cost in the text: it is why the next chapter exists.
   The countable quantity every chapter reduces: **average surprise per character, in
   bits, on held-out Shakespeare**, tracked on the ladder. Where a chapter's cost is not
@@ -338,8 +343,12 @@ its reason, plus the sentence that the small case is a sub-case and not a detour
   appear before the section that defines it.
 - **A coined word hands over to the field's word in the chapter that earned the idea**,
   not at the end of the course. One short paragraph at the first use of the thing, saying
-  what everyone else calls it, after which both words are in play. Leave it unlabelled and
-  keep it out of the `<Aside>` box. An opener like "this chapter's naming note is" is
+  what everyone else calls it, after which both words are in play. **Name the field's word
+  and stop.** "Both words are in play from here: the crossing when the point is what the
+  functions do, a tokenizer when the point is which component they are" is the course
+  narrating its own usage policy, and the reader read it as "just defining tokenizer",
+  which is all a handover is for; the policy sentence adds nothing to that. [casebook: 27]
+  Leave it unlabelled and keep it out of the `<Aside>` box. An opener like "this chapter's naming note is" is
   meta-narration, and a formula a reader skips after the second one; a shaded box says the
   lesson pauses here, which is the wrong signal for the one paragraph whose job is to put a
   word into the reader's working vocabulary. A course built this way is already bilingual
