@@ -468,5 +468,14 @@
     "of": 32,
     "counted": 32,
     "tally_total": 1003854
+  },
+  "numpy": {
+    "stacked_shape": [
+      4,
+      8
+    ],
+    "stacked_dtype": "int64",
+    "rebuilt_dtype": "int32",
+    "fresh_int_dtype": "int32"
   }
 }

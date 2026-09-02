@@ -983,6 +983,69 @@ reader's, so a phrase that names a rule here is a coinage on the page.
 author's working vocabulary leaks onto the page as bare nouns, and nothing in the checkers
 can see it, because the word is defined two sentences later and a grep finds it.
 
+## 30. "i don't know how to use the numpy arrays and feel like that shouldn't be integral to the course"
+
+**Chapter:** two (transformers), the batch exercise, `get_batch`.
+
+**What was wrong.** The learner had the algorithm: the one-line draw, a loop over the
+starts, a slice for each window and a slice for each target. He collected the rows in
+Python lists and returned the lists, and the first test died with `'list' object has no
+attribute 'shape'`. "that exercise is extremely annoying. i have the alogrithm but can't
+figure out the precise data types/numpy usage to create the exact arrays it needs. i was
+using basic list [] and clearly it expects me to use numpy arrays in a special way. i
+don't know how to use th enumpy arrays and feel like that hsouldn't be integral to the
+course. feel free to challenge me on that"
+
+Two defects, one of them the course's premise. The floor says the learner can read
+NumPy-flavoured code; nothing says he writes it, and this was the first exercise that
+needed an array produced with an exact shape and dtype. The chapter had shown the slice
+as maths and as prose and never shown the one call that glues B rows into a (B, T) block.
+That is casebook 20 again with an operation in place of a word: a thing the exercise
+cannot avoid, taught nowhere in the chapter. And the test crashed instead of teaching,
+because it reached for `.shape` before checking it had an array.
+
+**The challenge, answered.** NumPy stays. The scribe is arrays end to end and every later
+exercise is an operation on a (B, T) or (B, T, C) array, so there is no version of the
+course without it. What changes is that each operation is taught at first need, like
+everything else above the floor.
+
+**The loop, two rounds.** The first re-explanation listed three NumPy moves (slice, stack,
+the int32 trap) and asked for the shape and dtype of a stacked pair of slices. The reply:
+"i don't yet know numpy so how am i supposed to understand this?", with the function
+pasted. A re-explanation written in the vocabulary the reader has just said he lacks is
+not a re-explanation. The second started from his code and changed two lines: the slices
+ran one too long (`+ 1` and `+ 2` compensating for an end that is already exclusive), and
+the return needed `np.stack` on each list, explained as gluing a list of rows into one
+block, with the rows drawn before and after. "yeah that makes sense. that all worked."
+
+**What worked.** His own function as the text. The missing call described by what it does
+to the thing he already had (a list of rows becomes one block), not by what it is. The
+picture of three rows becoming a (3, 4) grid.
+
+**A trap the loop did not hit but the probe did.** Under the tab's Python (Pyodide, wasm32)
+a fresh `np.array([1, 2, 3])` is int32, so a get_batch that collects Python ints and
+rebuilds an array at the end fails the int64 test with a message that never says why. On a
+desktop NumPy the same code gives int64 and the trap does not exist, so the chapter quotes
+the dtype from the bench, which runs under the pinned Pyodide.
+
+**The fix.** A beat in the written-down section: the two slice equations are also the two
+lines of code, a slice is already a row, `np.stack` glues the B rows into the block the
+figure shows (shape and dtype from the bench), and the rows are built as slices rather
+than rebuilt from plain numbers, with the tab's int32 named. The prompt names the two
+lines where it states the contract. The test checks for an array before it asks for a
+shape, and its shape message names the (3, 5) case. The softmax test gained the same
+guard in the sweep.
+
+**Rules:** the floor now says reads NumPy and does not write it, with the consequence;
+"A word, or an operation, the exercise cannot avoid is taught in the chapter"; "the first
+assertion on any returned array checks that it is one"; and in `/stuck` step 2, a
+re-explanation cannot be written in the vocabulary the reader says he lacks.
+
+**Cost:** one beat, one prompt sentence, two test edits, a bench section, and one wasted
+round of the loop. The premise defect is the expensive part to have found late: two
+chapters were written against a floor that said "reads" while the exercises assumed
+"writes", and nothing but a reader could have said so.
+
 ## The pattern behind course one's eighteen
 
 Four of them (2, 6, 7, 12) are the same chapter, and it is the one chapter authored outside

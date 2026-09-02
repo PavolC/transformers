@@ -23,7 +23,9 @@ export const getBatchExercise: Exercise = {
       "in the stream. Row b of y is the same window shifted one character left, so " +
       "y[b, t] is the character that actually came after x[b, t] in the text. The axis " +
       "law is the one every array in this course obeys: batch first, time second, and " +
-      "time reads left to right.",
+      "time reads left to right. Build each row as a slice of ids and glue the rows " +
+      "into the block with np.stack, the two lines the chapter shows just above this " +
+      "exercise.",
     "y is not one answer per window. It is one answer per position, so a window of " +
       `${bench.window.block_size} characters is ${bench.window.block_size} training ` +
       "examples rather than one, and the last of them needs the character just past " +

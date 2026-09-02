@@ -297,4 +297,24 @@ def main():
     print(f"\nEvery one of the batch's {x.size} (x, y) pairs is a pair of neighbours, "
           f"so chapter 1's tally has a count for it: {hits} of {x.size}.")
 
+    # ------------------------------ the two lines of NumPy a batch takes
+    # A row of x is a slice of the int64 stream, and np.stack glues B rows
+    # into the (B, T) block. A fresh array built from plain Python numbers
+    # does not stay int64 under the tab's Python (wasm32, where the default
+    # integer is 32 bits), which is the trap a list-based get_batch falls
+    # into, so the chapter quotes the dtype from this engine rather than
+    # from a desktop NumPy, where it would read int64.
+    stacked = np.stack([x[b] for b in range(DEMO_B)])
+    rebuilt = np.array([[int(i) for i in row] for row in x])
+    assert stacked.dtype == np.int64 and (stacked == x).all()
+    out["numpy"] = {
+        "stacked_shape": [int(n) for n in stacked.shape],
+        "stacked_dtype": str(stacked.dtype),
+        "rebuilt_dtype": str(rebuilt.dtype),
+        "fresh_int_dtype": str(np.array([1, 2, 3]).dtype),
+    }
+    print(f"\nnp.stack of the {DEMO_B} rows is a {tuple(stacked.shape)} {stacked.dtype} array; "
+          f"the same numbers rebuilt from Python ints come out {rebuilt.dtype}, and a "
+          f"fresh np.array([1, 2, 3]) is {out['numpy']['fresh_int_dtype']} in this engine.")
+
     return json.dumps(out)

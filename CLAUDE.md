@@ -59,7 +59,9 @@ only, never encoder-decoder; no backend, no accounts, no telemetry.
 Finished Moving Parts: Neural Networks, weeks ago, so course one is faded: what survives
 is the shape (weights and biases, a loss, gradients point downhill, backprop as a chain of
 slopes, a training loop), and the derivations are gone, so this course restates whatever
-it leans on. Can read Python and NumPy-flavoured code. Has never seen: next-token
+it leans on. Can read Python and NumPy-flavoured code, and does not write NumPy: every
+array operation an exercise needs (a slice, `np.stack`, a dtype) is built here, in the
+chapter, on the chapter's own data, before the exercise asks for it. Has never seen: next-token
 prediction, tokenization, embeddings, attention, queries/keys/values, softmax over a
 vocabulary, LayerNorm, residual connections, or Adam. The absences are the load-bearing
 half, because a paragraph can be checked against them. Confirmed by the floor test on
@@ -176,7 +178,10 @@ is fixed:
 - Tests run in definition order and fail by raising with a teaching message. The first
   docstring line is the test's display title.
 - **Failure messages are teaching content.** Each says what was expected, what was
-  received, and the likely misconception behind the gap.
+  received, and the likely misconception behind the gap. The first assertion on any
+  returned array checks that it is one: a list handed to `.shape` dies with
+  `'list' object has no attribute 'shape'`, which is a crash where the lesson should be
+  ("np.stack(rows) glues a list of rows into one array"). [casebook: 30]
 - **Skeleton docstrings freeze into the learner's saved copy.** The editor persists their
   code, so improving a skeleton never reaches anyone who already opened the exercise.
   Anything essential to the contract must also live in the prompt, which always re-renders.
@@ -486,8 +491,16 @@ its reason, plus the sentence that the small case is a sub-case and not a detour
   A contract states obligations to someone who already knows the nouns, so a prompt that
   starts with the contract is written for the person who has already done the exercise.
   Say what arrives, say what to do with it, then state the shape. [casebook: 20]
-- **A word the exercise cannot avoid is taught in the chapter, in the same commit as the
-  exercise, however late in the chapter that beat has to sit.** The representation the code
+- **A word, or an operation, the exercise cannot avoid is taught in the chapter, in the
+  same commit as the exercise, however late in the chapter that beat has to sit.** The
+  operation half came from chapter 2's batch exercise: the learner had the algorithm and
+  a correct list of rows, and the chapter had never shown the one call that glues rows
+  into an array, so "i have the alogrithm but can't figure out the precise data
+  types/numpy usage ... i don't know how to use the numpy arrays and feel like that
+  shouldn't be integral to the course". NumPy is the medium and stays; the gap was the
+  course's, because the floor says the learner reads NumPy, not that he writes it. Every
+  operation an exercise needs gets one beat on the chapter's own data, in the reader's
+  terms (a list of rows becomes one block), not in NumPy's. [casebook: 30] The representation the code
   works in is not an implementation detail to be met in a docstring: chapter 1's prose
   spoke only of characters while its exercise took ids, and the plan put ids in chapter 2,
   so the reader hit the notation of a later chapter inside the first one's exercise. The

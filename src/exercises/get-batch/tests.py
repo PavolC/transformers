@@ -14,11 +14,20 @@ STREAM = np.arange(100, dtype=np.int64)
 def test_shapes_and_dtype():
     """get_batch: two (B, T) int64 arrays, batch first and time second"""
     x, y = get_batch(STREAM, 4, 3, np.random.default_rng(0))
+    assert isinstance(x, np.ndarray) and isinstance(y, np.ndarray), (
+        f"get_batch must return two NumPy arrays, and yours returned a "
+        f"{type(x).__name__} and a {type(y).__name__}. If those are lists of "
+        "rows, the rows are probably right and only the container is wrong: "
+        "np.stack(rows) glues a list of equal-length rows into one (rows, "
+        "length) array."
+    )
     assert x.shape == (3, 4) and y.shape == (3, 4), (
         f"asked for 3 windows of 4, so both arrays must be (3, 4): batch "
         f"first, time second. Got x{x.shape} and y{y.shape}. If yours are "
         "(4, 3) the two axes are swapped, which every later chapter would "
-        "read as 4 windows of 3."
+        "read as 4 windows of 3. If yours are (3, 5), each slice runs one too "
+        "long: ids[a:b] stops before b, so ids[s : s + block_size] is already "
+        "block_size characters."
     )
     assert x.dtype == np.int64 and y.dtype == np.int64, (
         f"both arrays must stay int64 (got {x.dtype} and {y.dtype}). These "
