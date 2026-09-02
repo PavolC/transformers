@@ -32,6 +32,10 @@ navigation. Fix those directly and skip to step 5. Everything else runs the loop
    chapter, or on one that is not written yet, is the same defect as the passage you are
    trying to diagnose, and you are asking it of someone who is already lost: "why are you
    asking me about chapter 4?? it's not even built and i only just started to read c2".
+   Already read means up to the sentence I stopped on, not the page: an interactive two
+   paragraphs below the passage is unread, and a check that says "drag the slider" lands
+   on someone who "hasn't made it to the interactive element yet". Use the text I quoted,
+   or a line from an earlier chapter.
    - I used it correctly: go to 4.
    - I did not: back to 1, with what my answer just told you.
    - Twice failed: stop looping. Two dead re-explanations mean the chapter has a

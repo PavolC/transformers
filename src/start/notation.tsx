@@ -133,14 +133,30 @@ export const NOTATION: NotationRow[] = [
     symbol: <b>a window</b>,
     means:
       "T characters in a row, cut out of the stream. It is T training examples rather than one, because every position in it is a question whose answer is the character after it",
-    alsoCalled: "a context window; its length is block_size in the code",
+    alsoCalled: "a context window",
+    from: "Chapter 2",
+  },
+  {
+    id: "size-T",
+    symbol: <code>T</code>,
+    means:
+      "the size of a window: how many characters it holds, and so how many steps reading it takes. The code writes the same number block_size",
+    alsoCalled: "block size, or context length",
+    from: "Chapter 2",
+  },
+  {
+    id: "step-t",
+    symbol: <code>t</code>,
+    means:
+      "the step the reading of a window has reached, counted from 0, so the last one is T - 1. A position in the window and the step at which the model reaches it are the same number",
+    alsoCalled: "the time axis, or position",
     from: "Chapter 2",
   },
   {
     id: "shape-bt",
     symbol: <code>(B, T)</code>,
     means:
-      "the shape of a batch: B windows down the first axis, T positions in time across the second. Batch first and time second, in every array in this course",
+      "the shape of a batch: B windows down the first axis, T positions across the second. Batch first and time second, in every array in this course",
     alsoCalled: "batch size and block size",
     from: "Chapter 2",
   },
