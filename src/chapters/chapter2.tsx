@@ -512,10 +512,17 @@ export function Chapter2() {
       <BatchFigure />
       <p>
         Both arrays have the same shape, <code>(B, T)</code>: {bench.batch.shape[0]} rows
-        of {bench.batch.shape[1]} here. The axis law is fixed for the whole course, and
-        every array in every later chapter obeys it. Axis 0 is the batch, so row{" "}
-        <code>b</code> is one window. Axis 1 is time, so column <code>t</code> is one
-        position, and time reads left to right.
+        of {bench.batch.shape[1]} here. An array with two dimensions has two axes, axis 0
+        down the rows and axis 1 across the columns, and nothing in NumPy decides what
+        either one means. This course decides it once, for every array in every chapter:
+        axis 0 always says which window, so row <code>b</code> is one window, and axis 1
+        always says which position, so column <code>t</code> is one position, with time
+        reading left to right. That promise is the course's <b>axis law</b>, and it is why{" "}
+        <code>x[b, t]</code> reads "window b, position t" in every later chapter exactly as
+        it does here. In the figure above, <code>x[2, 5]</code> is window 2 (the third row,
+        counting from 0) at position 5: the{" "}
+        <code>{charLabel(bench.batch.rows[2].x_text[5])}</code> in{" "}
+        <code>{bench.batch.rows[2].x_text}</code>.
       </p>
       <p>
         The starts are independent, which is why the four rows above come from four

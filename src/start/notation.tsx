@@ -156,7 +156,7 @@ export const NOTATION: NotationRow[] = [
     id: "shape-bt",
     symbol: <code>(B, T)</code>,
     means:
-      "the shape of a batch: B windows down the first axis, T positions across the second. Batch first and time second, in every array in this course",
+      "the shape of a batch: B windows down the first axis, T positions across the second. Batch first and time second, in every array in this course, is the promise this course calls the axis law",
     alsoCalled: "batch size and block size",
     from: "Chapter 2",
   },

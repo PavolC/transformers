@@ -340,7 +340,13 @@ its reason, plus the sentence that the small case is a sub-case and not a detour
   prose measure. [casebook: 8, 17]
 - **One word, one meaning.** Reserve the topic's load-bearing words and never reuse them.
   Before coining a noun, check what earlier chapters already call the thing. No word may
-  appear before the section that defines it.
+  appear before the sentence that defines it, and the defining sentence says that it is
+  one. A term used as if known, with its meaning following unlabelled, reads as a
+  reference to something the reader missed: chapter 2 wrote "The axis law is fixed for the
+  whole course" one sentence before saying what it was, and got back "what is an axis
+  law?" **This file's vocabulary is not the reader's.** Axis law, the crossing, the seam,
+  the ladder: a phrase that names a rule or an artifact here is a coinage on the page and
+  gets introduced like one, meaning first, name second. [casebook: 29]
 - **And one thing, one name, or "the same number" said aloud each time a second name
   arrives.** A quantity the prose, the maths and the code each call something different
   is three concepts to a reader until a sentence says it is one. Chapter 2 introduced T,

@@ -951,6 +951,38 @@ learner's first message named the confusion accurately, and the author's first t
 (a re-explanation on an unread panel, a check on the same panel) would both have gone
 straight into the page under the old process.
 
+## 29. "what is an axis law?"
+
+**Chapter:** two (transformers), chapter 2, section 5, the paragraph after the batch
+figure.
+
+**What was wrong.** "The axis law is fixed for the whole course, and every array in every
+later chapter obeys it." Then two sentences saying what axis 0 and axis 1 mean, which was
+the definition, unlabelled. The phrase is this rulebook's: `CLAUDE.md` has an "Axis law"
+line under the canonical representation, and the author wrote the page with that
+vocabulary in working memory. To the reader it arrived as a term of art he had missed,
+because the sentence using it was written as a reference, not an introduction.
+
+**The loop ran, one round.** The re-explanation went in the order the page did not: what
+axes are (a two-dimensional array has axis 0 down the rows and axis 1 across the columns),
+the promise (axis 0 always says which window, axis 1 always says which position), then the
+name, then the batch figure above the paragraph as the instance. The check used that
+figure: what is `x[2, 5]`, and does `x[5, 2]` exist? "x[2,5] is the space - 3rd row 6th
+column. x[5,2] doesn't exist." Both right, and the bench confirms window 2 is `ooted st`
+with a space at position 5.
+
+**The fix.** The paragraph now runs in that order, names the axis law as "that promise"
+after stating it, and closes on the figure's own cell, rendered from the bench. The
+notation row for `(B, T)` carries the name, since it already carried the promise.
+
+**Rule:** "No word may appear before the sentence that defines it, and the defining
+sentence says that it is one", plus the mechanism: this rulebook's vocabulary is not the
+reader's, so a phrase that names a rule here is a coinage on the page.
+
+**Cost:** one paragraph and one notation row. The mechanism is the part to keep: the
+author's working vocabulary leaks onto the page as bare nouns, and nothing in the checkers
+can see it, because the word is defined two sentences later and a grep finds it.
+
 ## The pattern behind course one's eighteen
 
 Four of them (2, 6, 7, 12) are the same chapter, and it is the one chapter authored outside
