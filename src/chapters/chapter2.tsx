@@ -403,12 +403,15 @@ export function Chapter2() {
       <p>
         One line checks that the crossing is lossless: encode the whole corpus, decode it
         again, and compare. All {n(units.chars)} characters come back unchanged, spaces and
-        newlines included. The exercise below runs the same check on your two functions,
-        where it catches what an implementation gets wrong: a character stripped or added
-        on the way back, or two lookups built in different orders. What it cannot catch is
-        a character the vocabulary does not contain, because the vocabulary was measured
-        from the very text being encoded; hand <code>encode</code> one and it stops, with
-        no id to write down, rather than inventing a number.
+        newlines included, and the exercise below runs the same check on your two
+        functions. What it proves is exactly that <code>decode</code> undoes{" "}
+        <code>encode</code>: a character stripped or added on the way back fails it, and so
+        do two lookups that disagree. It is silent on two other things. The numbering
+        itself, because any numbering both lookups share passes, sorted or not, and the
+        tests check the sorting separately. And a character the vocabulary does not
+        contain, because the vocabulary was measured from the very text being encoded, so
+        this text cannot produce one; hand <code>encode</code> one and it stops, with no id
+        to write down, rather than inventing a number.
       </p>
       <p>
         A pair of functions that turns text into tokens and back is what everyone else

@@ -882,8 +882,8 @@ words are in play from here on".
 whether they earned their place; that is a craft report with nothing to diagnose, like
 incident 26, and unlike incidents 24 and 25.
 
-**The fix.** The round-trip paragraph says what the check catches and the one thing it
-cannot see, and hands the check to the exercise in one sentence. The
+**The fix.** The round-trip paragraph says what the check proves and the two things it is
+silent on, and hands the check to the exercise in one sentence. The
 handover names the field's word, scopes it in one sentence, and stops. Chapter 1's clause
 was cut. Net, the section lost about forty words and gained the only sentence that gave the
 check a point.
@@ -896,6 +896,16 @@ error, a character stripped or added by `decode` or two lookups built in differe
 which is what `test_decode_round_trip` tests for. So the fix for a check with no stakes
 had invented a stake the check could not reach, and the rule now says the failure named
 must be one the check as run can reach.
+
+**And corrected twice.** The second draft said the check "catches what an implementation
+gets wrong", and the same bot pointed out that a `build_vocab` numbering characters in
+first-seen order, with both lookups built consistently from that order, passes the round
+trip untouched; `test_sorted_not_first_seen` exists because of exactly that. The check
+proves one property, that `decode` undoes `encode`, and a mistake that preserves the
+property passes. The paragraph now scopes its claim to that property and names both
+blind spots, the unsorted numbering and the uncovered character. Two corrections on one
+sentence is the cost of writing a check's coverage from what it is for instead of from
+what it compares.
 
 **Rules:** the check-that-cannot-fail clause under "State what a section buys before
 proving it", with the reachability clause from the correction, and "Name the field's word

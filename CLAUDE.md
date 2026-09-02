@@ -302,11 +302,15 @@ Write every chapter to the floor above. These are ordered roughly as they bite.
   encode-decode round trip passing on all 1,115,394 characters and stopped there, and the
   reader asked whether the paragraph had "a point besides saying that mapping string to int
   to string gives back the original string". It did not, until it said what the check
-  catches (a character stripped or added on the way back) and what it cannot (a character
-  the vocabulary does not contain, because the vocabulary is measured from the text being
-  encoded). **The failure named must be one the check as run can reach.** The first draft
-  gave the round trip a missing character as its one way to fail, which is the one way it
-  cannot fail; a stake the check cannot see is stated as what it cannot test. [casebook: 27]
+  proves (decode undoes encode: a character stripped or added, or two lookups that
+  disagree, fails it) and what it is silent on (a numbering both lookups share but never
+  sorted, and a character the vocabulary does not contain, because the vocabulary is
+  measured from the text being encoded). **The failure named must be one the check as run
+  can reach, and the coverage claimed is the property the check proves, not "what an
+  implementation gets wrong".** The first draft gave the round trip a missing character as
+  its one way to fail, which is the one way it cannot fail; the second said it catches
+  implementation errors, and a first-seen numbering that both lookups share passes it. A
+  mistake that preserves the property a check proves passes the check. [casebook: 27]
 - **Tally explicitly.** Count the cost in the text: it is why the next chapter exists.
   The countable quantity every chapter reduces: **average surprise per character, in
   bits, on held-out Shakespeare**, tracked on the ladder. Where a chapter's cost is not
