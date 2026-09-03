@@ -174,4 +174,55 @@ export const NOTATION: NotationRow[] = [
       "T characters starting at s. The number after the colon is where the slice stops rather than the last position it takes, so this one does not include ids[s + T], which is exactly the character the targets need",
     from: "Chapter 2",
   },
+  {
+    id: "probability",
+    symbol: <code>p</code>,
+    means:
+      "a probability: a number between 0 and 1 saying how likely something is, in a row that sums to 1. A row of the tally divided by its total is a row of them. Chapter 1's shares were probabilities in percent",
+    from: "Chapter 3",
+  },
+  {
+    id: "surprise",
+    symbol: (
+      <>
+        <b>surprise</b>, <code>-log2 p</code>
+      </>
+    ),
+    means:
+      "what a guess cost, in bits, once the next character is known: minus the base-2 logarithm of the probability that was given to it. A probability of 1 costs 0, and every halving adds one bit, which is one yes-or-no question",
+    alsoCalled: "the log loss; in information theory, self-information",
+    from: "Chapter 3",
+  },
+  {
+    id: "loss",
+    symbol: <b>the loss</b>,
+    means:
+      "the average surprise over every step of the text being scored, in bits per character. Course one's word for the number a training loop drives down; here it is this average, and every rung of the ladder is one",
+    alsoCalled: "bits per character",
+    from: "Chapter 3",
+  },
+  {
+    id: "alpha",
+    symbol: <code>alpha</code>,
+    means:
+      "the amount added to every cell of the tally before a row is divided by its total, so a pair the counting never saw has a small probability rather than none. This course adds 1",
+    alsoCalled: "additive or Laplace smoothing; the field writes it as the Greek letter alpha",
+    from: "Chapter 3",
+  },
+  {
+    id: "split",
+    symbol: <b>training and validation text</b>,
+    means:
+      "the nine tenths of the corpus a model learns from, and the tenth held back that it never reads. Every score in this course is taken on the validation text, because a model does better on text it has already seen",
+    alsoCalled: "the train/val split",
+    from: "Chapter 3",
+  },
+  {
+    id: "ladder",
+    symbol: <b>the ladder</b>,
+    means:
+      "the one figure of bits per character on the validation text, one rung per way of guessing, that every chapter adds to. Lower is better; the top rung is guessing evenly, log2 of the vocabulary size",
+    alsoCalled: "ours; there is nothing in the field to look up",
+    from: "Chapter 3",
+  },
 ];

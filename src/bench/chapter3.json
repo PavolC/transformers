@@ -1,0 +1,252 @@
+{
+  "bench": "chapter3",
+  "pyodide": "314.0.5",
+  "hits": {
+    "certain": {
+      "row": "q",
+      "favourite": "u",
+      "count": 563,
+      "total": 563,
+      "prob": 1,
+      "bits": 0,
+      "prob_smoothed": 0.8980891719745223,
+      "bits_smoothed": 0.1550693964928334
+    },
+    "open": {
+      "row": " ",
+      "favourite": "t",
+      "count": 21591,
+      "total": 153275,
+      "prob": 0.14086445930517044,
+      "bits": 2.8276204353477454,
+      "prob_smoothed": 0.1408112690752576,
+      "bits_smoothed": 2.828165297926231
+    },
+    "miss": {
+      "row": "h",
+      "favourite": "e",
+      "actual": "b",
+      "position": 27,
+      "count": 23,
+      "total": 46390,
+      "prob": 0.000495796507868075,
+      "bits": 10.977964269680186,
+      "prob_smoothed": 0.0005166289958023894,
+      "bits_smoothed": 10.918583762562026
+    }
+  },
+  "row": {
+    "char": "h",
+    "total": 46390,
+    "alpha": 1,
+    "smoothed_total": 46455,
+    "vocab_size": 65,
+    "shown": 6,
+    "entries": [
+      {
+        "char": "e",
+        "count": 16418,
+        "prob": 0.3539124811381763,
+        "prob_smoothed": 0.35343881175330966
+      },
+      {
+        "char": "a",
+        "count": 8723,
+        "prob": 0.18803621470144427,
+        "prob_smoothed": 0.18779463997416854
+      },
+      {
+        "char": "i",
+        "count": 6395,
+        "prob": 0.13785298555723216,
+        "prob_smoothed": 0.13768162738133677
+      },
+      {
+        "char": "o",
+        "count": 4665,
+        "prob": 0.10056046561759,
+        "prob_smoothed": 0.10044128726724788
+      },
+      {
+        "char": " ",
+        "count": 4646,
+        "prob": 0.10015089458935116,
+        "prob_smoothed": 0.10003228931223765
+      },
+      {
+        "char": "y",
+        "count": 1434,
+        "prob": 0.030911834447079112,
+        "prob_smoothed": 0.0308901087073512
+      }
+    ],
+    "rest_count": 4109,
+    "rest_prob": 0.08857512394912696,
+    "sum": 1,
+    "sum_smoothed": 1.0000000000000002
+  },
+  "bits_table": [
+    {
+      "prob": 1,
+      "bits": 0
+    },
+    {
+      "prob": 0.5,
+      "bits": 1
+    },
+    {
+      "prob": 0.25,
+      "bits": 2
+    },
+    {
+      "prob": 0.125,
+      "bits": 3
+    },
+    {
+      "prob": 0.0009765625,
+      "bits": 10
+    }
+  ],
+  "walk": [
+    {
+      "position": 0,
+      "current": "\n",
+      "next": "\n",
+      "count": 6284,
+      "total": 35525,
+      "prob": 0.17688951442646023,
+      "bits": 2.499079563723309,
+      "running": 2.499079563723309
+    },
+    {
+      "position": 1,
+      "current": "\n",
+      "next": "G",
+      "count": 718,
+      "total": 35525,
+      "prob": 0.020211118930330754,
+      "bits": 5.628706995194453,
+      "running": 4.063893279458881
+    },
+    {
+      "position": 2,
+      "current": "G",
+      "next": "R",
+      "count": 96,
+      "total": 2189,
+      "prob": 0.0438556418455916,
+      "bits": 4.51109373845979,
+      "running": 4.2129600991258505
+    },
+    {
+      "position": 3,
+      "current": "R",
+      "next": "E",
+      "count": 323,
+      "total": 4235,
+      "prob": 0.07626918536009446,
+      "bits": 3.712755899525636,
+      "running": 4.087909049225797
+    },
+    {
+      "position": 4,
+      "current": "E",
+      "next": "M",
+      "count": 29,
+      "total": 5567,
+      "prob": 0.0052092689060535295,
+      "bits": 7.584703372738261,
+      "running": 4.787267913928289
+    },
+    {
+      "position": 5,
+      "current": "M",
+      "next": "I",
+      "count": 247,
+      "total": 2615,
+      "prob": 0.09445506692160612,
+      "bits": 3.4042279995496263,
+      "running": 4.556761261531846
+    },
+    {
+      "position": 6,
+      "current": "I",
+      "next": "O",
+      "count": 791,
+      "total": 10341,
+      "prob": 0.07649163523837153,
+      "bits": 3.7085541996156337,
+      "running": 4.435588824115244
+    },
+    {
+      "position": 7,
+      "current": "O",
+      "next": ":",
+      "count": 920,
+      "total": 4561,
+      "prob": 0.20171015128261346,
+      "bits": 2.309644403913379,
+      "running": 4.169845771590011
+    }
+  ],
+  "unseen": {
+    "count": 187,
+    "of": 111538,
+    "first_position": 7642,
+    "first_pair": [
+      "z",
+      "!"
+    ],
+    "first_row_total": 320,
+    "first_prob": 0.0025974025974025974,
+    "first_bits": 8.588714635582264,
+    "worst_pair": [
+      "t",
+      "b"
+    ],
+    "worst_bits": 15.883430852903517,
+    "worst_bits_text": "15.88",
+    "zero_cells": 2845,
+    "cells": 4225
+  },
+  "heldout": {
+    "val_bits": 3.5806368604266123,
+    "train_bits": 3.5412019064637894,
+    "gap": 0.03943495396282293,
+    "val_chars": 111539,
+    "train_chars": 1003855
+  },
+  "ladder": {
+    "uniform_bits": 6.022367813028454,
+    "unigram_bits": 4.829140518163154,
+    "bigram_val_bits": 3.5806368604266123,
+    "bigram_val_text": "3.5806",
+    "rungs": [
+      {
+        "id": "uniform",
+        "label": "guess evenly over 65",
+        "bits": 6.022367813028454,
+        "chapter": 3
+      },
+      {
+        "id": "unigram",
+        "label": "letter frequency alone",
+        "bits": 4.829140518163154,
+        "chapter": 3
+      },
+      {
+        "id": "bigram",
+        "label": "the counted tally",
+        "bits": 3.5806368604266123,
+        "chapter": 3
+      }
+    ]
+  },
+  "receipt": {
+    "val_text": "3.5806",
+    "train_text": "3.5412",
+    "unseen_count": 187,
+    "unseen_of": 111538,
+    "worst_bits_text": "15.88"
+  }
+}

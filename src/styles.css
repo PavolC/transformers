@@ -2388,7 +2388,9 @@ button:disabled {
 
 /* The static target-curve figure. Plot family (CLAUDE.md): rendered at
    natural scale, capped at its viewBox width and centred. */
-.curve-figure {
+.curve-figure,
+.c3-ladder,
+.meter-plot {
 	display: block;
 	margin: 0 auto;
 	background: #fff;
@@ -4598,5 +4600,142 @@ button:disabled {
 		margin-left: 0;
 		margin-right: auto;
 		text-align: left;
+	}
+}
+
+/* ---- chapter 3 -------------------------------------------------------- */
+
+/* The ladder and the meter's plot: plot family, so they render at their drawn
+   width, capped at the column, and shrink on a phone rather than panning. The
+   frame comes from the .curve-figure list above. */
+.c3-ladder {
+	width: min(520px, 100%);
+	height: auto;
+}
+
+.meter-plot {
+	width: min(520px, 100%);
+	height: auto;
+	margin-top: 0.3rem;
+	margin-bottom: 0.3rem;
+}
+
+.ladder-axis {
+	stroke: var(--ink);
+	stroke-width: 1.2;
+}
+
+/* A rung is the loss colour: it is the loss, and chapter 10's curves will be
+   drawn in the same ink. */
+.ladder-rung {
+	stroke: var(--loss);
+	stroke-width: 2.2;
+}
+
+.ladder-rung-label {
+	font-family: var(--font-ui);
+	font-size: 12px;
+	fill: var(--ink);
+}
+
+.ladder-rung-value {
+	font-family: var(--font-mono);
+	font-size: 12px;
+	fill: var(--loss);
+}
+
+/* The meter's strip of text: a fixed number of monospace characters, so the
+   line never changes length as the reading advances. It is right-aligned and
+   clips on the left, so on a narrow screen the oldest characters go and the
+   current one, the next one and what is ahead stay in view. */
+.meter-strip {
+	display: flex;
+	justify-content: flex-end;
+	overflow: hidden;
+	margin: 0.5rem 0 0.4rem;
+	font-family: var(--font-mono);
+	font-size: 0.95rem;
+	line-height: 1.9;
+	white-space: pre;
+}
+
+.meter-strip-read {
+	color: var(--muted);
+}
+
+.meter-strip-current {
+	padding: 0 0.15rem;
+	border-radius: 3px;
+	background: var(--accent);
+	color: #fff;
+}
+
+.meter-strip-next {
+	padding: 0 0.15rem;
+	border-radius: 3px;
+	outline: 2px solid var(--loss);
+	outline-offset: -2px;
+}
+
+.meter-strip-ahead {
+	color: var(--rule-strong);
+}
+
+/* The readout: four labelled values on a fixed grid with reserved heights, so
+   a value that changes length (a probability written as a fraction of two
+   totals) never moves the plot under it. */
+.meter-readout {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.35rem 1rem;
+	margin: 0.3rem 0 0.5rem;
+	font-family: var(--font-ui);
+	font-size: 0.85rem;
+}
+
+.meter-item {
+	display: flex;
+	flex-direction: column;
+	min-height: 2.7rem;
+}
+
+.meter-item-label {
+	font-size: 0.68rem;
+	font-weight: var(--label-weight);
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+.meter-item-value {
+	min-height: 1.3rem;
+	font-family: var(--font-mono);
+	font-size: 0.85rem;
+	overflow-wrap: anywhere;
+}
+
+.meter-plot-line {
+	fill: none;
+	stroke: var(--loss);
+	stroke-width: 2;
+}
+
+.meter-plot-mean {
+	stroke: var(--muted);
+	stroke-width: 1.2;
+	stroke-dasharray: 5 4;
+}
+
+.meter-status {
+	min-height: 2.6rem;
+}
+
+@media (max-width: 560px) {
+	.meter-readout {
+		grid-template-columns: 1fr;
+	}
+
+	.meter-strip {
+		font-size: 0.8rem;
 	}
 }

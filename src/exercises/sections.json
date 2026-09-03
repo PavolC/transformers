@@ -54,6 +54,21 @@
     "checks": []
   },
   {
+    "id": "avg-surprise",
+    "kind": "exercise",
+    "module": "c3",
+    "label": "Chapter 3, Measuring surprise",
+    "marker": "# ---- [section:avg-surprise] Chapter 3, Measuring surprise ----",
+    "provides": [
+      "probs_from_tally",
+      "surprise_bits",
+      "avg_surprise"
+    ],
+    "requires": [],
+    "pulledInBy": [],
+    "checks": []
+  },
+  {
     "id": "softmax",
     "kind": "exercise",
     "module": "c4",

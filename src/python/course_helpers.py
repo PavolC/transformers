@@ -54,6 +54,9 @@ build_vocab = _rs.build_vocab
 encode = _rs.encode
 decode = _rs.decode
 get_batch = _rs.get_batch
+probs_from_tally = _rs.probs_from_tally
+surprise_bits = _rs.surprise_bits
+avg_surprise = _rs.avg_surprise
 softmax = _rs.softmax
 
 # ----------------------------------------------------- shared, never exercises

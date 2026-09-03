@@ -807,6 +807,21 @@ without knowing.
   `COLUMN_FLOOR + 128` and would otherwise have followed the floor down and left the
   strip crushed between 704 and 880.
 
+- **2026-09-03, the ladder renders whatever rung list it is handed, and each chapter's
+  bench emits the whole list up to itself**, recomputing the earlier rungs in the same
+  engine, so the numbers on one drawing never come from two benches or two runs.
+  Rejected: one shared rung file merged from several benches, which puts a merge step
+  between the bench and the figure that nothing regenerates.
+- **2026-09-03, the ladder has a letter-frequency rung** between the ceiling and the
+  counted tally, an addition to the design doc's two: with two rungs the ladder is a
+  line, and the middle rung is what makes "context buys bits" visible on the day the
+  figure debuts (6.02 to 4.83 for knowing which letters are common, 4.83 to 3.58 for
+  knowing the one before). It is smoothed the same way as the tally.
+- **2026-09-03, the surprise meter opens unsmoothed**, and chapter 3 turns smoothing on
+  only after the reader has jumped to the first pair the counting never saw and watched
+  the average go infinite (succeed, break, fix). The exercise's default alpha is 1, so a
+  learner who runs the snippet gets the ladder's rung without choosing.
+
 ## Known non-bugs, do not chase
 
 - The Pyodide boot prints loader noise to stdout; the worker tags everything before boot
