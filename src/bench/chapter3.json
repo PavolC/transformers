@@ -47,37 +47,43 @@
         "char": "e",
         "count": 16418,
         "prob": 0.3539124811381763,
-        "prob_smoothed": 0.35343881175330966
+        "prob_smoothed": 0.35343881175330966,
+        "bits": 1.4985354538966458
       },
       {
         "char": "a",
         "count": 8723,
         "prob": 0.18803621470144427,
-        "prob_smoothed": 0.18779463997416854
+        "prob_smoothed": 0.18779463997416854,
+        "bits": 2.4109175513959227
       },
       {
         "char": "i",
         "count": 6395,
         "prob": 0.13785298555723216,
-        "prob_smoothed": 0.13768162738133677
+        "prob_smoothed": 0.13768162738133677,
+        "bits": 2.858797581968199
       },
       {
         "char": "o",
         "count": 4665,
         "prob": 0.10056046561759,
-        "prob_smoothed": 0.10044128726724788
+        "prob_smoothed": 0.10044128726724788,
+        "bits": 3.3138648599980773
       },
       {
         "char": " ",
         "count": 4646,
         "prob": 0.10015089458935116,
-        "prob_smoothed": 0.10003228931223765
+        "prob_smoothed": 0.10003228931223765,
+        "bits": 3.3197527869283907
       },
       {
         "char": "y",
         "count": 1434,
         "prob": 0.030911834447079112,
-        "prob_smoothed": 0.0308901087073512
+        "prob_smoothed": 0.0308901087073512,
+        "bits": 5.015696917035293
       }
     ],
     "rest_count": 4109,
@@ -85,28 +91,6 @@
     "sum": 1,
     "sum_smoothed": 1.0000000000000002
   },
-  "bits_table": [
-    {
-      "prob": 1,
-      "bits": 0
-    },
-    {
-      "prob": 0.5,
-      "bits": 1
-    },
-    {
-      "prob": 0.25,
-      "bits": 2
-    },
-    {
-      "prob": 0.125,
-      "bits": 3
-    },
-    {
-      "prob": 0.0009765625,
-      "bits": 10
-    }
-  ],
   "walk": [
     {
       "position": 0,
@@ -241,6 +225,43 @@
         "chapter": 3
       }
     ]
+  },
+  "example": {
+    "probs": [
+      0.5,
+      0.5,
+      0.0625,
+      1
+    ],
+    "exponents": [
+      1,
+      1,
+      4,
+      0
+    ],
+    "product": 0.015625,
+    "product_denominator": 64,
+    "total_bits": 6,
+    "per_char_bits": 1.5,
+    "per_char_prob": 0.3535533905932738,
+    "second_probs": [
+      0.25,
+      0.25,
+      0.25,
+      0.25
+    ],
+    "second_exponents": [
+      2,
+      2,
+      2,
+      2
+    ],
+    "second_total_bits": 8,
+    "second_per_char_bits": 2,
+    "second_product_denominator": 256,
+    "val_steps": 111538,
+    "val_total_bits": 399377.0741382635,
+    "val_decimal_digits": 120224
   },
   "receipt": {
     "val_text": "3.5806",

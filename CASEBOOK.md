@@ -1046,6 +1046,71 @@ round of the loop. The premise defect is the expensive part to have found late: 
 chapters were written against a floor that said "reads" while the exercises assumed
 "writes", and nothing but a reader could have said so.
 
+## 31. "randomly assigning cost to probabilities... why?"
+
+**Chapter:** two (transformers), chapter 3, sections 1 to 3, on the learner's first read
+of the merged chapter.
+
+**What was wrong.** Three reports in one message, of two kinds. Section 1 leaned on two
+rows from chapter 1 as bare callbacks ("leaning on examples that i don't remember") and
+closed on a sentence nobody could parse: "A score that reads the whole row can charge for
+that too, a large number rather than a cross." Section 2 taught division to a reader with a
+neural networks course behind him: "literally just explains probability which i think is
+below the floor". And section 3, the chapter's load-bearing beat, was "completely over my
+head... again talking of cost and randomly assigning cost to probabilities... why?", with a
+side note that "theres a lot of cases you say the word charge that doesn't really land".
+
+The first two were craft and needed no teach-back. The third was the confusion, and its
+mechanism was that the section had a metaphor where its explanation should have been. A
+guess "costs" bits, the score "charges" for a probability, a table said 1/2 costs 1 and
+1/1024 costs 10: all names, none of them derived. "Numbers before notation" was obeyed in
+form (the table came first) and not in substance, because nothing on the page produced the
+table's second column from its first.
+
+**The loop, three rounds.** The first re-explanation went from the goal (one number for a
+guesser on unseen text) to the product of per-step probabilities to the log. The check
+came back half right: "1/64, avg 1/16 per character", the product understood and the
+per-character average wrong, with the diagnosis attached: "probabilities per char and
+multiplying over the guesses makes sense and is easy math. it's the charge and bit language
+and way you write where the explanation fails". The second attempt explained roots and
+logarithms in three lines and was answered with "go slower and reexplain". The third had
+eight numbered steps and no metaphor: the per-step probability; the product over four
+made-up steps; why the product is unprintable over 111,538 steps; why "per character" of a
+product is a fourth root (0.354); each probability as a power of 1/2 so the exponents add
+(1 + 1 + 4 + 0 = 6); per character by division (1.5, and (1/2)^1.5 is the same 0.354);
+only then "bits" as the name of the exponent and "minus log2" as the name of finding it;
+the score as sum over steps. The check, a second guesser at 1/4 every step: "1/2^2 ... 4
+of them the same. so total 8 div 4 = 2. first guesser at 1.5 per char did better than 2
+per char on the second." Landed.
+
+**What worked.** The order. Goal, product, the two problems with the product, the
+rewriting that solves both, a comparison, and the names last. Every number small enough to
+hold in the head. And nothing called a cost.
+
+**The fix.** Sections 1 and 2 became one section: the score, one paragraph of bookkeeping
+that divides a row by its total and hands "share" over to "probability" (the floor grants
+the rest), the row figure, and the three steps from chapter 1 restated in full as a table
+with a probability column and a hit-rate column, so the reader has to remember nothing.
+Section 3 was rebuilt from the third re-explanation: the four made-up probabilities as a
+labelled hand-placed case, the product, the two problems (the bench now computes that the
+tenth's product would have about 120,000 zeros after the point, a number the author had
+said from memory in chat as "forty thousand" and got wrong), a table of the four as powers
+of 1/2 with the exponents column that adds, the per-character division matching the
+fourth root, the second guesser, and then the names. The word cost or charge appeared in
+nine places in the chapter, the exercise prompt, its skeleton, three test messages, a
+notation row, the meter's header comment and the bench's own printed sentences, and every
+one was swept.
+
+**Rules:** "A metaphor is not a mechanism", under Reaching the reader; the floor binds
+downward too, under The learner floor; and in `/stuck` step 2, a formula is re-explained
+from the goal on the smallest numbers with the name last, and "go slower" is a request
+for that order rather than a failed attempt.
+
+**Cost:** two sections rebuilt and one removed, a bench section, a sweep across seven
+files, and three rounds of the loop. The expensive part was the first round: the author
+answered "why bits?" with more bits, and only the reader's own sentence ("it's the charge
+and bit language") named the thing to remove.
+
 ## The pattern behind course one's eighteen
 
 Four of them (2, 6, 7, 12) are the same chapter, and it is the one chapter authored outside

@@ -189,7 +189,7 @@ export const NOTATION: NotationRow[] = [
       </>
     ),
     means:
-      "what a guess cost, in bits, once the next character is known: minus the base-2 logarithm of the probability that was given to it. A probability of 1 costs 0, and every halving adds one bit, which is one yes-or-no question",
+      "one step's probability, the one given to the character that actually came next, written as an exponent of 1/2: minus the base-2 logarithm of it. A probability of 1 is 0 bits, 1/2 is 1 bit, and each halving adds one. Exponents add where probabilities multiply, which is why a text's score is a sum",
     alsoCalled: "the log loss; in information theory, self-information",
     from: "Chapter 3",
   },

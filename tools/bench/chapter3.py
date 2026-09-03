@@ -75,7 +75,7 @@ def main():
             "prob_smoothed": float(probs[r, fav]), "bits_smoothed": bits_of(probs[r, fav]),
         }
     # And one miss: the first position in the held-back text where the row is
-    # the dominated one and the favourite was wrong. A miss costs a number,
+    # the dominated one and the favourite was wrong. A miss is a number,
     # not a cross.
     h = stoi[DOMINATED]
     fav_h = int(np.argmax(counts[h]))
@@ -91,9 +91,9 @@ def main():
     out["hits"] = {"certain": hits[CERTAIN], "open": hits[OPEN], "miss": miss}
     c, o = hits[CERTAIN], hits[OPEN]
     print(f"After {label(c['row'])} the favourite {c['favourite']!r} has probability "
-          f"{c['prob']:.4f}, so when it is right the guess cost {c['bits']:.4f} bits; "
+          f"{c['prob']:.4f}, so when it is right the step is {c['bits']:.4f} bits; "
           f"after a {label(o['row'])} the favourite {o['favourite']!r} has probability "
-          f"{o['prob']:.4f} and a right answer still cost {o['bits']:.4f} bits.")
+          f"{o['prob']:.4f} and a right answer is still {o['bits']:.4f} bits.")
     print(f"  The first time {miss['row']!r} is followed by something other than "
           f"{miss['favourite']!r} in the held-back text it is {miss['actual']!r}, at "
           f"probability {miss['prob']:.4f}: {miss['bits']:.4f} bits, a number rather "
@@ -104,7 +104,8 @@ def main():
     order = np.argsort(-counts[r], kind="stable")
     shown = 6
     row_entries = [{"char": chars[j], "count": int(counts[r, j]),
-                    "prob": float(raw[r, j]), "prob_smoothed": float(probs[r, j])}
+                    "prob": float(raw[r, j]), "prob_smoothed": float(probs[r, j]),
+                    "bits": bits_of(raw[r, j])}
                    for j in order[:shown]]
     rest_count = int(counts[r, order[shown:]].sum())
     rest_prob = float(raw[r, order[shown:]].sum())
@@ -124,15 +125,6 @@ def main():
           f"each of its {V} cells the row totals {totals[r] + ALPHA * V:g} and "
           f"{e0['char']!r} moves to {e0['prob_smoothed']:.4f}.")
 
-    # ------------------------------------------------------- what a bit costs
-    # Exact by construction: these are the numbers the reader derives by hand.
-    table = [(1.0, 0), (0.5, 1), (0.25, 2), (0.125, 3), (1 / 1024, 10)]
-    out["bits_table"] = [{"prob": p, "bits": b} for p, b in table]
-    for p, b in table:
-        assert abs(-np.log2(p) - b) < 1e-12
-    print("  A probability of 1 costs 0 bits, 1/2 costs 1, 1/4 costs 2, 1/8 costs 3, "
-          "and 1/1024 costs 10: each halving is one more bit.")
-
     # -------------------------------------------------- the meter's first steps
     s = rs.surprise_bits(probs, val_ids)
     s_raw = rs.surprise_bits(raw, val_ids)
@@ -148,7 +140,7 @@ def main():
     w = out["walk"]
     print(f"\nUnsmoothed, the held-back text opens {''.join(chars[i] for i in val_ids[:WALK + 1])!r}. "
           f"Its first step, {w[0]['current']!r} then {w[0]['next']!r}, had probability "
-          f"{w[0]['prob']:.4f} and cost {w[0]['bits']:.4f} bits; after {WALK} steps the "
+          f"{w[0]['prob']:.4f}, which is {w[0]['bits']:.4f} bits; after {WALK} steps the "
           f"running average is {w[-1]['running']:.4f}.")
 
     # ------------------------------------------ the pairs the counting never saw
@@ -175,7 +167,7 @@ def main():
           f"{u['first_pair'][1]!r} at position {first}: unsmoothed, probability 0 and "
           f"infinite surprise; with {ALPHA:g} added, probability {u['first_prob']:.6f} "
           f"and {u['first_bits']:.2f} bits. The single most expensive character in the "
-          f"tenth costs {u['worst_bits']:.2f} bits.")
+          f"tenth is {u['worst_bits']:.2f} bits.")
 
     # -------------------------------------- the text it counted, and the text it did not
     val_bits = rs.avg_surprise(probs, val_ids)
@@ -201,9 +193,47 @@ def main():
             {"id": "bigram", "label": "the counted tally", "bits": val_bits, "chapter": 3},
         ],
     }
-    print(f"\nGuessing evenly over {V} characters costs log2({V}) = {uniform:.4f} bits; "
-          f"guessing by letter frequency alone costs {unigram:.4f}; the counted tally "
-          f"costs {val_bits:.4f}. Three rungs.")
+    print(f"\nGuessing evenly over {V} characters is log2({V}) = {uniform:.4f} bits per step; "
+          f"guessing by letter frequency alone scores {unigram:.4f}; the counted tally "
+          f"scores {val_bits:.4f}. Three rungs.")
+
+    # -------------------------------------------- four made-up steps, by hand
+    # The chapter's worked example: probabilities small enough to multiply in
+    # the head, chosen as powers of 1/2 so the exponents are whole numbers.
+    # Hand-placed, and the chapter says so. Everything derived from them is
+    # computed here rather than typed.
+    demo = [0.5, 0.5, 1 / 16, 1.0]
+    exps = [bits_of(p) for p in demo]
+    product = float(np.prod(demo))
+    total = float(sum(exps))
+    per_char = total / len(demo)
+    per_char_prob = float(2.0 ** -per_char)
+    assert abs(product ** (1 / len(demo)) - per_char_prob) < 1e-12
+    second = [0.25] * len(demo)
+    second_exps = [bits_of(p) for p in second]
+    steps = len(val_ids) - 1
+    out["example"] = {
+        "probs": demo, "exponents": exps, "product": product,
+        "product_denominator": int(round(1 / product)),
+        "total_bits": total, "per_char_bits": per_char, "per_char_prob": per_char_prob,
+        "second_probs": second, "second_exponents": second_exps,
+        "second_total_bits": float(sum(second_exps)),
+        "second_per_char_bits": float(sum(second_exps)) / len(second),
+        "second_product_denominator": int(round(1 / float(np.prod(second)))),
+        # What the product over the whole tenth would look like: its total
+        # bits, and how many decimal places that is.
+        "val_steps": steps,
+        "val_total_bits": val_bits * steps,
+        "val_decimal_digits": int(val_bits * steps * np.log10(2)),
+    }
+    e = out["example"]
+    print(f"\nFour made-up steps at {demo}: the product is 1/{e['product_denominator']}, "
+          f"the exponents are {[int(x) for x in exps]}, total {total:g}, {per_char:g} per "
+          f"character, and (1/2)^{per_char:g} is {per_char_prob:.3f}, the fourth root of "
+          f"the product. A second guesser at 1/4 every step totals "
+          f"{e['second_total_bits']:g}, {e['second_per_char_bits']:g} per character.")
+    print(f"  Over the whole tenth the tally's product would be about {e['val_total_bits']:.0f} "
+          f"bits, a decimal with about {e['val_decimal_digits']} zeros after the point.")
 
     # ---------------------------------------------------- the receipt the snippet prints
     out["receipt"] = {

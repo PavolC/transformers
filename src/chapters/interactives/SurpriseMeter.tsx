@@ -1,5 +1,5 @@
 // Chapter 3's centerpiece: the tally reading the held-back tenth one
-// character at a time, charged in bits for each guess, with the running
+// character at a time, each step's probability written as bits, with the running
 // average settling as it goes.
 //
 // The tally is counted here, in JavaScript, over the same nine tenths chapter

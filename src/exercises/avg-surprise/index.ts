@@ -12,9 +12,9 @@ export const avgSurpriseExercise: Exercise = {
       "the tally and the text are both handed to them: nothing here opens the corpus " +
       "or counts a pair. probs_from_tally(counts, alpha) takes the tally your " +
       "count_pairs built and turns its counts into probabilities. surprise_bits(probs, " +
-      "ids) reads a stream of ids and charges, at every step, for how much probability " +
-      "the table gave the character that actually came next. avg_surprise(probs, ids) " +
-      "is the mean of those charges, and it is the number on the ladder.",
+      "ids) reads a stream of ids and, at every step, turns the probability the table " +
+      "gave the character that actually came next into bits. avg_surprise(probs, ids) " +
+      "is the mean of those bits, and it is the number on the ladder.",
     "The probabilities first. counts is a (vocab_size, vocab_size) array, row a " +
       "being what followed a. Add alpha to every cell, then divide each row by its own " +
       "total, so every row sums to 1. alpha is the smoothing from the chapter: 1.0 by " +
@@ -51,17 +51,17 @@ export const avgSurpriseExercise: Exercise = {
         'print(f"{avg_surprise(probs, val):.4f} bits per character on the held-back tenth")\n' +
         'print(f"{avg_surprise(probs, train):.4f} bits per character on the text it counted")\n' +
         "\n" +
-        "# The pairs the counting never saw, and what the worst one cost.\n" +
+        "# The pairs the counting never saw, and the worst single step.\n" +
         "unseen = int((counts[val[:-1], val[1:]] == 0).sum())\n" +
         'print(f"{unseen} of {len(val) - 1} held-back pairs never occurred in the training text")\n' +
         "s = surprise_bits(probs, val)\n" +
-        'print(f"the single most expensive character cost {s.max():.2f} bits")',
+        'print(f"the single most surprising step was {s.max():.2f} bits")',
     },
     `The first line is the ladder's rung, ${bench.ladder.bigram_val_text} bits, and it ` +
       "is now a number your own three functions produced. The second is the same tally " +
       "scoring the text it was built from, and the gap between them is what the tenth " +
       `was held back to reveal. The third counts the ${bench.unseen.count} pairs the ` +
-      "smoothing exists for, and the last is what the worst of them cost once it did.",
+      "smoothing exists for, and the last is the worst single step once it did.",
   ],
   skeleton,
   tests,

@@ -28,6 +28,11 @@ navigation. Fix those directly and skip to step 5. Everything else runs the loop
    NumPy moves offered to "i don't yet know numpy so how am i supposed to understand
    this?" was a first attempt wasted; the second used the reader's own pasted function
    and changed two lines of it. Start from what I wrote, not from what I am missing.
+   When the confusion is a formula, run from the goal to the formula on the smallest
+   numbers that show the mechanism, and name nothing until it has been shown. "go slower
+   and reexplain" is not a failed attempt; it is a request for exactly that order. The
+   version that landed chapter 3's score had eight numbered steps, four made-up
+   probabilities and no metaphor, and it is what the page was rebuilt from.
 3. **Check that it landed by making me use it.** Never "does that make sense?", which a
    tired reader answers yes to. Ask me to predict a number, to apply it to a case you did
    not use, or to say what would break if a piece changed. That is this course's own
