@@ -2036,7 +2036,9 @@ button:disabled {
 .chain-net,
 .bp-diagram,
 .ripple-slice,
-.c1-loop {
+.c1-loop,
+.c3-steps,
+.c3-routes {
 	display: block;
 	width: min(calc(var(--fig-units) * var(--fig-scale)), 100%);
 	height: auto;
@@ -2358,7 +2360,9 @@ button:disabled {
 .chain-ripple,
 .chain-net,
 .bp-diagram,
-.ripple-slice {
+.ripple-slice,
+.c3-steps,
+.c3-routes {
 	min-width: calc(var(--fig-units) * var(--fig-scale-min));
 }
 
@@ -4262,6 +4266,40 @@ button:disabled {
 	font-family: var(--font-ui);
 	font-size: 10.5px;
 	fill: var(--muted);
+}
+
+/* The family's second ink, for the one piece of a figure that is the object
+   of study (chapter 3: the character that came next, and the exponent column
+   the course keeps). Accent fill with inverse text where a label sits on it. */
+.fig-box-accent {
+	fill: var(--accent);
+	stroke: var(--accent);
+	stroke-width: 1;
+}
+
+.fig-label-accent {
+	fill: var(--accent);
+	font-weight: 600;
+}
+
+.fig-label-inverse {
+	fill: #fff;
+}
+
+/* A wrong guess, in the same red the loss curves use. */
+.fig-label-loss {
+	fill: var(--loss);
+}
+
+/* A label that is a character or a number the reader will meet in code. */
+.fig-code {
+	font-family: var(--font-mono);
+}
+
+/* Joins two results that are the same number. */
+.fig-arrow-dashed {
+	stroke: var(--accent);
+	stroke-dasharray: 4 4;
 }
 
 /* A chapter listed on the front door whose prose is not written yet. Muted and

@@ -299,6 +299,17 @@ Write every chapter to the floor above. These are ordered roughly as they bite.
   One six-row table replaced all four, and the numbers that had appeared from nowhere
   ("where the heck did 39 come from? and 8?") became rows with the derivation in the
   caption. [casebook: 26]
+- **"Dense" is a report that a passage needs a figure, not a rewrite.** A reader who
+  "thinks i get what it's trying to say, but the writing style is so dense it's hard to
+  follow" has no misconception to diagnose, so a re-explanation in more prose is the wrong
+  instrument. Two chat pictures did what a third round of prose on chapter 3's score had
+  not, and the passage was rebuilt around them ("use these kinds of graphics as the
+  primary mode to teach and condense the 2 sections into 1"). Draw the mechanism (each
+  step of a log with the number the score keeps beside the one it drops; two routes to
+  the same number side by side), keep only the prose that reads the figure, and merge
+  the sections that were circling one idea, because two sections circling one idea are
+  one section. In `/stuck`, a picture is a structurally different re-explanation, and
+  when the report is density it is the first one to try. [casebook: 32]
 - **Draw every conceptual jump.** Never ask the reader to imagine a picture; put the
   figure in the page. Before any interactive the reader gets a how-to-read key. Captions
   state counts and label which parts of the figure are the object of study and which are

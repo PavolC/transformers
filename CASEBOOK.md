@@ -1111,6 +1111,74 @@ files, and three rounds of the loop. The expensive part was the first round: the
 answered "why bits?" with more bits, and only the reader's own sentence ("it's the charge
 and bit language") named the thing to remove.
 
+## 32. "the writing style is so dense it's hard to follow"
+
+**Chapter:** two (transformers), chapter 3, the two sections that opened it after
+incident 31 ("The score you already have" and "One number for the whole text"), on the
+learner's second read.
+
+**What was wrong.** "the way the "The score you already have" section is written is really
+confusing. i think i get what it's trying to say, but the writing style is so dense it's
+hard to follow." The section had been rebuilt once already (incident 31) from a
+re-explanation that worked in chat, and the rebuild had ported the words rather than the
+mechanism: one paragraph did four jobs in five sentences (counts to probabilities, a worked
+instance, the share-to-probability rename, and a comparability argument with two more
+numbers in nested relative clauses), the section's one point (a hit rate keeps yes or no
+and throws away how much probability the row had on the right answer) arrived last as two
+sentence fragments, and "hit rate" was used as if chapter 1 had named it, which it had not.
+The section that followed walked the four made-up probabilities in prose, one paragraph per
+step of the derivation, so the two sections together were eleven paragraphs and three
+tables circling one idea.
+
+**The loop, as it actually ran.** The first re-explanation was prose in a different order
+(the row as a list of counts, then the two things one could write down per step, then the
+three steps where they disagree), closed by a check on chapter 1's `z` row. The learner did
+not answer the check. He said "we've been circling this and the next section for a while
+now" and asked for the plainest possible statement of what both sections teach, then, given
+that, "show me the minimum number of pictures right here that explain what you just did".
+Two pictures: three steps as bars with the character that came next filled in, chapter 1's
+right-or-wrong beside this chapter's probability; and the four made-up probabilities taken
+to one number by two routes side by side, multiply-and-root against add-and-divide, meeting
+at 0.354. His answer was the brief: "use these kinds of graphics as the primary mode to
+teach and condense the 2 sections into 1 straight and to the point one." So the diagnosis
+was never confirmed by a prediction; what is confirmed is that the pictures were what he
+chose to build from, and that a third round of prose was not.
+
+**What the misunderstanding turned out to be.** Not one. The learner had the idea and said
+so. The defect was density, and density is not a wording problem: the passage was a
+derivation with no picture of the thing being derived, so every sentence had to carry the
+structure that a figure carries for free.
+
+**The fix.** One section, "The score, in bits", built on the two figures. The first figure
+replaced the row table, the three-steps table and two paragraphs; the second replaced the
+worked table and three paragraphs. What prose remains reads the figure beside it: one
+paragraph on what chapter 1's score kept, one reading the first figure, one setting up the
+four steps, one reading the second figure and pricing the real text, one naming bits and
+running the second guesser, the equation, and the handover to log loss. Every number
+comes from the same bench as before, so the bench did not move. The receipts table and the
+recap were repointed at the instance the reader now sees (t after a space) rather than the
+one that had been in the removed row table.
+
+**Rules:** "Dense is a report that a passage needs a figure, not a rewrite", under Reaching
+the reader, and a paragraph in `/stuck` step 2 saying a picture is a structurally different
+re-explanation and the first one to try on that report.
+
+**Sweep.** A scan of every chapter for four or more consecutive paragraphs with no figure,
+table or panel between them found: chapter 1's opening (four paragraphs counting one line
+by hand, before the tally figure, which is the hand count the figure then draws), chapter 3's
+ladder section (three paragraphs reading the three rungs of the ladder figure directly above
+them, then the lead-in to the equations), and two five-paragraph runs in chapter 2's window
+section, one before the slicer and one after. The two chapter 2 runs are the ones with the
+same shape as this incident, a derivation (size, then position, then the slice, then the
+targets as a shifted slice) told in prose next to a panel that shows only its end state.
+Not fixed here; the learner has not stopped on it.
+
+**Cost:** one section rebuilt from two, two SVG figures, six stylesheet classes, and one
+round of screenshots that found four label collisions and a caption counting its own
+columns wrong (it said the fourth and fifth of four). The expensive part was again the
+first round: the author answered "dense" with prose, and only the learner's request for
+pictures named the instrument.
+
 ## The pattern behind course one's eighteen
 
 Four of them (2, 6, 7, 12) are the same chapter, and it is the one chapter authored outside

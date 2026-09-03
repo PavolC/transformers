@@ -33,6 +33,12 @@ navigation. Fix those directly and skip to step 5. Everything else runs the loop
    and reexplain" is not a failed attempt; it is a request for exactly that order. The
    version that landed chapter 3's score had eight numbered steps, four made-up
    probabilities and no metaphor, and it is what the page was rebuilt from.
+   When the report is "dense" or "hard to follow" from someone who thinks he has the
+   idea, there is no misconception to find, and more prose is the wrong instrument: draw
+   it. A picture is a structurally different re-explanation, and "show me the minimum
+   number of pictures right here that explain what you just did" is the check that
+   decides whether the chapter needs one. The two pictures that answered it for chapter
+   3's score became the section's two figures.
 3. **Check that it landed by making me use it.** Never "does that make sense?", which a
    tired reader answers yes to. Ask me to predict a number, to apply it to a case you did
    not use, or to say what would break if a piece changed. That is this course's own
