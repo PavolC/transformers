@@ -1,10 +1,12 @@
 // Chapter 3: Measuring surprise.
 //
 // Beat plan (CLAUDE.md, the authoring playbook):
-//   1 the score chapter 1 ended with, and the two hits it cannot tell apart;
-//   2 one row of the tally divided by its total, and the field's word for
-//     what the numbers now are;
-//   3 what a guess costs, numbers first, then the log and its glyph;
+//   1 the score chapter 1 ended with; a row divided by its total (one
+//     paragraph: the reader has probability, the floor says so); the three
+//     steps the hit rate cannot tell apart, restated in full as a table;
+//   2 one number for the whole text, from the goal to the formula on four
+//     made-up probabilities, with no metaphor and no name before its
+//     mechanism (casebook 31);
 //   4 the first eight steps of the held-back text as a log, then the meter;
 //   5 the pair the counting never saw, infinite surprise, and smoothing as a
 //     labelled choice with its price;
@@ -95,29 +97,106 @@ function RowFigure() {
   );
 }
 
-/** What a probability costs, at the values a reader can check by hand. */
-function BitsTable() {
+/** Three steps from the held-back text, restated in full so nothing has to be
+ * remembered from chapter 1: what the hit rate saw at each, and what it did
+ * not. Two hits the hit rate counts as equal, and a miss it counts as nothing
+ * more than a miss. */
+function StepsTable() {
+  const rows = [
+    { after: hits.certain.row, fav: hits.certain.favourite, next: hits.certain.favourite, p: hits.certain.prob, hit: true },
+    { after: hits.open.row, fav: hits.open.favourite, next: hits.open.favourite, p: hits.open.prob, hit: true },
+    { after: hits.miss.row, fav: hits.miss.favourite, next: hits.miss.actual, p: hits.miss.prob, hit: false },
+  ];
+  return (
+    <div className="table-scroll scroll-x" tabIndex={0}>
+      <table className="truth-table">
+        <caption>
+          Three steps, each a character and the one that came after it in the held-back
+          text, with the tally's row for the first character. The hit rate reads only the
+          last column. The probability column is what it never looks at: on the first hit
+          the row had put everything on <C ch={hits.certain.favourite} />, on the second it
+          had put {pct(hits.open.prob)} percent on <C ch={hits.open.favourite} /> and was
+          right anyway, and on the miss it had put {(hits.miss.prob * 100).toFixed(2)}{" "}
+          percent on <C ch={hits.miss.actual} />, small but not nothing.
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">after</th>
+            <th scope="col">the row's favourite</th>
+            <th scope="col">what came next</th>
+            <th scope="col">probability the row gave it</th>
+            <th scope="col">the hit rate says</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.after + r.next}>
+              <td>
+                <C ch={r.after} />
+              </td>
+              <td>
+                <C ch={r.fav} />
+              </td>
+              <td>
+                <C ch={r.next} />
+              </td>
+              <td>{f4(r.p)}</td>
+              <td>{r.hit ? "hit" : "miss"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/** The worked example: four made-up probabilities, their product, and the
+ * same four written as powers of one half so the exponents add. Every number
+ * in it is computed by the bench from the four probabilities. */
+function WorkedTable() {
+  const ex = bench.example;
   const fraction = (p: number) => (p === 1 ? "1" : `1/${Math.round(1 / p)}`);
   return (
     <div className="table-scroll scroll-x" tabIndex={0}>
       <table className="truth-table">
         <caption>
-          What a guess costs when the character it was given this probability is the one
-          that came next. Each halving of the probability adds one bit.
+          Four steps with made-up probabilities, chosen so the arithmetic can be done by
+          hand. Each probability is written as a power of 1/2, and the exponents are the
+          column that adds: {ex.exponents.map((x) => x.toFixed(0)).join(" + ")} ={" "}
+          {ex.total_bits.toFixed(0)}, so the product is (1/2)^{ex.total_bits.toFixed(0)},
+          which is 1/{ex.product_denominator}.
         </caption>
         <thead>
           <tr>
-            <th scope="col">probability given to what happened</th>
-            <th scope="col">cost in bits</th>
+            <th scope="col">step</th>
+            <th scope="col">probability given to what came next</th>
+            <th scope="col">as a power of 1/2</th>
+            <th scope="col">exponent</th>
           </tr>
         </thead>
         <tbody>
-          {bench.bits_table.map((r) => (
-            <tr key={r.prob}>
-              <td>{fraction(r.prob)}</td>
-              <td>{r.bits}</td>
+          {ex.probs.map((p, i) => (
+            <tr key={i}>
+              <td>{i + 1}</td>
+              <td>{fraction(p)}</td>
+              <td>(1/2)^{ex.exponents[i].toFixed(0)}</td>
+              <td>{ex.exponents[i].toFixed(0)}</td>
             </tr>
           ))}
+          <tr>
+            <th scope="row">all four</th>
+            <td>product: 1/{ex.product_denominator}</td>
+            <td>(1/2)^{ex.total_bits.toFixed(0)}</td>
+            <td>sum: {ex.total_bits.toFixed(0)}</td>
+          </tr>
+          <tr>
+            <th scope="row">per character</th>
+            <td>{ex.per_char_prob.toFixed(3)}</td>
+            <td>(1/2)^{ex.per_char_bits}</td>
+            <td>
+              {ex.total_bits.toFixed(0)} / {ex.probs.length} = {ex.per_char_bits}
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -217,9 +296,9 @@ function ReceiptsTable() {
     [
       "surprise is minus log2 of the probability given to what came next",
       <>
-        <C ch={hits.open.favourite} /> after a space at {f4(hits.open.prob)} cost{" "}
+        <C ch={hits.open.favourite} /> after a space at {f4(hits.open.prob)} is{" "}
         {f2(hits.open.bits)} bits; <C ch={hits.miss.actual} /> after <C ch={hits.miss.row} />{" "}
-        at {f4(hits.miss.prob)} cost {f2(hits.miss.bits)}
+        at {f4(hits.miss.prob)} is {f2(hits.miss.bits)}
       </>,
     ],
     [
@@ -238,7 +317,7 @@ function ReceiptsTable() {
       </>,
     ],
     [
-      "guessing evenly costs log2 of the vocabulary size, whatever the text",
+      "guessing evenly is log2 of the vocabulary size on every step, whatever the text",
       <>
         log2({row.vocab_size}) is {f4(ladder.uniform_bits)}, the ladder's top rung
       </>,
@@ -296,91 +375,116 @@ export function Chapter3() {
         where this chapter starts.
       </p>
       <p>
-        Two rows from chapter 1's table show what it cannot see. After <code>q</code>,{" "}
-        <C ch={qRow.top[0].char} /> followed {n(qRow.total)} times out of {n(qRow.total)}.
-        After a space, <C ch={spaceRow.top[0].char} /> followed {pct(spaceRow.top[0].share)}{" "}
-        percent of the time, and was still the row's favourite, because nothing else
-        followed a space more often. When the next character really is{" "}
-        <C ch={qRow.top[0].char} /> after <code>q</code>, the tally's guess was as good as a
-        guess gets. When it really is <C ch={spaceRow.top[0].char} /> after a space, the
-        tally had put {pct(1 - spaceRow.top[0].share)} percent of the row on other
-        characters and was right anyway. The hit rate counts both as one hit.
-      </p>
-      <p>
-        A miss is the other half of the same problem. The first time <C ch={hits.miss.row} />{" "}
-        is followed by <C ch={hits.miss.actual} /> in the held-back text, the favourite{" "}
-        <C ch={hits.miss.favourite} /> is wrong, and the hit rate records a miss and nothing
-        more. But the row had not said <C ch={hits.miss.actual} /> was impossible: it had
-        seen it after <C ch={hits.miss.row} /> {n(hits.miss.count)} times in{" "}
-        {n(hits.miss.total)}. A score that reads the whole row can charge for that too, a
-        large number rather than a cross. So there are two questions here, and chapter 1
-        answered the first: how often was the favourite right, and how much of the row sat
-        on what actually happened.
-      </p>
-
-      <SectionHeader id="c3-probs" title="From counts to probabilities" />
-      <p>
-        The tally's rows are counts, and a count only means something next to its row's
-        total. The row for <C ch={row.char} /> holds {n(row.total)} followers,{" "}
-        {n(row.entries[0].count)} of them <C ch={row.entries[0].char} />. Divide every count
-        in the row by {n(row.total)} and the row becomes {row.vocab_size} numbers between 0
-        and 1: <C ch={row.entries[0].char} /> at {f4(row.entries[0].count / row.total)},
-        then <C ch={row.entries[1].char} /> at {f4(row.entries[1].count / row.total)}, down
-        to followers so rare they round to 0. The {row.vocab_size} numbers sum to 1, because
-        the counts summed to the total.
+        One step of bookkeeping first. The tally's rows are counts, and dividing a row by
+        its total turns the counts into probabilities: the row for <C ch={row.char} />{" "}
+        holds {n(row.total)} followers, {n(row.entries[0].count)} of them{" "}
+        <C ch={row.entries[0].char} />, so <C ch={row.entries[0].char} /> after{" "}
+        <C ch={row.char} /> has probability {f4(row.entries[0].count / row.total)}. Chapter 1
+        called these shares and wrote them in percent; from here the word is{" "}
+        <b>probability</b>. The division changes nothing the tally knows, and it puts
+        every row on one scale, so a probability after <code>q</code>, whose row holds{" "}
+        {n(qRow.total)} counts, can be set beside one after a space, whose row holds{" "}
+        {n(spaceRow.total)}.
       </p>
       <RowFigure />
       <p>
-        A number between 0 and 1 that says how likely something is, in a row that sums to
-        1, is a <b>probability</b>. Chapter 1's shares were probabilities written in
-        percent, and from here the prose says probability.
+        The hit rate reads one thing per step: was the row's favourite the character that
+        came next. Three steps from the held-back text, restated in full, show what that
+        leaves out.
       </p>
+      <StepsTable />
       <p>
-        Nothing the tally knew has changed. The row still says what followed{" "}
-        <C ch={row.char} /> and how often. What the division bought is one scale for every
-        row: the <code>q</code> row holds {n(qRow.total)} counts and the space row{" "}
-        {n(spaceRow.total)}, so their raw counts could never be compared, and their
-        probabilities can.
+        On the first hit the row had everything on <C ch={hits.certain.favourite} />, and on
+        the second it had {pct(hits.open.prob)} percent on <C ch={hits.open.favourite} /> and
+        was right anyway; the hit rate scores those the same. On the miss the row had{" "}
+        {(hits.miss.prob * 100).toFixed(2)} percent on <C ch={hits.miss.actual} />, and the
+        hit rate scores that the same as a row that had none. So there are two questions,
+        and chapter 1 answered the first. How often was the favourite right. And how much
+        probability did the row give what actually happened, step after step.
       </p>
 
-      <SectionHeader id="c3-surprise" title="What a guess costs" />
+      <SectionHeader id="c3-surprise" title="One number for the whole text" />
       <p>
-        The score charges one number per step, after the fact: how much probability did
-        the row give the character that actually came next. The numbers first. A
-        probability of 1 costs nothing. A probability of 1/2 costs 1 bit. A probability of
-        1/4 costs 2 bits, 1/8 costs 3, and 1/1024 costs 10.
+        The raw material of the second question is one probability per step: the one the
+        row gave the character that actually came next. The score has to combine{" "}
+        {n(bench.example.val_steps)} of them into one number, and that number has to be
+        comparable between two guessers. Start with four steps and made-up probabilities,
+        small enough to work by hand:{" "}
+        {bench.example.probs.map((p) => (p === 1 ? "1" : `1/${Math.round(1 / p)}`)).join(", ")}.
       </p>
-      <BitsTable />
       <p>
-        Every halving of the probability adds one bit, and that is what a bit is: the
-        answer to one yes-or-no question. A character the row gave 1/8 to is one the row
-        would have needed three yes-or-no answers to pin down, so being told it happened is
-        worth three bits of news. The function with that property is the logarithm to
-        base 2, with its sign flipped so that the cost comes out positive:
+        The probability the guesser gave to those four characters coming out in that order
+        is the product, 1/{bench.example.product_denominator}, the same way the chance of
+        four coin flips is the product of four halves. That is the honest combined number,
+        and it has two problems. Over the whole tenth it is a product of{" "}
+        {n(bench.example.val_steps)} fractions, a decimal with about{" "}
+        {n(Math.round(bench.example.val_decimal_digits / 1000) * 1000)} zeros after the
+        point, which cannot be printed
+        and cannot be compared by eye. And "per character" is awkward for a product: the one
+        probability that, repeated on all four steps, gives the same 1/
+        {bench.example.product_denominator} is the number whose fourth power is 1/
+        {bench.example.product_denominator}, about {bench.example.per_char_prob.toFixed(3)},
+        a fourth root. For the tenth it would be a {n(bench.example.val_steps)}th root.
+      </p>
+      <p>
+        Both problems go away if every probability is written as a power of 1/2. 1/2 is
+        (1/2)<sup>1</sup>, 1/16 is (1/2)<sup>4</sup> because 2 × 2 × 2 × 2 is 16, and 1 is
+        (1/2)<sup>0</sup>, because anything to the power 0 is 1.
+      </p>
+      <WorkedTable />
+      <p>
+        Multiplying powers of the same base adds the exponents, so the product of the four
+        is (1/2)<sup>{bench.example.total_bits.toFixed(0)}</sup>, which is 1/
+        {bench.example.product_denominator}, and four multiplications became one addition:{" "}
+        {bench.example.exponents.map((x) => x.toFixed(0)).join(" + ")} ={" "}
+        {bench.example.total_bits.toFixed(0)}. Per character, {bench.example.total_bits.toFixed(0)}{" "}
+        over {bench.example.probs.length} is {bench.example.per_char_bits}, and (1/2)
+        <sup>{bench.example.per_char_bits}</sup> is {bench.example.per_char_prob.toFixed(3)},
+        the same fourth root as before, reached by a division. Products became sums and
+        roots became divisions, and that is the whole reason for writing probabilities this
+        way.
+      </p>
+      <p>
+        A second guesser gives 1/4 on every one of the same four steps. 1/4 is (1/2)
+        <sup>2</sup>, so its exponents are{" "}
+        {bench.example.second_exponents.map((x) => x.toFixed(0)).join(", ")}, the sum is{" "}
+        {bench.example.second_total_bits.toFixed(0)}, and per character it is{" "}
+        {bench.example.second_per_char_bits}. The first guesser did better: {bench.example.per_char_bits}{" "}
+        is smaller than {bench.example.second_per_char_bits}, because 1/
+        {bench.example.product_denominator} is larger than 1/
+        {bench.example.second_product_denominator}. Smaller is better, because a smaller
+        exponent means the guesser gave the whole text a larger probability.
+      </p>
+      <p>
+        The exponent is what everyone calls <b>bits</b>. A probability of (1/2)<sup>k</sup>{" "}
+        is k bits: 1/2 is 1 bit, 1/4 is 2, 1/16 is 4, and 1 is 0 bits. For a probability
+        that is not a tidy power of 1/2 the exponent is a fraction: <C ch={row.entries[0].char} />{" "}
+        after <C ch={row.char} /> at {f4(row.entries[0].prob)} is {f2(row.entries[0].bits)} bits,
+        because (1/2)<sup>{f2(row.entries[0].bits)}</sup> is {f4(row.entries[0].prob)}. Finding
+        the exponent for any probability is what the base-2 logarithm does, with the sign
+        flipped, because the exponent of a number below 1 comes out negative:
       </p>
       <Eq
         tex={"\\text{surprise} = -\\log_2 p"}
-        gloss="The surprise of what happened is minus the base-2 logarithm of the probability that was given to it: a probability of 1 costs 0 bits, and every halving adds one."
+        gloss="The exponent k for which (1/2) to the power k equals p. A probability of 1 is 0 bits, 1/2 is 1 bit, and each halving adds one."
       />
       <p>
-        The <code>log</code> is said "log", the small 2 is its base, and{" "}
-        <code>p</code> is the probability. In code the same line is{" "}
-        <code>-np.log2(p)</code>, and the bench that produced every number on this page
-        computes it that way.
+        The <code>log</code> is said "log", the small 2 is its base, and <code>p</code> is
+        the probability. In code the same line is <code>-np.log2(p)</code>, and the bench
+        that produced every number on this page computes it that way.
       </p>
       <p>
-        Chapter 1's two hits come apart at once. After <code>q</code>,{" "}
-        <C ch={hits.certain.favourite} /> had probability {f4(hits.certain.prob)}, so that hit
-        cost {f2(hits.certain.bits)} bits. After a space, <C ch={hits.open.favourite} /> had
-        probability {f4(hits.open.prob)}, so that hit cost {f2(hits.open.bits)} bits: nearly
-        three yes-or-no questions' worth, for a guess that was right. And the miss:{" "}
-        <C ch={hits.miss.actual} /> after <C ch={hits.miss.row} /> at probability{" "}
-        {f4(hits.miss.prob)} cost {f2(hits.miss.bits)} bits. A miss is expensive and finite,
-        and two misses can cost different amounts.
+        Now the three steps from the table above, in bits. <C ch={hits.certain.favourite} />{" "}
+        after <code>q</code> at probability {f4(hits.certain.prob)} is {f2(hits.certain.bits)}{" "}
+        bits. <C ch={hits.open.favourite} /> after a space at {f4(hits.open.prob)} is{" "}
+        {f2(hits.open.bits)} bits. <C ch={hits.miss.actual} /> after <C ch={hits.miss.row} />{" "}
+        at {f4(hits.miss.prob)} is {f2(hits.miss.bits)} bits. The two hits the hit rate
+        counted as equal are {f2(hits.certain.bits)} and {f2(hits.open.bits)}, and the miss
+        is a large finite number rather than a cross.
       </p>
       <p>
-        This course calls the number <b>surprise</b>. Everyone else calls it the log loss,
-        or, in information theory, the self-information of the event.
+        This course calls a step's bits its <b>surprise</b>. Everyone else calls the same
+        number the log loss, or, in information theory, the self-information of the event.
       </p>
 
       <SectionHeader id="c3-meter" title="Reading the held-back text" />
@@ -426,8 +530,8 @@ export function Chapter3() {
         <C ch={row.entries[0].char} /> moves from {f4(row.entries[0].count / row.total)} to{" "}
         {f4(row.entries[0].prob_smoothed)}. The row still sums to 1. A pair the counting
         never saw now has probability 1 over the row's new total: <C ch={unseen.first_pair[0]} />{" "}
-        then <C ch={unseen.first_pair[1]} /> gets {f4(unseen.first_prob)}, which costs{" "}
-        {f2(unseen.first_bits)} bits, expensive and finite.
+        then <C ch={unseen.first_pair[1]} /> gets {f4(unseen.first_prob)}, which is{" "}
+        {f2(unseen.first_bits)} bits, large and finite.
       </p>
       <p>
         The 1 is a free design choice, and it is this course's. The field calls the method{" "}
@@ -435,7 +539,7 @@ export function Chapter3() {
         <b>alpha</b>. Its price falls on small rows. The <code>q</code> row holds{" "}
         {n(qRow.total)} counts, and giving each of its {row.vocab_size} cells one more takes{" "}
         <C ch={hits.certain.favourite} /> from probability {f4(hits.certain.prob)} to{" "}
-        {f4(hits.certain.prob_smoothed)}, so that step now costs{" "}
+        {f4(hits.certain.prob_smoothed)}, so that step is now{" "}
         {f2(hits.certain.bits_smoothed)} bits rather than {f2(hits.certain.bits)}. On a row
         of forty thousand the same {row.vocab_size} counts change the third decimal. Turn
         smoothing on in the meter and run it to the end: the average now exists, and it
@@ -446,8 +550,8 @@ export function Chapter3() {
           The worst single step in the held-back text is <C ch={unseen.worst_pair[0]} />{" "}
           followed by <C ch={unseen.worst_pair[1]} />, at {f2(unseen.worst_bits)} bits with
           smoothing on. That is one step out of {n(unseen.of)}, and on its own it adds{" "}
-          {(unseen.worst_bits / unseen.of).toFixed(5)} bits to the average. An average is forgiving of a few disasters and unforgiving of a small cost
-          paid on every step, which is why smoothing is priced by what it does to common
+          {(unseen.worst_bits / unseen.of).toFixed(5)} bits to the average. An average is forgiving of a few disasters and unforgiving of a small amount
+          added on every step, which is why smoothing is judged by what it does to common
           rows, not rare ones.
         </p>
       </Aside>
@@ -488,15 +592,15 @@ export function Chapter3() {
       </Figure>
       <p>
         The top rung is guessing with no information at all. Every one of the{" "}
-        {row.vocab_size} characters gets probability 1/{row.vocab_size}, so every step
-        costs log2({row.vocab_size}), which is {f4(ladder.uniform_bits)} bits, whatever the
-        text says. A guesser that spreads its probability evenly cannot do better or
+        {row.vocab_size} characters gets probability 1/{row.vocab_size}, so every step is
+        log2({row.vocab_size}), which is {f4(ladder.uniform_bits)} bits, whatever the text
+        says. A guesser that spreads its probability evenly cannot do better or
         worse than that, which makes it the ceiling every model is measured against.
       </p>
       <p>
         The middle rung uses one fact about the corpus: how often each character occurs
         at all, regardless of what came before. Guessing every next character from that
-        one list costs {f4(ladder.unigram_bits)} bits on the held-back text. Knowing that{" "}
+        one list scores {f4(ladder.unigram_bits)} bits on the held-back text. Knowing that{" "}
         <code>e</code> is common and <code>z</code> is rare is worth{" "}
         {f2(ladder.uniform_bits - ladder.unigram_bits)} bits a character over knowing
         nothing.
@@ -529,15 +633,15 @@ export function Chapter3() {
       />
       <Eq
         tex={`-\\log_2 \\frac{1}{${row.vocab_size}} = \\log_2 ${row.vocab_size} = ${f4(ladder.uniform_bits)}`}
-        gloss={`Giving every character probability 1 over ${row.vocab_size} costs log2 of ${row.vocab_size} on every step, which is the ceiling.`}
+        gloss={`Giving every character probability 1 over ${row.vocab_size} is log2 of ${row.vocab_size} bits on every step, which is the ceiling.`}
       />
       <ReceiptsTable />
 
       <SectionHeader id="c3-exercise" title="Your turn: score the tally" />
       <p>
         One more section of your file. Three short functions turn the tally your{" "}
-        <code>count_pairs</code> built into probabilities, charge a stream of ids for what
-        came next, and average the charges. The last of them is the number on the ladder,
+        <code>count_pairs</code> built into probabilities, turn every step of a stream of
+        ids into its bits, and average them. The last of them is the number on the ladder,
         and chapter 10's training loop calls the same idea on every step.
       </p>
       <ExerciseCard exercise={avgSurpriseExercise} />
@@ -545,7 +649,7 @@ export function Chapter3() {
       <Recap
         items={[
           `A row of the tally divided by its total is a row of probabilities: ${row.vocab_size} numbers that sum to 1, ${charLabel(row.entries[0].char)} at ${f4(row.entries[0].count / row.total)} after ${row.char}.`,
-          `Surprise is minus log2 of the probability given to what actually came next. A probability of 1 costs 0 bits and every halving adds one: a right guess after a space cost ${f2(hits.open.bits)} bits, a wrong one after h cost ${f2(hits.miss.bits)}.`,
+          `A step's surprise is the exponent of the probability given to what actually came next, written as a power of 1/2, which is what minus log2 computes. Exponents add where probabilities multiply, so a whole text's score is a sum divided by its steps. A probability of 1 is 0 bits, 1/2 is 1 bit, and each halving adds one: the right guess after a space was ${f2(hits.open.bits)} bits, the wrong one after h was ${f2(hits.miss.bits)}.`,
           "The loss is average surprise per character, in bits, over text the model never read. It is this course's unit from here to the last chapter.",
           `${n(unseen.count)} of the held-back text's ${n(unseen.of)} steps are pairs the training text never produced, so an unsmoothed tally scores infinite surprise. Adding ${row.alpha} to every cell keeps every score finite, at a price that falls on small rows.`,
           `The tally scores ${f4(held.train_bits)} bits on the text it counted and ${f4(held.val_bits)} on the tenth it never read. Only the second says what it would do on new text, and the ladder shows only that kind of number.`,

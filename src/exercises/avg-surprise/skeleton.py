@@ -4,7 +4,7 @@
 # Three small functions. The first turns the tally's counts into
 # probabilities. The other two read a stream of ids and ask, at every
 # position, how much probability the table gave the character that really
-# followed, and charge for it in bits.
+# followed, and write it as bits.
 #
 # Contract:
 # - probs_from_tally(counts, alpha=1.0):

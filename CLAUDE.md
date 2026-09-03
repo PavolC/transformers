@@ -68,7 +68,11 @@ half, because a paragraph can be checked against them. Confirmed by the floor te
 2026-08-31 ("floor is right").
 
 The floor is binding on every chapter, including the last one. Everything above the floor
-is built here, in the order the story needs it and never before.
+is built here, in the order the story needs it and never before. It binds downward too: a
+section that teaches what the floor already grants costs attention and reads as padding.
+Chapter 3 spent three paragraphs dividing counts by a row total and was told it "literally
+just explains probability which i think is below the floor". Say what is new (the field's
+word, the one consequence the chapter uses) and move on. [casebook: 31]
 
 ## Hard rules
 
@@ -262,6 +266,17 @@ Write every chapter to the floor above. These are ordered roughly as they bite.
 
 - **Numbers before notation.** Compute a concrete instance by hand, then name the
   operation and its shorthand. Never the reverse.
+- **A metaphor is not a mechanism.** A frame borrowed to make a formula feel natural (a
+  guess "costs" bits, the score "charges" for a probability) is a name, and a name may not
+  arrive before the thing it names has been shown working on small numbers. Chapter 3
+  built its score on cost and charge, asserted a table of bits, and got back "randomly
+  assigning cost to probabilities... why?" and "theres a lot of cases you say the word
+  charge that doesn't really land". What landed had no metaphor and eight steps in order:
+  the goal, a product over four made-up probabilities, the two problems with a product
+  (unprintable, and per-character means a root), the same four as powers of 1/2 so the
+  exponents add and divide, a second guesser to compare, and only then the word bits and
+  the name log. The table of probabilities against bits looked like numbers before
+  notation and was not, because nothing derived the second column. [casebook: 31]
 - **Interactives carry the algorithm; the formalism recaps it.** Teach the one genuinely
   new idea in prose with concrete numbers, reach the interactive by the page's midpoint,
   and present the formal statements after it as "what you just watched, written down".

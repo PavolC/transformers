@@ -89,7 +89,7 @@ def test_surprise_is_whole_bits_on_powers_of_two():
         f"expected {np.round(want, 4).tolist()}, got {np.round(got, 4).tolist()}. "
         "Step 0 is 0 then 0: the table gives that 0.5, and -log2(0.5) is 1 bit. "
         "Step 1 is 0 then 1 at 0.25, 2 bits. Step 4 is 2 then 0 at probability 1, "
-        "0 bits: a certain event costs nothing."
+        "0 bits: a probability of 1 is (1/2) to the power 0."
     )
 
 
@@ -112,7 +112,7 @@ def test_surprise_of_the_unseen_is_infinite():
         got = surprise_bits(POW2, ids)
     assert got.shape == (1,) and np.isinf(got[0]) and got[0] > 0, (
         f"probs[2, 1] is 0, and -log2(0) is +inf: a pair the table gave no "
-        f"probability to costs infinite surprise. Got {got}. Do not clip or "
+        f"probability to is infinite surprise. Got {got}. Do not clip or "
         "replace the zero; the chapter's point is that this is what happens, and "
         "smoothing in probs_from_tally is what prevents it."
     )
@@ -129,7 +129,7 @@ def test_average_is_the_mean_of_the_steps():
     )
     want = (1.0 + 2.0 + 0.415037499278844 + 3.0 + 0.0) / 5
     assert abs(got - want) < 1e-9, (
-        f"the five steps cost 1, 2, 0.415, 3 and 0 bits, so the average is "
+        f"the five steps are 1, 2, 0.415, 3 and 0 bits, so the average is "
         f"{want:.4f}; got {got:.4f}. It is a mean over steps, so divide by the "
         "number of steps (five), not the number of characters (six)."
     )
