@@ -95,10 +95,22 @@ def bigram_probs(counts, alpha=1.0):
     return smoothed / smoothed.sum(axis=1, keepdims=True)
 
 
-def bigram_avg_surprise_bits(probs, ids):
-    """Average surprise per character, in bits, of the counted bigram."""
+def surprise_bits(probs, ids):
+    """One surprise per position: minus log2 of the probability the table gave
+    the character that actually came next. Shape (len(ids) - 1,)."""
     p = probs[ids[:-1], ids[1:]]
-    return float(-np.log2(p).mean())
+    with np.errstate(divide="ignore"):
+        return -np.log2(p)
+
+
+def avg_surprise(probs, ids):
+    """Average surprise per character, in bits: the loss, and a ladder rung."""
+    return float(surprise_bits(probs, ids).mean())
+
+
+# The names chapter 3's exercise section provides.
+probs_from_tally = bigram_probs
+bigram_avg_surprise_bits = avg_surprise
 
 
 # ---------------------------------------------------------------------------

@@ -44,6 +44,12 @@ export const EXERCISES: ExerciseRef[] = [
     builds: "get_batch: B windows of T characters, with their shifted targets",
   },
   {
+    id: "avg-surprise",
+    title: "Scoring the tally in bits",
+    module: "c3",
+    builds: "probs_from_tally, surprise_bits, avg_surprise: a guesser's score in bits per character",
+  },
+  {
     id: "softmax",
     title: "Softmax",
     module: "c4",

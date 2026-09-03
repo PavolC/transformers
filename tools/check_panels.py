@@ -313,6 +313,8 @@ SNIPPET_MUST_PRINT = {
     "sample-next": ["sample.text", "favourite_loop.text"],
     "build-vocab": ["crossing.corpus_ids", "crossing.own_ids"],
     "get-batch": ["window.x_text", "window.y_text", "batch.rows.3.y_text"],
+    "avg-surprise": ["receipt.val_text", "receipt.train_text", "receipt.unseen_count",
+                     "receipt.worst_bits_text"],
 }
 
 

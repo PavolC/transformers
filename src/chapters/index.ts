@@ -58,6 +58,17 @@ export const CHAPTERS: ChapterDef[] = [
     ...deferred(() => import("./chapter2").then((m) => ({ default: m.Chapter2 }))),
   },
   {
+    id: "c3",
+    navLabel: "3 · Surprise",
+    title: "Measuring surprise",
+    covers:
+      "From counts to probabilities, and from a hit rate to a score that reads the whole " +
+      "row: surprise as the bits a guess cost, averaged over text the counting never read. " +
+      "The pair that was never seen, the tenth that was held back, and the ladder's first " +
+      "three rungs.",
+    ...deferred(() => import("./chapter3").then((m) => ({ default: m.Chapter3 }))),
+  },
+  {
     id: "c4",
     navLabel: "4 · Learning",
     title: "The learned tally",

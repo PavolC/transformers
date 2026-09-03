@@ -13,6 +13,7 @@ const LOADERS: Readonly<Record<string, () => Promise<Exercise>>> = {
   "sample-next": () => import("./sample-next").then((m) => m.sampleNextExercise),
   "build-vocab": () => import("./build-vocab").then((m) => m.buildVocabExercise),
   "get-batch": () => import("./get-batch").then((m) => m.getBatchExercise),
+  "avg-surprise": () => import("./avg-surprise").then((m) => m.avgSurpriseExercise),
   softmax: () => import("./softmax").then((m) => m.softmaxExercise),
 };
 
