@@ -1,12 +1,11 @@
 // Chapter 3: Measuring surprise.
 //
 // Beat plan (CLAUDE.md, the authoring playbook):
-//   1 the score chapter 1 ended with; a row divided by its total (one
-//     paragraph: the reader has probability, the floor says so); the three
-//     steps the hit rate cannot tell apart, restated in full as a table;
-//   2 one number for the whole text, from the goal to the formula on four
-//     made-up probabilities, with no metaphor and no name before its
-//     mechanism (casebook 31);
+//   1 the score, in bits, with two figures carrying it (casebook 32): chapter
+//     1's right-or-wrong beside the probability the row gave, on three steps
+//     drawn as bars; then four made-up probabilities taken to one number by
+//     two routes drawn side by side, multiply-and-root against add-and-divide,
+//     with the names (bits, log) arriving after the routes (casebook 31);
 //   4 the first eight steps of the held-back text as a log, then the meter;
 //   5 the pair the counting never saw, infinite surprise, and smoothing as a
 //     labelled choice with its price;
@@ -15,6 +14,9 @@
 //   7 the ladder's first three rungs, then the same thing written down with
 //     receipts;
 //   8 the exercise.
+//   (Beats 2 and 3 of the first draft, a paragraph of division and a prose
+//   walk through the four made-up steps, were folded into 1 as the two
+//   figures; the numbering of the rest is kept.)
 //
 // Every number in the prose comes from tools/bench/chapter3.py, or is quoted
 // from chapter 1's bench where the chapter quotes chapter 1. The meter
@@ -24,7 +26,7 @@
 // article.module, which is what the stylesheet's measure rules select.
 
 import { useEffect, type ReactNode } from "react";
-import { AfterThis, Aside, Figure, ModuleToc, Recap, SectionHeader } from "../components/ModuleBits";
+import { AfterThis, Aside, Figure, ModuleToc, Recap, SectionHeader, fig } from "../components/ModuleBits";
 import { Eq } from "../components/Math";
 import { ExerciseCard } from "../components/ExerciseCard";
 import { avgSurpriseExercise } from "../exercises/avg-surprise";
@@ -50,156 +52,215 @@ const f2 = (x: number) => x.toFixed(2);
 const pct = (x: number) => (x * 100).toFixed(1);
 const C = ({ ch }: { ch: string }) => <code>{charLabel(ch)}</code>;
 
-/** One row of the tally, as counts and as the counts divided by the row's
- * total. The probabilities are computed here from the bench's integer counts,
- * so the division the prose describes is the division the page shows. */
-function RowFigure() {
-  return (
-    <div className="table-scroll scroll-x" tabIndex={0}>
-      <table className="truth-table">
-        <caption>
-          The row for <code>{row.char}</code>: what followed it in the training text,
-          as counts and as probabilities. The {row.shown} most common followers are
-          shown and the other {row.vocab_size - row.shown} are summed. Every probability
-          is its count divided by the row's total of {n(row.total)}, and the{" "}
-          {row.vocab_size} of them sum to 1.
-        </caption>
-        <thead>
-          <tr>
-            <th scope="col">next character</th>
-            <th scope="col">count</th>
-            <th scope="col">probability</th>
-          </tr>
-        </thead>
-        <tbody>
-          {row.entries.map((e) => (
-            <tr key={e.char}>
-              <td>
-                <C ch={e.char} />
-              </td>
-              <td>{n(e.count)}</td>
-              <td>{f4(e.count / row.total)}</td>
-            </tr>
-          ))}
-          <tr>
-            <td>the other {row.vocab_size - row.shown}</td>
-            <td>{n(row.rest_count)}</td>
-            <td>{f4(row.rest_count / row.total)}</td>
-          </tr>
-          <tr>
-            <th scope="row">the whole row</th>
-            <td>{n(row.total)}</td>
-            <td>{f4(row.sum)}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
+/** The row for a character, split in proportion to its counts. `parts` are the
+ * shown followers, `rest` the summed remainder, `next` the character that
+ * actually came next in the held-back text, drawn filled. `hidden` is a
+ * follower buried inside the remainder (the miss: b after h is 23 counts in a
+ * row of 46,390), drawn as a hairline at the bar's end so the figure has a
+ * filled piece to point at. Every width is a count over the row's total. */
+function RowBar({
+  y,
+  total,
+  parts,
+  rest,
+  next,
+  hidden,
+}: {
+  y: number;
+  total: number;
+  parts: { char: string; count: number }[];
+  rest: number;
+  next: string;
+  hidden?: { char: string; count: number };
+}) {
+  const x0 = 104;
+  const width = 228;
+  const segs: { label: string; count: number; hit: boolean }[] = parts.map((e) => ({
+    label: charLabel(e.char),
+    count: e.count,
+    hit: e.char === next,
+  }));
+  if (rest > 0) {
+    const rest_shown = hidden ? rest - hidden.count : rest;
+    segs.push({ label: "the rest", count: rest_shown, hit: false });
+    if (hidden) segs.push({ label: charLabel(hidden.char), count: hidden.count, hit: true });
+  }
+  let x = x0;
+  const out: ReactNode[] = [];
+  for (const s of segs) {
+    const w = Math.max((width * s.count) / total, 2);
+    out.push(
+      <rect key={`r${x}`} x={x} y={y - 11} width={w} height={22} className={s.hit ? "fig-box-accent" : "fig-box-fill"} />,
+    );
+    // A label needs room: one character fits in 16 units, "the rest" in 44.
+    if (w > (s.label.length > 1 ? 44 : 16)) {
+      out.push(
+        <text key={`t${x}`} x={x + w / 2} y={y + 4} className={s.hit ? "fig-label fig-code fig-label-inverse" : "fig-note fig-code"} textAnchor="middle">
+          {s.label}
+        </text>,
+      );
+    }
+    x += w;
+  }
+  return <>{out}</>;
 }
 
-/** Three steps from the held-back text, restated in full so nothing has to be
- * remembered from chapter 1: what the hit rate saw at each, and what it did
- * not. Two hits the hit rate counts as equal, and a miss it counts as nothing
- * more than a miss. */
-function StepsTable() {
-  const rows = [
-    { after: hits.certain.row, fav: hits.certain.favourite, next: hits.certain.favourite, p: hits.certain.prob, hit: true },
-    { after: hits.open.row, fav: hits.open.favourite, next: hits.open.favourite, p: hits.open.prob, hit: true },
-    { after: hits.miss.row, fav: hits.miss.favourite, next: hits.miss.actual, p: hits.miss.prob, hit: false },
+/** Three steps from the held-back text, each with the tally's row for the
+ * character just read drawn as a bar, the character that came next filled in,
+ * and the two things a score could keep from it: chapter 1's right or wrong,
+ * and this chapter's probability. Grid family: fixed bar width, the value
+ * beside the cell. */
+function StepsFigure() {
+  const hRow = row.entries.map((e) => ({ char: e.char, count: e.count }));
+  const spaceParts = spaceRow.top.map((e) => ({ char: e.char, count: e.count }));
+  const spaceRest = spaceRow.total - spaceParts.reduce((a, e) => a + e.count, 0);
+  const ys = [56, 116, 176];
+  const steps = [
+    { y: ys[0], after: hits.certain.row, next: hits.certain.favourite, count: hits.certain.count, total: hits.certain.total, prob: hits.certain.prob, hit: true },
+    { y: ys[1], after: hits.open.row, next: hits.open.favourite, count: hits.open.count, total: hits.open.total, prob: hits.open.prob, hit: true },
+    { y: ys[2], after: hits.miss.row, next: hits.miss.actual, count: hits.miss.count, total: hits.miss.total, prob: hits.miss.prob, hit: false },
   ];
   return (
-    <div className="table-scroll scroll-x" tabIndex={0}>
-      <table className="truth-table">
-        <caption>
-          Three steps, each a character and the one that came after it in the held-back
-          text, with the tally's row for the first character. The hit rate reads only the
-          last column. The probability column is what it never looks at: on the first hit
-          the row had put everything on <C ch={hits.certain.favourite} />, on the second it
-          had put {pct(hits.open.prob)} percent on <C ch={hits.open.favourite} /> and was
-          right anyway, and on the miss it had put {(hits.miss.prob * 100).toFixed(2)}{" "}
-          percent on <C ch={hits.miss.actual} />, small but not nothing.
-        </caption>
-        <thead>
-          <tr>
-            <th scope="col">after</th>
-            <th scope="col">the row's favourite</th>
-            <th scope="col">what came next</th>
-            <th scope="col">probability the row gave it</th>
-            <th scope="col">the hit rate says</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.after + r.next}>
-              <td>
-                <C ch={r.after} />
-              </td>
-              <td>
-                <C ch={r.fav} />
-              </td>
-              <td>
-                <C ch={r.next} />
-              </td>
-              <td>{f4(r.p)}</td>
-              <td>{r.hit ? "hit" : "miss"}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Figure
+      caption={`Three steps from the held-back text. Each bar is the tally's row for the character just read, split in proportion to its counts, with the character that actually came next filled in. The filled piece's width is that character's count over the row's total: ${n(hits.open.count)} of ${n(hits.open.total)} after a space is ${f4(hits.open.prob)}. Chapter 1 called the fraction a share and wrote it in percent; from here the word is probability. Chapter 1 kept the right-or-wrong column. This chapter keeps the last one.`}
+    >
+      <svg {...fig(0, 0, 600, 222)} className="c3-steps" role="img" aria-label="Three steps, each with the tally's row drawn as a bar and the character that came next filled in; chapter 1 recorded right or wrong, this chapter records the filled piece's width as a probability.">
+        <text x="0" y="14" className="fig-note">
+          the step
+        </text>
+        <text x="104" y="14" className="fig-note">
+          the row for the character just read, by count
+        </text>
+        <text x="372" y="14" className="fig-note">
+          chapter 1 wrote
+        </text>
+        <text x="462" y="14" className="fig-note">
+          this chapter writes
+        </text>
+        <line x1="0" y1="22" x2="600" y2="22" className="fig-arrow" />
+        <RowBar y={ys[0]} total={hits.certain.total} parts={[{ char: hits.certain.favourite, count: hits.certain.count }]} rest={0} next={hits.certain.favourite} />
+        <RowBar y={ys[1]} total={spaceRow.total} parts={spaceParts} rest={spaceRest} next={hits.open.favourite} />
+        <RowBar y={ys[2]} total={row.total} parts={hRow} rest={row.rest_count} next={hits.miss.actual} hidden={{ char: hits.miss.actual, count: hits.miss.count }} />
+        {steps.map((s) => (
+          <g key={s.after + s.next}>
+            <text x="0" y={s.y + 4} className="fig-label fig-code">
+              {charLabel(s.after)} then {charLabel(s.next)}
+            </text>
+            <text x="372" y={s.y + 4} className={s.hit ? "fig-label" : "fig-label fig-label-loss"}>
+              {s.hit ? "right" : "wrong"}
+            </text>
+            <text x="462" y={s.y - 3} className="fig-note fig-code">
+              {n(s.count)} / {n(s.total)}
+            </text>
+            <text x="462" y={s.y + 13} className="fig-label fig-code fig-label-accent">
+              = {f4(s.prob)}
+            </text>
+          </g>
+        ))}
+        <text x="104" y="203" className="fig-note">
+          filled: the character that came next, as wide as its count over the row total.
+        </text>
+        <text x="104" y="217" className="fig-note">
+          After h, b is the hairline at the end of the bar.
+        </text>
+      </svg>
+    </Figure>
   );
 }
 
-/** The worked example: four made-up probabilities, their product, and the
- * same four written as powers of one half so the exponents add. Every number
- * in it is computed by the bench from the four probabilities. */
-function WorkedTable() {
+/** Four made-up per-step probabilities taken to one number per character by
+ * two routes: multiply and take a root, or write each as a power of 1/2, add
+ * the exponents and divide. Box-and-arrow family. Every number is the bench's. */
+function RoutesFigure() {
   const ex = bench.example;
   const fraction = (p: number) => (p === 1 ? "1" : `1/${Math.round(1 / p)}`);
+  const L = 0;
+  const R = 290;
+  const rowY = (i: number) => 52 + i * 22;
+  const arrow = (x: number, y1: number, y2: number, label: string) => (
+    <>
+      <path d={`M${x} ${y1} V${y2}`} className="fig-arrow" markerEnd="url(#c3-arrow)" />
+      <text x={x + 10} y={(y1 + y2) / 2 + 4} className="fig-note">
+        {label}
+      </text>
+    </>
+  );
   return (
-    <div className="table-scroll scroll-x" tabIndex={0}>
-      <table className="truth-table">
-        <caption>
-          Four steps with made-up probabilities, chosen so the arithmetic can be done by
-          hand. Each probability is written as a power of 1/2, and the exponents are the
-          column that adds: {ex.exponents.map((x) => x.toFixed(0)).join(" + ")} ={" "}
-          {ex.total_bits.toFixed(0)}, so the product is (1/2)^{ex.total_bits.toFixed(0)},
-          which is 1/{ex.product_denominator}.
-        </caption>
-        <thead>
-          <tr>
-            <th scope="col">step</th>
-            <th scope="col">probability given to what came next</th>
-            <th scope="col">as a power of 1/2</th>
-            <th scope="col">exponent</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ex.probs.map((p, i) => (
-            <tr key={i}>
-              <td>{i + 1}</td>
-              <td>{fraction(p)}</td>
-              <td>(1/2)^{ex.exponents[i].toFixed(0)}</td>
-              <td>{ex.exponents[i].toFixed(0)}</td>
-            </tr>
-          ))}
-          <tr>
-            <th scope="row">all four</th>
-            <td>product: 1/{ex.product_denominator}</td>
-            <td>(1/2)^{ex.total_bits.toFixed(0)}</td>
-            <td>sum: {ex.total_bits.toFixed(0)}</td>
-          </tr>
-          <tr>
-            <th scope="row">per character</th>
-            <td>{ex.per_char_prob.toFixed(3)}</td>
-            <td>(1/2)^{ex.per_char_bits}</td>
-            <td>
-              {ex.total_bits.toFixed(0)} / {ex.probs.length} = {ex.per_char_bits}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <Figure
+      caption={`Two routes from four per-step probabilities to one number per character. Left: multiply them, then take the fourth root. Right: write each as a power of 1/2, add the exponents, then divide by four. Both land on ${ex.per_char_prob.toFixed(3)}, because (1/2) to the power ${ex.per_char_bits} is ${ex.per_char_prob.toFixed(3)}. The exponent column is the one this course keeps.`}
+    >
+      <svg {...fig(0, 0, 600, 268)} className="c3-routes" role="img" aria-label="Four probabilities combined two ways: multiplied and rooted on the left, written as powers of one half with the exponents added and divided on the right, reaching the same number per character.">
+        <text x={L} y="14" className="fig-note">
+          multiply the probabilities
+        </text>
+        <text x={R} y="14" className="fig-note">
+          add the exponents of 1/2
+        </text>
+        <line x1="0" y1="22" x2="600" y2="22" className="fig-arrow" />
+        {ex.probs.map((p, i) => (
+          <g key={i}>
+            <text x={L} y={rowY(i)} className="fig-note">
+              step {i + 1}
+            </text>
+            <text x={L + 80} y={rowY(i)} className="fig-label fig-code">
+              {fraction(p)}
+            </text>
+            <text x={R} y={rowY(i)} className="fig-note">
+              step {i + 1}
+            </text>
+            <text x={R + 80} y={rowY(i)} className="fig-label fig-code">
+              (1/2)^{ex.exponents[i].toFixed(0)}
+            </text>
+            <text x={R + 170} y={rowY(i)} className="fig-label fig-code fig-label-accent">
+              {ex.exponents[i].toFixed(0)}
+            </text>
+          </g>
+        ))}
+        {arrow(L + 90, 142, 172, "multiply")}
+        {arrow(R + 180, 142, 172, "add")}
+        <text x={L} y="192" className="fig-note">
+          all four
+        </text>
+        <text x={L + 80} y="192" className="fig-label fig-code">
+          1/{ex.product_denominator}
+        </text>
+        <text x={R} y="192" className="fig-note">
+          all four
+        </text>
+        <text x={R + 80} y="192" className="fig-label fig-code">
+          (1/2)^{ex.total_bits.toFixed(0)}
+        </text>
+        <text x={R + 170} y="192" className="fig-label fig-code fig-label-accent">
+          {ex.exponents.map((x) => x.toFixed(0)).join(" + ")} = {ex.total_bits.toFixed(0)}
+        </text>
+        {arrow(L + 90, 200, 230, "fourth root")}
+        {arrow(R + 180, 200, 230, `divide by ${ex.probs.length}`)}
+        <text x={L} y="252" className="fig-note">
+          per character
+        </text>
+        <text x={L + 80} y="252" className="fig-label fig-code">
+          {ex.per_char_prob.toFixed(3)}
+        </text>
+        <text x={R} y="252" className="fig-note">
+          per character
+        </text>
+        <text x={R + 80} y="252" className="fig-label fig-code">
+          (1/2)^{ex.per_char_bits}
+        </text>
+        <text x={R + 170} y="252" className="fig-label fig-code fig-label-accent">
+          {ex.total_bits.toFixed(0)} / {ex.probs.length} = {ex.per_char_bits} bits
+        </text>
+        <path d={`M${L + 140} 248 H${R - 12}`} className="fig-arrow fig-arrow-dashed" />
+        <text x={(L + 140 + R - 12) / 2} y="242" className="fig-note" textAnchor="middle">
+          the same number
+        </text>
+        <defs>
+          <marker id="c3-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0 0 L10 5 L0 10 z" className="fig-arrow-head" />
+          </marker>
+        </defs>
+      </svg>
+    </Figure>
   );
 }
 
@@ -289,8 +350,8 @@ function ReceiptsTable() {
     [
       "a row's probabilities are its counts over its total",
       <>
-        after <C ch={row.char} />, <C ch={row.entries[0].char} /> is {n(row.entries[0].count)}{" "}
-        of {n(row.total)}, which is {f4(row.entries[0].count / row.total)}
+        after a space, <C ch={hits.open.favourite} /> is {n(hits.open.count)} of{" "}
+        {n(hits.open.total)}, which is {f4(hits.open.prob)}
       </>,
     ],
     [
@@ -366,103 +427,48 @@ export function Chapter3() {
       />
       <ModuleToc />
 
-      <SectionHeader id="c3-score" title="The score you already have" />
+      <SectionHeader id="c3-score" title="The score, in bits" />
       <p>
         Chapter 1 ended with a score. On the tenth of the corpus the counting never read,
-        the tally's single best guess for the next character was right{" "}
-        {n(fav.hits)} times out of {n(fav.of)}, {pct(fav.share)} percent, against{" "}
-        {pct(fav.baseline_share)} percent for always answering a space. That number is
-        where this chapter starts.
+        the row's biggest count was the character that came next {n(fav.hits)} times out
+        of {n(fav.of)}, {pct(fav.share)} percent, against {pct(fav.baseline_share)} percent
+        for always answering a space. That score keeps one thing per step, right or wrong.
+        The row holds more than that.
+      </p>
+      <StepsFigure />
+      <p>
+        The two hits chapter 1 counted as equal are {f4(hits.certain.prob)} and{" "}
+        {f4(hits.open.prob)}. The miss is {f4(hits.miss.prob)}, small and not nothing. One{" "}
+        <b>probability</b> per step, the one the row gave to what actually came next, is
+        what the rest of this chapter turns into a score.
       </p>
       <p>
-        One step of bookkeeping first. The tally's rows are counts, and dividing a row by
-        its total turns the counts into probabilities: the row for <C ch={row.char} />{" "}
-        holds {n(row.total)} followers, {n(row.entries[0].count)} of them{" "}
-        <C ch={row.entries[0].char} />, so <C ch={row.entries[0].char} /> after{" "}
-        <C ch={row.char} /> has probability {f4(row.entries[0].count / row.total)}. Chapter 1
-        called these shares and wrote them in percent; from here the word is{" "}
-        <b>probability</b>. The division changes nothing the tally knows, and it puts
-        every row on one scale, so a probability after <code>q</code>, whose row holds{" "}
-        {n(qRow.total)} counts, can be set beside one after a space, whose row holds{" "}
-        {n(spaceRow.total)}.
+        The held-back tenth has {n(bench.example.val_steps)} such steps, and they have to
+        become one number that can be compared between two guessers. Four steps with
+        made-up probabilities, {bench.example.probs.map((p) => (p === 1 ? "1" : `1/${Math.round(1 / p)}`)).join(", ")},
+        are small enough to show both ways of doing it.
       </p>
-      <RowFigure />
+      <RoutesFigure />
       <p>
-        The hit rate reads one thing per step: was the row's favourite the character that
-        came next. Three steps from the held-back text, restated in full, show what that
-        leaves out.
-      </p>
-      <StepsTable />
-      <p>
-        On the first hit the row had everything on <C ch={hits.certain.favourite} />, and on
-        the second it had {pct(hits.open.prob)} percent on <C ch={hits.open.favourite} /> and
-        was right anyway; the hit rate scores those the same. On the miss the row had{" "}
-        {(hits.miss.prob * 100).toFixed(2)} percent on <C ch={hits.miss.actual} />, and the
-        hit rate scores that the same as a row that had none. So there are two questions,
-        and chapter 1 answered the first. How often was the favourite right. And how much
-        probability did the row give what actually happened, step after step.
-      </p>
-
-      <SectionHeader id="c3-surprise" title="One number for the whole text" />
-      <p>
-        The raw material of the second question is one probability per step: the one the
-        row gave the character that actually came next. The score has to combine{" "}
-        {n(bench.example.val_steps)} of them into one number, and that number has to be
-        comparable between two guessers. Start with four steps and made-up probabilities,
-        small enough to work by hand:{" "}
-        {bench.example.probs.map((p) => (p === 1 ? "1" : `1/${Math.round(1 / p)}`)).join(", ")}.
-      </p>
-      <p>
-        The probability the guesser gave to those four characters coming out in that order
-        is the product, 1/{bench.example.product_denominator}, the same way the chance of
-        four coin flips is the product of four halves. That is the honest combined number,
-        and it has two problems. Over the whole tenth it is a product of{" "}
-        {n(bench.example.val_steps)} fractions, a decimal with about{" "}
+        Powers of one base multiply by adding their exponents, which is why the right
+        route works: {bench.example.exponents.map((x) => x.toFixed(0)).join(" + ")} is{" "}
+        {bench.example.total_bits.toFixed(0)}, and (1/2)<sup>{bench.example.total_bits.toFixed(0)}</sup>{" "}
+        is 1/{bench.example.product_denominator}. On the real tenth the left route is a
+        product of {n(bench.example.val_steps)} fractions, a decimal with about{" "}
         {n(Math.round(bench.example.val_decimal_digits / 1000) * 1000)} zeros after the
-        point, which cannot be printed
-        and cannot be compared by eye. And "per character" is awkward for a product: the one
-        probability that, repeated on all four steps, gives the same 1/
-        {bench.example.product_denominator} is the number whose fourth power is 1/
-        {bench.example.product_denominator}, about {bench.example.per_char_prob.toFixed(3)},
-        a fourth root. For the tenth it would be a {n(bench.example.val_steps)}th root.
+        point, and then a {n(bench.example.val_steps)}th root. The right route is a sum and
+        one division.
       </p>
       <p>
-        Both problems go away if every probability is written as a power of 1/2. 1/2 is
-        (1/2)<sup>1</sup>, 1/16 is (1/2)<sup>4</sup> because 2 × 2 × 2 × 2 is 16, and 1 is
-        (1/2)<sup>0</sup>, because anything to the power 0 is 1.
-      </p>
-      <WorkedTable />
-      <p>
-        Multiplying powers of the same base adds the exponents, so the product of the four
-        is (1/2)<sup>{bench.example.total_bits.toFixed(0)}</sup>, which is 1/
-        {bench.example.product_denominator}, and four multiplications became one addition:{" "}
-        {bench.example.exponents.map((x) => x.toFixed(0)).join(" + ")} ={" "}
-        {bench.example.total_bits.toFixed(0)}. Per character, {bench.example.total_bits.toFixed(0)}{" "}
-        over {bench.example.probs.length} is {bench.example.per_char_bits}, and (1/2)
-        <sup>{bench.example.per_char_bits}</sup> is {bench.example.per_char_prob.toFixed(3)},
-        the same fourth root as before, reached by a division. Products became sums and
-        roots became divisions, and that is the whole reason for writing probabilities this
-        way.
-      </p>
-      <p>
-        A second guesser gives 1/4 on every one of the same four steps. 1/4 is (1/2)
-        <sup>2</sup>, so its exponents are{" "}
-        {bench.example.second_exponents.map((x) => x.toFixed(0)).join(", ")}, the sum is{" "}
-        {bench.example.second_total_bits.toFixed(0)}, and per character it is{" "}
-        {bench.example.second_per_char_bits}. The first guesser did better: {bench.example.per_char_bits}{" "}
-        is smaller than {bench.example.second_per_char_bits}, because 1/
-        {bench.example.product_denominator} is larger than 1/
-        {bench.example.second_product_denominator}. Smaller is better, because a smaller
-        exponent means the guesser gave the whole text a larger probability.
-      </p>
-      <p>
-        The exponent is what everyone calls <b>bits</b>. A probability of (1/2)<sup>k</sup>{" "}
-        is k bits: 1/2 is 1 bit, 1/4 is 2, 1/16 is 4, and 1 is 0 bits. For a probability
-        that is not a tidy power of 1/2 the exponent is a fraction: <C ch={row.entries[0].char} />{" "}
-        after <C ch={row.char} /> at {f4(row.entries[0].prob)} is {f2(row.entries[0].bits)} bits,
-        because (1/2)<sup>{f2(row.entries[0].bits)}</sup> is {f4(row.entries[0].prob)}. Finding
-        the exponent for any probability is what the base-2 logarithm does, with the sign
-        flipped, because the exponent of a number below 1 comes out negative:
+        The exponent is what everyone calls <b>bits</b>: 1/2 is 1 bit, 1/4 is 2, 1/16 is 4,
+        and 1 is 0 bits. A second guesser that gives 1/4 on every one of the four steps
+        scores {bench.example.second_exponents.map((x) => x.toFixed(0)).join(" + ")} over{" "}
+        {bench.example.second_probs.length}, which is {bench.example.second_per_char_bits} bits
+        per character, worse than {bench.example.per_char_bits}. A larger exponent means the
+        guesser gave the whole text a smaller probability, so lower is better. For a
+        probability that is not a tidy power of 1/2 the exponent is a fraction, and finding
+        it is what the base-2 logarithm does, with the sign flipped, because the exponent of
+        a number below 1 comes out negative:
       </p>
       <Eq
         tex={"\\text{surprise} = -\\log_2 p"}
@@ -470,17 +476,14 @@ export function Chapter3() {
       />
       <p>
         The <code>log</code> is said "log", the small 2 is its base, and <code>p</code> is
-        the probability. In code the same line is <code>-np.log2(p)</code>, and the bench
-        that produced every number on this page computes it that way.
-      </p>
-      <p>
-        Now the three steps from the table above, in bits. <C ch={hits.certain.favourite} />{" "}
-        after <code>q</code> at probability {f4(hits.certain.prob)} is {f2(hits.certain.bits)}{" "}
-        bits. <C ch={hits.open.favourite} /> after a space at {f4(hits.open.prob)} is{" "}
-        {f2(hits.open.bits)} bits. <C ch={hits.miss.actual} /> after <C ch={hits.miss.row} />{" "}
-        at {f4(hits.miss.prob)} is {f2(hits.miss.bits)} bits. The two hits the hit rate
-        counted as equal are {f2(hits.certain.bits)} and {f2(hits.open.bits)}, and the miss
-        is a large finite number rather than a cross.
+        the probability. In code the same line is <code>-np.log2(p)</code>. The three steps
+        of the first figure, in bits: <C ch={hits.certain.favourite} /> after <code>q</code>{" "}
+        at {f4(hits.certain.prob)} is {f2(hits.certain.bits)}, <C ch={hits.open.favourite} />{" "}
+        after a space at {f4(hits.open.prob)} is {f2(hits.open.bits)}, and{" "}
+        <C ch={hits.miss.actual} /> after <C ch={hits.miss.row} /> at {f4(hits.miss.prob)} is{" "}
+        {f2(hits.miss.bits)}. The two hits chapter 1 scored the same are{" "}
+        {f2(hits.certain.bits)} and {f2(hits.open.bits)} bits, and the miss is a large finite
+        number rather than a wrong.
       </p>
       <p>
         This course calls a step's bits its <b>surprise</b>. Everyone else calls the same
@@ -621,7 +624,7 @@ export function Chapter3() {
       </p>
       <Eq
         tex={`p(b \\mid a) = \\frac{\\text{count}(a, b) + \\alpha}{\\text{total}(a) + \\alpha \\cdot ${row.vocab_size}}`}
-        gloss={`The probability of b coming next after a is the pair's count plus alpha, over the row's total plus alpha for each of the ${row.vocab_size} cells. The bar is said "given": b given a. With alpha 0 it is the plain division of the row figure.`}
+        gloss={`The probability of b coming next after a is the pair's count plus alpha, over the row's total plus alpha for each of the ${row.vocab_size} cells. The bar is said "given": b given a. With alpha 0 it is the plain count over the row total of the first figure.`}
       />
       <Eq
         tex={"s_i = -\\log_2 p(\\text{ids}_{i+1} \\mid \\text{ids}_i)"}
@@ -648,7 +651,7 @@ export function Chapter3() {
 
       <Recap
         items={[
-          `A row of the tally divided by its total is a row of probabilities: ${row.vocab_size} numbers that sum to 1, ${charLabel(row.entries[0].char)} at ${f4(row.entries[0].count / row.total)} after ${row.char}.`,
+          `A row of the tally divided by its total is a row of probabilities: ${row.vocab_size} numbers that sum to 1, ${charLabel(hits.open.favourite)} at ${f4(hits.open.prob)} after a space.`,
           `A step's surprise is the exponent of the probability given to what actually came next, written as a power of 1/2, which is what minus log2 computes. Exponents add where probabilities multiply, so a whole text's score is a sum divided by its steps. A probability of 1 is 0 bits, 1/2 is 1 bit, and each halving adds one: the right guess after a space was ${f2(hits.open.bits)} bits, the wrong one after h was ${f2(hits.miss.bits)}.`,
           "The loss is average surprise per character, in bits, over text the model never read. It is this course's unit from here to the last chapter.",
           `${n(unseen.count)} of the held-back text's ${n(unseen.of)} steps are pairs the training text never produced, so an unsmoothed tally scores infinite surprise. Adding ${row.alpha} to every cell keeps every score finite, at a price that falls on small rows.`,
