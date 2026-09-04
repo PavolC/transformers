@@ -500,4 +500,16 @@ Each ends deployable. Deploy exists from M1 onward.
 
 ## 10. What the build actually produced
 
-(Empty. Entries appear here as the build departs from the plan, each with its reason.)
+(Entries appear here as the build departs from the plan, each with its reason.)
+
+- **2026-09-04, chapter 4.** The softmax playground has a scale slider and does not call
+  it temperature: the softmax exercise, shipped at M1, promises that chapter 10 names the
+  knob, and a chapter that names it twice hands the reader two introductions. The
+  exercise list is five sections rather than the doc's six items: `sgd_step` lives in the
+  model's section beside `init_bigram`, `bigram_forward` and `bigram_backward`, because a
+  step with nothing to step is not an exercise, and "training through the driver seam" is
+  the prompt's experiment rather than a section, because the drivers are course code
+  (CLAUDE.md, Decisions, 2026-09-04). The learned-tally heatmap is a pair, counted beside
+  learned, painted on a canvas: 4,225 SVG rectangles per grid repainted every hundred
+  steps was the alternative.
+

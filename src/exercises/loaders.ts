@@ -15,6 +15,10 @@ const LOADERS: Readonly<Record<string, () => Promise<Exercise>>> = {
   "get-batch": () => import("./get-batch").then((m) => m.getBatchExercise),
   "avg-surprise": () => import("./avg-surprise").then((m) => m.avgSurpriseExercise),
   softmax: () => import("./softmax").then((m) => m.softmaxExercise),
+  "cross-entropy": () => import("./cross-entropy").then((m) => m.crossEntropyExercise),
+  embedding: () => import("./embedding").then((m) => m.embeddingExercise),
+  "grad-check": () => import("./grad-check").then((m) => m.gradCheckExercise),
+  "train-bigram": () => import("./train-bigram").then((m) => m.trainBigramExercise),
 };
 
 const cache = new Map<string, Promise<Exercise>>();

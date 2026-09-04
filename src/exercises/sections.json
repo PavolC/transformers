@@ -80,5 +80,68 @@
     "requires": [],
     "pulledInBy": [],
     "checks": []
+  },
+  {
+    "id": "cross-entropy",
+    "kind": "exercise",
+    "module": "c4",
+    "label": "Chapter 4, The loss and its gradient",
+    "marker": "# ---- [section:cross-entropy] Chapter 4, The loss and its gradient ----",
+    "provides": [
+      "cross_entropy",
+      "cross_entropy_backward"
+    ],
+    "requires": [
+      "softmax"
+    ],
+    "pulledInBy": [],
+    "checks": []
+  },
+  {
+    "id": "embedding",
+    "kind": "exercise",
+    "module": "c4",
+    "label": "Chapter 4, The embedding table",
+    "marker": "# ---- [section:embedding] Chapter 4, The embedding table ----",
+    "provides": [
+      "embedding_forward",
+      "embedding_backward"
+    ],
+    "requires": [],
+    "pulledInBy": [],
+    "checks": []
+  },
+  {
+    "id": "grad-check",
+    "kind": "exercise",
+    "module": "c4",
+    "label": "Chapter 4, The gradient check",
+    "marker": "# ---- [section:grad-check] Chapter 4, The gradient check ----",
+    "provides": [
+      "numeric_grad",
+      "grad_check"
+    ],
+    "requires": [],
+    "pulledInBy": [],
+    "checks": []
+  },
+  {
+    "id": "train-bigram",
+    "kind": "exercise",
+    "module": "c4",
+    "label": "Chapter 4, The learned tally",
+    "marker": "# ---- [section:train-bigram] Chapter 4, The learned tally ----",
+    "provides": [
+      "init_bigram",
+      "bigram_forward",
+      "bigram_backward",
+      "sgd_step"
+    ],
+    "requires": [
+      "embedding",
+      "cross-entropy"
+    ],
+    "pulledInBy": [],
+    "checks": []
   }
 ]

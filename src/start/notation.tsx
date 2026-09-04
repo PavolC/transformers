@@ -225,4 +225,89 @@ export const NOTATION: NotationRow[] = [
     alsoCalled: "ours; there is nothing in the field to look up",
     from: "Chapter 3",
   },
+  {
+    id: "scores",
+    symbol: <b>scores</b>,
+    means:
+      "the row of 65 numbers a model gives for what comes next, one per character, before they are probabilities: any number is allowed, and bigger means more likely",
+    alsoCalled: "logits",
+    from: "Chapter 4",
+  },
+  {
+    id: "softmax",
+    symbol: <code>softmax</code>,
+    means:
+      "the machine that turns a row of scores into a guess list: e to the power of each score, divided by the row's total, so the row is positive and sums to 1",
+    alsoCalled: "the softmax function; its output is a probability distribution over the vocabulary",
+    from: "Chapter 4",
+  },
+  {
+    id: "table",
+    symbol: <b>the table</b>,
+    means:
+      "a (V, C) array with one row per character, read by id: the character at a position picks out its row. In chapter 4 a row is that character's row of scores, so C is V",
+    alsoCalled: "an embedding table, and a row of it a character's embedding; wte in GPT code",
+    from: "Chapter 4",
+  },
+  {
+    id: "shape-btv",
+    symbol: <code>(B, T, V)</code>,
+    means: "one row of V scores at every one of the T positions of every one of the B windows in a batch: the model's output, and the loss's input",
+    from: "Chapter 4",
+  },
+  {
+    id: "onehot",
+    symbol: <b>the one-hot</b>,
+    means:
+      "the real next character written as a row: zeros everywhere and a 1 at its id. The gradient of the loss is the probabilities minus this",
+    alsoCalled: "a one-hot vector, or one-hot encoding",
+    from: "Chapter 4",
+  },
+  {
+    id: "gradient",
+    symbol: <code>d_logits, grads</code>,
+    means:
+      "one slope per number: how much the loss moves when that number moves a little. d_ before a name is the slope with respect to that thing; grads mirrors params name for name",
+    alsoCalled: "the gradient, whose entries are partial derivatives",
+    from: "Chapter 4",
+  },
+  {
+    id: "cross-entropy",
+    symbol: <code>cross_entropy</code>,
+    means:
+      "the loss for a model that gives scores: minus log2 of the probability the row gave the real next character, averaged over every position. Chapter 3's surprise, in bits",
+    alsoCalled: "cross-entropy loss, or log loss; the field measures it in nats, and one nat is 1.4427 bits",
+    from: "Chapter 4",
+  },
+  {
+    id: "lr",
+    symbol: <code>lr</code>,
+    means:
+      "the learning rate: how far one step moves every parameter against its gradient. The gradient sets the direction, the learning rate the size",
+    alsoCalled: "step size",
+    from: "Chapter 4",
+  },
+  {
+    id: "params",
+    symbol: <code>params</code>,
+    means:
+      "a model's parameters as one dict of named arrays, the numbers training moves. The learned tally has one entry, \"table\"; the scribe will have dozens, and the same sgd_step walks them all",
+    alsoCalled: "the model's weights, or its state",
+    from: "Chapter 4",
+  },
+  {
+    id: "flat",
+    symbol: <code>x.flat[i]</code>,
+    means:
+      "element i of an array of any shape, counted along the rows as if the array were one long line. What the gradient check uses to nudge every element in turn",
+    from: "Chapter 4",
+  },
+  {
+    id: "grad-check",
+    symbol: <code>grad_check</code>,
+    means:
+      "nudge every number up and down, measure the slope from the two losses, and compare with the slope a formula claimed: the check every backward pass in the course is held to",
+    alsoCalled: "a numerical gradient check, by finite differences",
+    from: "Chapter 4",
+  },
 ];

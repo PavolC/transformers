@@ -55,6 +55,8 @@ ALLOWED_UNSTYLED: dict[str, str] = {
     "vocab-grid": "panel identity hook; its rules are on its children",
     "window-slicer": "panel identity hook; its rules are on its children",
     "tally-cell": "grid cell; painted inline and by tally-cell-next",
+    "softmax-playground": "panel identity hook; its rules are on its children",
+    "bigram-trainer": "panel identity hook; its rules are on its children",
 }
 
 

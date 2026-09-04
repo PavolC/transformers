@@ -217,29 +217,184 @@ def attention_backward(d_out, cache):
     return d_x, d_wqkv, d_bqkv, d_wo, d_bo
 
 
-def cross_entropy_bits_forward(logits, targets):
-    """Mean surprise in bits over every position, with its gradient's cache."""
-    m = logits.max(axis=-1, keepdims=True)
-    z = logits - m
-    logsumexp = np.log(np.exp(z).sum(axis=-1, keepdims=True))
-    logp = z - logsumexp  # natural log
+def cross_entropy(logits, targets):
+    """Mean surprise in bits over every position, plus the cache its gradient needs.
+
+    Chapter 4's loss, and the loss of every model after it. logits is
+    (B, T, V), one row of scores per position; targets is (B, T), the id that
+    actually came next at each position. The row is turned into probabilities
+    by softmax, the probability given to the real next character is read off,
+    and its surprise is minus log2 of that, exactly as chapter 3 scored the
+    tally; the loss is the mean over all B * T positions.
+    """
+    probs = softmax(logits)
     B, T, V = logits.shape
     bi = np.arange(B)[:, None]
     ti = np.arange(T)[None, :]
-    picked = logp[bi, ti, targets]
-    loss_bits = float(-picked.mean() / LN2)
-    return loss_bits, (logp, targets)
+    picked = probs[bi, ti, targets]
+    loss_bits = float(-np.log2(picked).mean())
+    return loss_bits, (probs, targets)
 
 
-def cross_entropy_bits_backward(cache):
-    logp, targets = cache
-    B, T, V = logp.shape
-    probs = np.exp(logp)
+def cross_entropy_backward(cache):
+    """The gradient of the loss with respect to every score.
+
+    Probabilities minus the one-hot of the target, divided by the number of
+    positions (the mean) and by ln 2 (the loss is in bits, and the natural
+    slope of a logarithm is in nats). Dropping the ln 2 leaves every gradient
+    1.4427 times too large, which grad_check catches at once.
+    """
+    probs, targets = cache
+    B, T, V = probs.shape
     onehot = np.zeros_like(probs)
     bi = np.arange(B)[:, None]
     ti = np.arange(T)[None, :]
     onehot[bi, ti, targets] = 1.0
     return (probs - onehot) / (B * T * LN2)
+
+
+# The names the rest of this file, the training driver and the parity
+# fixture use for the same two functions.
+cross_entropy_bits_forward = cross_entropy
+cross_entropy_bits_backward = cross_entropy_backward
+
+
+def embedding_forward(table, ids):
+    """Look up one row of the table per id.
+
+    table is (V, C): one row per character in the vocabulary. ids is (B, T).
+    The result is (B, T, C): at every position, the row of the character that
+    sits there. The cache is what the backward pass needs to put gradient
+    back into the rows that were read.
+    """
+    return table[ids], (ids, table.shape)
+
+
+def embedding_backward(d_out, cache):
+    """Add each position's gradient into the row its id looked up.
+
+    A row read at several positions collects all of them, which is the same
+    accumulate-on-repeat that chapter 1's np.add.at did for the tally. Rows no
+    position read get zero.
+    """
+    ids, shape = cache
+    d_table = np.zeros(shape)
+    np.add.at(d_table, ids.reshape(-1), d_out.reshape(-1, d_out.shape[-1]))
+    return d_table
+
+
+# ---------------------------------------------------------------------------
+# The learned tally (chapter 4's model), one step downhill, and the check
+# ---------------------------------------------------------------------------
+
+def init_bigram(vocab_size):
+    """The learned tally before any training: a table of zeros.
+
+    Every row of zeros is an even guess over the vocabulary, so the untrained
+    model sits exactly on the ladder's ceiling rung, log2(vocab_size) bits.
+    Parameters live in one flat dict, the same shape every later model uses.
+    """
+    return {"table": np.zeros((vocab_size, vocab_size))}
+
+
+def bigram_forward(params, x):
+    """(B, T) ids -> (B, T, V) scores: the row of the table for each id."""
+    return embedding_forward(params["table"], x)
+
+
+def bigram_backward(d_logits, cache, params):
+    """Gradients mirroring params key for key: here, one table."""
+    return {"table": embedding_backward(d_logits, cache)}
+
+
+def sgd_step(params, grads, lr):
+    """One step downhill: every parameter moves against its gradient by lr
+    times the gradient. In place, and returned for convenience."""
+    for name in params:
+        params[name] = params[name] - lr * grads[name]
+    return params
+
+
+def numeric_grad(f, x, eps=1e-5):
+    """The slope of f at every element of x, measured by nudging.
+
+    For each element in turn: raise it by eps, evaluate f, lower it by eps,
+    evaluate f, and divide the difference by 2 * eps. x is restored after
+    every nudge. Slow (two evaluations per element), which is why it is a
+    check on a formula rather than a way to train.
+    """
+    g = np.zeros_like(x, dtype=np.float64)
+    for i in range(x.size):
+        old = x.flat[i]
+        x.flat[i] = old + eps
+        up = f(x)
+        x.flat[i] = old - eps
+        down = f(x)
+        x.flat[i] = old
+        g.flat[i] = (up - down) / (2.0 * eps)
+    return g
+
+
+def grad_check(f, x, claimed, eps=1e-5):
+    """How far a claimed gradient is from the nudged one, as a relative error.
+
+    Returns the largest, over all elements, of |numeric - claimed| divided by
+    |numeric| + |claimed| + 1e-12. A correct formula lands near 1e-8 in
+    float64; a wrong one is off by orders of magnitude.
+    """
+    numeric = numeric_grad(f, x, eps)
+    return float(np.max(np.abs(numeric - claimed) / (np.abs(numeric) + np.abs(claimed) + 1e-12)))
+
+
+# ---------------------------------------------------------------------------
+# The drivers: the seam every model trains and is scored through
+# ---------------------------------------------------------------------------
+
+def train_driver(params, ids, *, forward_fn, backward_fn, loss_fn, loss_backward_fn,
+                 step_fn, steps, batch_size, block_size, lr, rng, on_step=None):
+    """The training loop, with the model handed in as functions.
+
+    Chapter 4 trains the learned tally through this and chapter 10 trains the
+    scribe through the same loop; only the functions passed in change. Every
+    step: draw a batch, run the model forward, score it, run the loss and the
+    model backward, and step every parameter against its gradient. Returns
+    the loss at every step, in bits. on_step(step, loss_bits, params), when
+    given, is called after each step (the live panels stream from it).
+    """
+    losses = []
+    for step in range(1, steps + 1):
+        x, y = get_batch(ids, block_size, batch_size, rng)
+        logits, cache = forward_fn(params, x)
+        loss, loss_cache = loss_fn(logits, y)
+        d_logits = loss_backward_fn(loss_cache)
+        grads = backward_fn(d_logits, cache, params)
+        step_fn(params, grads, lr)
+        losses.append(float(loss))
+        if on_step is not None:
+            on_step(step, float(loss), params)
+    return losses
+
+
+def eval_driver(params, ids, *, forward_fn, loss_fn, block_size):
+    """The loss in bits over every step of ids, walked with the answer key open.
+
+    ids is cut into consecutive windows of block_size (the last one shorter),
+    each is run forward and scored on the character after each position, and
+    the per-position losses are averaged over all len(ids) - 1 steps. For a
+    model that reads one character this is exactly chapter 3's average
+    surprise; for one that reads a window it scores each position with only
+    the window behind it.
+    """
+    steps = len(ids) - 1
+    total = 0.0
+    for start in range(0, steps, block_size):
+        stop = min(start + block_size, steps)
+        x = ids[start:stop][None, :]
+        y = ids[start + 1:stop + 1][None, :]
+        logits, _ = forward_fn(params, x)
+        loss, _ = loss_fn(logits, y)
+        total += loss * (stop - start)
+    return total / steps
 
 
 # ---------------------------------------------------------------------------
