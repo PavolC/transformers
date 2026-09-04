@@ -1179,6 +1179,52 @@ columns wrong (it said the fourth and fifth of four). The expensive part was aga
 first round: the author answered "dense" with prose, and only the learner's request for
 pictures named the instrument.
 
+## 33. "allowing the model to generate things and then comparing it to the held back text"
+
+**Chapter:** two (transformers), chapter 3, "Reading the held-back text", with the root in
+chapter 1's "How often is it right?".
+
+**What was wrong.** After the score section was rebuilt (incident 32) the learner asked:
+"my intuition says that if we train on the corpus and then test on the held back text, then
+our measure of how good the "trained model" is on the held back text should be allowing the
+model to generate things and then comparing it to the held back text and measuring the
+difference right? is this what we're doing already? if so then clearly the explanations are
+not working. if not then why?" Chapter 1 had taught the tally to write two sections before
+it scored the tally, and neither chapter said that the scorer never writes. Every sentence
+about the walk ("the character just read", "what came next") was true of both procedures,
+so the reader filled the gap with the capability he had just been shown.
+
+**The loop, one round.** The re-explanation was the procedure as four numbered steps with
+the answer key open (read the real character, give the row, score it on the real next
+character, be handed the real next character), then why generate-and-compare fails (one
+different draw and the two texts are different passages, and the score measures where they
+parted), then the observation that his intuition was chapter 1's hit rate with the
+randomness removed. The check: where does the `h` at step 27 of the walk table come from,
+and what would step 27 have to do with the held-back text if the tally had been fed its
+own guesses since step 1. "held back text. it would have diverged quite a bit probably."
+Then, unprompted: "we create the vocab/probabilities and measure the diff between the
+probability of the next char and what is actually the next character in held back text.
+the bigger the diff, the larger the score... and i'm guessing this will become our cost
+function to minimize through training?" Landed, with one nuance left to correct in chat
+(the score is minus log2 of the probability given, not a difference).
+
+**What the misunderstanding turned out to be.** Not a misreading of anything on the page.
+A procedure the chapter never described, assumed from the capability the course had just
+built, because nothing said the score does not use it.
+
+**The fix.** One paragraph in chapter 1's score section, at the first place the score is
+taken: the tally does not write during this, why a written text cannot be compared, and
+the walk with the answer key open. Two sentences in chapter 3's "Reading the held-back
+text" saying the walk is chapter 1's and that a wrong guess never takes the tally off the
+text, and a parenthesis in the first figure's caption saying whose character "just read"
+is. Nothing else moved.
+
+**Rule:** "When a chapter teaches the model to do a thing, the next measurement says
+whether the thing is happening", under Backward references.
+
+**Cost:** three small edits and one round of the loop. Cheap because the check was
+answered; the previous incident's was not.
+
 ## The pattern behind course one's eighteen
 
 Four of them (2, 6, 7, 12) are the same chapter, and it is the one chapter authored outside

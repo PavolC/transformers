@@ -122,7 +122,7 @@ function StepsFigure() {
   ];
   return (
     <Figure
-      caption={`Three steps from the held-back text. Each bar is the tally's row for the character just read, split in proportion to its counts, with the character that actually came next filled in. The filled piece's width is that character's count over the row's total: ${n(hits.open.count)} of ${n(hits.open.total)} after a space is ${f4(hits.open.prob)}. Chapter 1 called the fraction a share and wrote it in percent; from here the word is probability. Chapter 1 kept the right-or-wrong column. This chapter keeps the last one.`}
+      caption={`Three steps from the held-back text. Each bar is the tally's row for the character just read from that text (not one the tally wrote), split in proportion to its counts, with the character that actually came next filled in. The filled piece's width is that character's count over the row's total: ${n(hits.open.count)} of ${n(hits.open.total)} after a space is ${f4(hits.open.prob)}. Chapter 1 called the fraction a share and wrote it in percent; from here the word is probability. Chapter 1 kept the right-or-wrong column. This chapter keeps the last one.`}
     >
       <svg {...fig(0, 0, 600, 222)} className="c3-steps" role="img" aria-label="Three steps, each with the tally's row drawn as a bar and the character that came next filled in; chapter 1 recorded right or wrong, this chapter records the filled piece's width as a probability.">
         <text x="0" y="14" className="fig-note">
@@ -492,7 +492,11 @@ export function Chapter3() {
 
       <SectionHeader id="c3-meter" title="Reading the held-back text" />
       <p>
-        Score every step of the held-back tenth this way and take the average. The tenth
+        Score every step of the held-back tenth this way and take the average. The walk
+        is chapter 1's: the tally never writes while it is scored. At each step it reads
+        the real character from the held-back text, gives its row, the row is scored on
+        the real next character, and that real character is what it reads at the next
+        step, so a wrong guess never takes it off the text. The tenth
         opens <code>{walk.map((w) => charLabel(w.current)).join("")}{charLabel(walk[walk.length - 1].next)}</code>, so its first step is a
         newline followed by a newline, which the newline row gave probability{" "}
         {f4(walk[0].prob)}: {f2(walk[0].bits)} bits. The first {walk.length} steps, logged:
