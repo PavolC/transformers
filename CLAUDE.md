@@ -186,6 +186,15 @@ is fixed:
   returned array checks that it is one: a list handed to `.shape` dies with
   `'list' object has no attribute 'shape'`, which is a crash where the lesson should be
   ("np.stack(rows) glues a list of rows into one array"). [casebook: 30]
+- **A table that maps ids to files is derived from the files, never typed.** The
+  workbench's starting-body table was a hand-written list beside a folder per exercise,
+  and chapter 3's entry was never added, so "opening the exercise in workbench only adds
+  the marker to the file and nothing else". No checker read the list, because the
+  checker took bodies straight from the folders. Anything keyed by section id (bodies,
+  registries, fixtures) is built by a glob over the folders, and the checker asserts the
+  glob rather than the entries; and a seed path that finds a section with nothing under
+  its marker re-seeds it, because a build that shipped the gap has already written that
+  empty section into every learner's saved copy. [casebook: 34]
 - **Skeleton docstrings freeze into the learner's saved copy.** The editor persists their
   code, so improving a skeleton never reaches anyone who already opened the exercise.
   Anything essential to the contract must also live in the prompt, which always re-renders.
