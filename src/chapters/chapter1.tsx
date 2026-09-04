@@ -340,6 +340,16 @@ export function Chapter1() {
         {(fav.share * 100).toFixed(1)} percent.
       </p>
       <p>
+        The tally does not write during this. The loop of the last section would draw a
+        character, feed it back in, and be somewhere else in Shakespeare within a few
+        steps, so a comparison with the held-back text would measure where the two parted
+        rather than how well the tally guesses. Here the held-back text is walked with the
+        answer key open: at each position the tally reads the real character, guesses,
+        the guess is marked against the real next character, and then the real next
+        character is what it reads at the following position. Its own guesses are never
+        fed back in.
+      </p>
+      <p>
         On its own that number means nothing, so measure it against the laziest possible
         player: always answer <code>{charLabel(fav.baseline_char)}</code>, the corpus's
         most common character, whatever came before. That is right{" "}

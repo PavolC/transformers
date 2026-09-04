@@ -450,6 +450,17 @@ its reason, plus the sentence that the small case is a sub-case and not a detour
   (here the data changed several chapters before the model did), and say which later
   chapter actually uses the new freedom, so it does not read as a capability the model
   already has. [casebook: 25]
+- **When a chapter teaches the model to do a thing, the next measurement says whether
+  the thing is happening.** Chapter 1 taught the tally to write (draw, feed back, repeat)
+  and two sections later scored it on the held-back text, and neither chapter said the
+  scorer never writes. The reader's intuition was the natural one: "our measure of how
+  good the trained model is on the held back text should be allowing the model to generate
+  things and then comparing it to the held back text". Say, where the score is first
+  taken, that the text is walked with the answer key open (the model reads the real
+  character, guesses, is marked against the real next one, and is handed the real one),
+  and say why the alternative fails (a generated text parts from the real one within a few
+  steps and the comparison measures where). A capability the course just built is the
+  first thing a reader will assume every later procedure uses. [casebook: 33]
 
 ### Sentences
 
