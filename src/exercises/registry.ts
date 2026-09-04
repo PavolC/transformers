@@ -55,4 +55,28 @@ export const EXERCISES: ExerciseRef[] = [
     module: "c4",
     builds: "softmax: scores into a guess list, stable against overflow",
   },
+  {
+    id: "cross-entropy",
+    title: "The loss and its gradient",
+    module: "c4",
+    builds: "cross_entropy, cross_entropy_backward: the score in bits for a model that gives scores, and its slope",
+  },
+  {
+    id: "embedding",
+    title: "The embedding table",
+    module: "c4",
+    builds: "embedding_forward, embedding_backward: a row per character, read by id, and gradient back into the rows read",
+  },
+  {
+    id: "grad-check",
+    title: "The gradient check",
+    module: "c4",
+    builds: "numeric_grad, grad_check: nudge every number and compare the slope with the formula's",
+  },
+  {
+    id: "train-bigram",
+    title: "The learned tally",
+    module: "c4",
+    builds: "init_bigram, bigram_forward, bigram_backward, sgd_step: the tally found by training",
+  },
 ];

@@ -2038,7 +2038,7 @@ button:disabled {
 .ripple-slice,
 .c1-loop,
 .c3-steps,
-.c3-routes {
+.c3-routes, .c4-anatomy {
 	display: block;
 	width: min(calc(var(--fig-units) * var(--fig-scale)), 100%);
 	height: auto;
@@ -2362,7 +2362,7 @@ button:disabled {
 .bp-diagram,
 .ripple-slice,
 .c3-steps,
-.c3-routes {
+.c3-routes, .c4-anatomy {
 	min-width: calc(var(--fig-units) * var(--fig-scale-min));
 }
 
@@ -4775,5 +4775,99 @@ button:disabled {
 
 	.meter-strip {
 		font-size: 0.8rem;
+	}
+}
+
+/* ---------- Chapter 4: the learned tally ---------- */
+
+/* Two 65 by 65 probability grids side by side (HeatPair). Grid family: each
+   cell is a fixed 4.5px, painted on a canvas because the trainer repaints one
+   grid every hundred steps. The pair is 605px wide, so it fits the column
+   without panning and pans inside .table-scroll on a phone. */
+.heat-figure {
+	margin: 0.6rem 0 0.2rem;
+}
+
+.heat-pair {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+	width: max-content;
+	margin: 0 auto;
+	padding: 0 0.3rem;
+}
+
+.heat-panel {
+	flex: 0 0 auto;
+}
+
+.heat-title {
+	margin: 0 0 0.3rem;
+	font-family: var(--font-ui);
+	font-size: 0.78rem;
+	font-weight: var(--label-weight);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--muted);
+	text-align: center;
+}
+
+.heat-canvas {
+	display: block;
+	border: 1px solid var(--rule);
+	image-rendering: pixelated;
+}
+
+/* Reserved height: the readout changes on every hover, and a line that
+   appears and disappears moves the grid under the cursor. */
+.heat-readout {
+	min-height: 2.6rem;
+	margin: 0.5rem 0 0;
+	font-family: var(--font-ui);
+	font-size: 0.82rem;
+	color: var(--muted);
+	text-align: center;
+}
+
+/* The trainer's status line changes on every tick and carries a sentence
+   when the run is done; hold two lines so the plot below never jumps. */
+.trainer-status {
+	min-height: 2.6rem;
+}
+
+/* The playground's four characters double as the picker for which one really
+   came next: a small toggle in the bar's character slot. */
+.softmax-pick {
+	flex: none;
+	width: 1.8rem;
+	min-width: 0;
+	padding: 0.1rem 0;
+	font-family: var(--font-mono);
+	font-size: 0.9rem;
+	line-height: 1.3;
+	background: transparent;
+	color: var(--ink);
+	border: 1px solid var(--rule);
+	border-radius: var(--radius-sm);
+}
+
+.softmax-pick-next {
+	border-color: var(--accent);
+	outline: 2px solid var(--accent);
+	outline-offset: -2px;
+}
+
+.softmax-value {
+	width: 13rem;
+}
+
+.softmax-status {
+	min-height: 2.6rem;
+}
+
+@media (max-width: 560px) {
+	.softmax-value {
+		width: 9rem;
+		font-size: 0.7rem;
 	}
 }

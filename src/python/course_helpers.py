@@ -58,7 +58,24 @@ probs_from_tally = _rs.probs_from_tally
 surprise_bits = _rs.surprise_bits
 avg_surprise = _rs.avg_surprise
 softmax = _rs.softmax
+cross_entropy = _rs.cross_entropy
+cross_entropy_backward = _rs.cross_entropy_backward
+embedding_forward = _rs.embedding_forward
+embedding_backward = _rs.embedding_backward
+numeric_grad = _rs.numeric_grad
+grad_check = _rs.grad_check
+init_bigram = _rs.init_bigram
+bigram_forward = _rs.bigram_forward
+bigram_backward = _rs.bigram_backward
+sgd_step = _rs.sgd_step
 
 # ----------------------------------------------------- shared, never exercises
+#
+# The drivers are the seam (CLAUDE.md, the exercise contract): they take the
+# model as functions, so chapter 4's learned tally and chapter 10's scribe
+# train and are scored through one loop. The scratch pad sees them by name,
+# the way it sees load_corpus, because a snippet that trains has to call one.
 
 split_data = _rs.split_data
+train_driver = _rs.train_driver
+eval_driver = _rs.eval_driver

@@ -73,9 +73,10 @@ export const CHAPTERS: ChapterDef[] = [
     navLabel: "4 · Learning",
     title: "The learned tally",
     covers:
-      "The bigram rebuilt as a trained model: scores, softmax, the loss's clean gradient, " +
-      "and training that recovers what counting knew.",
-    draft: true,
+      "Chapter 1's table found by training instead of counting: a row of scores, softmax " +
+      "to turn it into a guess list, the loss's slope with every factor in it, checked by " +
+      "nudging, and 4,000 steps that walk a table of zeros from the ceiling rung to " +
+      "within a few hundredths of the counted tally.",
     ...deferred(() => import("./chapter4").then((m) => ({ default: m.Chapter4 }))),
   },
 ];

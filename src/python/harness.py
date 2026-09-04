@@ -250,10 +250,12 @@ def run_document_scratch(document, scratch_code, spec_json):
         })
     if scratch_code.strip():
         # The corpus loader, so a play snippet can open the bundled text the
-        # way the prompts say it can. Only names the learner's own file does
-        # not define: their work always wins over a convenience.
+        # way the prompts say it can, and the two drivers, the loop every
+        # model trains and is scored through, which the course provides and
+        # no exercise writes. Only names the learner's own file does not
+        # define: their work always wins over a convenience.
         import course
-        for name in ("load_corpus",):
+        for name in ("load_corpus", "train_driver", "eval_driver"):
             if hasattr(course, name) and name not in submission.__dict__:
                 setattr(submission, name, getattr(course, name))
         try:

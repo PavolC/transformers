@@ -47,6 +47,11 @@ DATA = ROOT / "public" / "data"
 # it is checked here for the same reason a panel would be.
 CASES = [
     (RUNTIME / "pyodideWorker.ts", "TRAIN_DRIVER", "train"),
+    # Chapter 4's live trainer: the learned tally through train_driver. It
+    # reads its knobs from _args_json and falls back to the chapter's defaults,
+    # which is the run the bench records, so this also re-runs the bench's
+    # training natively (about three seconds).
+    (PANELS / "BigramTrainer.tsx", "TRAIN_BIGRAM", "python"),
 ]
 
 # What --fast trains: enough steps to move the loss and exercise every branch
@@ -315,6 +320,12 @@ SNIPPET_MUST_PRINT = {
     "get-batch": ["window.x_text", "window.y_text", "batch.rows.3.y_text"],
     "avg-surprise": ["receipt.val_text", "receipt.train_text", "receipt.unseen_count",
                      "receipt.worst_bits_text"],
+    "cross-entropy": ["receipt.hand_bits_text", "receipt.hand_grad_text",
+                      "receipt.counted_val_text"],
+    "embedding": ["receipt.walk_probs_text", "receipt.walk_reads_text"],
+    "grad-check": ["receipt.gradcheck_pass_text", "receipt.gradcheck_without_ln2_text"],
+    "train-bigram": ["receipt.first_batch_text", "receipt.last50_text",
+                     "receipt.learned_val_text", "receipt.counted_val_text"],
 }
 
 
@@ -337,9 +348,11 @@ def check_prompt_snippets(datasets, problems):
             label = f"{section} snippet {n}"
             ns, _ = worker_globals(datasets)
             # The scratch pad runs in the namespace the learner's own file
-            # made, with load_corpus lent from the course module: see
-            # run_document_scratch in src/python/harness.py.
-            ns["load_corpus"] = ns["course"].load_corpus
+            # made, with load_corpus and the two drivers lent from the course
+            # module: the same three names run_document_scratch in
+            # src/python/harness.py lends, and no others.
+            for name in ("load_corpus", "train_driver", "eval_driver"):
+                ns[name] = getattr(ns["course"], name)
             printed = io.StringIO()
             real_stdout = sys.stdout
             try:
@@ -389,14 +402,17 @@ def main():
         ns, reports = worker_globals(datasets)
         ticks = []
         try:
-            run_snippet(code, label, ns)
             if kind == "train":
+                run_snippet(code, label, ns)
                 out = ns["_train"](json.dumps(params),
                                    lambda t: ticks.append(json.loads(t)))
                 summary = json.loads(out)
             else:
+                # A first-party snippet reads its knobs from _args_json the
+                # moment it runs, so the (empty) args go in first and the
+                # snippet runs exactly once, as the worker runs it.
                 ns["_args_json"] = json.dumps({})
-                summary = run_snippet(code, label, ns)
+                summary = json.loads(run_snippet(code, label, ns))
         except Exception as exc:  # noqa: BLE001
             problems.append(f"{label}: {type(exc).__name__}: {exc}")
             print(f"{label:26} FAILED  {type(exc).__name__}: {exc}")

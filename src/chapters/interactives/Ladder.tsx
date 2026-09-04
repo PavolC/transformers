@@ -28,7 +28,9 @@ function y(bits: number) {
 export function Ladder({ rungs }: { rungs: Rung[] }) {
   // Labels sit at their rung's height, pushed apart where two rungs are
   // within a line of each other, so chapter 4's rung at almost the same
-  // height as the counted tally's stays legible.
+  // height as the counted tally's stays legible. The values on the right
+  // follow the same rows: two rungs 0.03 bits apart printed their values on
+  // top of each other when each value sat on its own line.
   const sorted = [...rungs].sort((a, b) => b.bits - a.bits);
   const labelY: number[] = [];
   for (const r of sorted) {
@@ -77,7 +79,7 @@ export function Ladder({ rungs }: { rungs: Rung[] }) {
           >
             {r.label}
           </text>
-          <text x={RUNG_END + 8} y={y(r.bits) + 4} className="ladder-rung-value">
+          <text x={RUNG_END + 8} y={labelY[i] - 1} className="ladder-rung-value">
             {r.bits.toFixed(2)}
           </text>
         </g>
