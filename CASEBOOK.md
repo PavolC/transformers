@@ -1225,6 +1225,45 @@ whether the thing is happening", under Backward references.
 **Cost:** three small edits and one round of the loop. Cheap because the check was
 answered; the previous incident's was not.
 
+## 34. "opening the exercise in workbench only adds the marker to the file and nothing else"
+
+**Chapter:** two (transformers), chapter 3's exercise, `avg-surprise`, in the workbench.
+
+**What was wrong.** "possible bug in chapter 3. opening the exercise in workbench only adds
+`# ---- [section:avg-surprise] Chapter 3, Measuring surprise ----` to the file and nothing
+else." A defect, not a confusion: the workbench seeds a new section from
+`src/exercises/skeletons.ts`, a hand-written map from section id to skeleton text, kept
+separate from each exercise's `index.ts` so that opening the file does not pull every test
+suite and solution into the first chunk. Chapter 2's commit added its two entries; chapter
+3's commit added the exercise folder, the registry entry, the section-table entry and the
+chapter's card, and not this one. `startingBody("avg-surprise")` returned the empty string
+and the seed wrote a marker with nothing under it.
+
+Nothing caught it because nothing reads that file. `tools/check_exercises.py` assembles its
+documents from the folders directly (`src/exercises/<id>/skeleton.py`), so every skeleton
+check passed on a skeleton the app never showed. The one script that mounts the real
+workbench, `tools/check_workbench.mjs`, is outside `npm run check` and tests the scratch
+pad, not seeding. So the defect was invisible to every check in the repository and visible
+to the first reader who clicked.
+
+**The fix.** Three parts. The table is now derived: `import.meta.glob` over
+`./*/skeleton.py` and `./given/*.py`, keyed by folder, so a new exercise folder is in the
+table by existing. The checker asserts the two globs are what the file uses and that no
+entry is listed by hand, which is the only thing about that file a Python script can
+check. And `ensureSection` re-seeds a section that is present with nothing under its
+marker, because the broken build had already written that empty section into the learner's
+saved document, and a fix to the table alone would have left it there ("skeleton docstrings
+freeze into the learner's saved copy", the rule from course one, cuts both ways).
+
+**Rule:** "A table that maps ids to files is derived from the files, never typed", under
+The exercise and test contract.
+
+**Cost:** an hour, a defect that reached the learner, and a lesson the repository had
+already learned once: the registry says of itself that it "cannot be checked here without
+importing the thing this file exists to avoid importing, so tools/check_exercises.py
+checks both from outside the bundle". The body table had the same shape and no such
+sentence, and no such check.
+
 ## The pattern behind course one's eighteen
 
 Four of them (2, 6, 7, 12) are the same chapter, and it is the one chapter authored outside

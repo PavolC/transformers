@@ -209,7 +209,11 @@ export function ensureSection(id: string): void {
 	// A given section arrives with the exercise that needs it, so the file
 	// always runs as it stands.
 	for (const wanted of [...givensFor(id), id]) {
-		if (doc.byId.has(wanted)) continue;
+		const present = doc.byId.get(wanted);
+		// A section that is present but holds nothing under its marker was
+		// seeded by a build whose body table had no entry for it (CASEBOOK.md
+		// 34), and the learner has written nothing there to lose. Re-seed it.
+		if (present && (present.body.trim() !== "" || startingBody(wanted) === "")) continue;
 		text = upsertSection(text, wanted, startingBody(wanted)).text;
 		doc = parseDocument(text);
 		changed = true;

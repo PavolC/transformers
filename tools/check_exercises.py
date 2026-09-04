@@ -139,6 +139,23 @@ def check_order(problems):
                 f"A: src/exercises/{d.name} exists but the registry does not list it, "
                 "so it is invisible on the front page")
 
+    # The body the workbench seeds a section with comes from
+    # src/exercises/skeletons.ts, which nothing in this script otherwise reads:
+    # the assembly below takes bodies straight from the folders. A hand list
+    # there went one entry short of the folders and chapter 3's exercise opened
+    # as a bare marker (CASEBOOK.md 34), so the file has to derive its table
+    # from the folders with a glob, and the glob has to cover both shapes.
+    skeletons_ts = (EX / "skeletons.ts").read_text()
+    for pattern in ('"./*/skeleton.py"', '"./given/*.py"'):
+        if f"import.meta.glob<string>({pattern}" not in skeletons_ts:
+            problems.append(
+                f"A: src/exercises/skeletons.ts does not glob {pattern}; the body "
+                "table must be derived from the folders, never listed by hand")
+    if re.search(r'^\s*"[a-z0-9-]+":\s*\w+,?$', skeletons_ts, re.M):
+        problems.append(
+            "A: src/exercises/skeletons.ts lists a section body by hand; derive "
+            "it from the folders instead")
+
     # The registry's own order is the order the workbench assembles in, so a
     # registry that lists two exercises out of chapter order would build a
     # file whose sections run backwards against the course.
